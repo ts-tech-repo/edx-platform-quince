@@ -51,24 +51,27 @@ def connect_to_mongodb(
         if read_preference is not None:
             kwargs['read_preference'] = read_preference
 
+    if 'replicaSet' in kwargs and kwargs['replicaSet'] == '':
+        kwargs['replicaSet'] = None
+
     connection_params = {
         'host': host,
         'port': port,
         'tz_aware': tz_aware,
         'document_class': dict,
-        'authSource': db,
+        # 'authSource': db,
         'directConnection': True,
         **kwargs,
     }
 
-    if user is not None and password is not None:
-        connection_params.update({'user': user, 'password': password})
+    if user is not None and password is not None and auth_source:
+        connection_params.update({'username': user, 'password': password, 'authSource': auth_source})
 
-    # import pdb; pdb.set_trace() # pdb9
     mongo_conn = pymongo.database.Database(
-        pymongo.MongoClient(connection_params),
+        pymongo.MongoClient(**connection_params),
         db
     )
+
 
     if proxy:
         mongo_conn = MongoProxy(

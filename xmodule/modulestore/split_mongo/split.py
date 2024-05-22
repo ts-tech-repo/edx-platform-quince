@@ -308,6 +308,7 @@ class SplitBulkWriteMixin(BulkOperationsMixin):
         if self._is_in_bulk_operation(course_key, False):
             self._clear_bulk_ops_record(course_key)
 
+        # import pdb; pdb.set_trace()
         self.db_connection.delete_course_index(course_key)
 
     def insert_course_index(self, course_key, index_entry):  # lint-amnesty, pylint: disable=missing-function-docstring

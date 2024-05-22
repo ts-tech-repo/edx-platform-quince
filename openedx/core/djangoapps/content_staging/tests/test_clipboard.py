@@ -297,7 +297,7 @@ class ClipboardTestCase(ModuleStoreTestCase):
         assert static_assets == [python_api.StagedContentFileData(
             filename="foo_bar.jpg",
             source_key=course_key.make_asset_key("asset", "foo_bar.jpg"),
-            md5_hash="d41d8cd98f00b204e9800998ecf8427e",
+            md5_hash="addd3c218c0c0c41e7e1ae73f5969810",
             data=None,
         )]
 

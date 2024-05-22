@@ -166,7 +166,6 @@ class MixedModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase):
                 log.exception("Invalid MixedModuleStore configuration. Unable to parse course_id %r", course_id)
                 continue
 
-        # import pdb; pdb.set_trac() # pdb13
         for store_settings in stores:
             key = store_settings['NAME']
             store = create_modulestore_instance(
@@ -184,6 +183,7 @@ class MixedModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase):
                 if store_name == key:
                     self.mappings[course_key] = store
             self.modulestores.append(store)
+        # import pdb; pdb.set_trac() # pdb13
 
     def _clean_locator_for_mapping(self, locator):
         """
