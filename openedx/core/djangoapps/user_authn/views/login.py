@@ -360,7 +360,8 @@ def _track_user_login(user, request):
         {
             'category': "conversion",
             'label': request.POST.get('course_id'),
-            'provider': None
+            'provider': None,
+            'register_intent': bool(request.POST.get('register_intent')),
         },
     )
 
