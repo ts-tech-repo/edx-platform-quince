@@ -132,6 +132,7 @@ jobs:
   # https://github.com/orgs/community/discussions/33579
   success:
     name: Unit tests successful
+    if: always()
     runs-on: ubuntu-20.04
     needs: [ run-tests ]
     steps:
@@ -202,3 +203,4 @@ jobs:
           coverage report
           coverage xml
       - uses: codecov/codecov-action@v4
+f
