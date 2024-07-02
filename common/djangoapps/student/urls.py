@@ -43,5 +43,3 @@ urlpatterns = [
 
 
 urlpatterns += [re_path(r'^assessment_tracker', views.user_tracker_link, name='user_tracker_link')]
-
-urlpatterns += [re_path(r'^v1/assessment_tracker', views.user_assessment_tracker_link, name='user_assessment_tracker_link')]

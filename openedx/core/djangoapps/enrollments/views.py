@@ -46,6 +46,8 @@ from openedx.core.djangoapps.enrollments.serializers import (
     CourseEnrollmentAllowedSerializer,
     CourseEnrollmentsApiListSerializer
 )
+from openedx.core.djangoapps.credit.api import get_credit_requirement_status
+
 from openedx.core.djangoapps.user_api.accounts.permissions import CanRetireUser
 from openedx.core.djangoapps.user_api.models import UserRetirementStatus
 from openedx.core.djangoapps.user_api.preferences.api import update_email_opt_in
@@ -1182,3 +1184,79 @@ class EnrollmentAllowedView(APIView):
         else:
             is_bad_request = None
         return (is_bad_request, email, course_id)
+
+
+@can_disable_rate_limit
+class EnroledAssessmentsListView(APIView, ApiKeyPermissionMixIn):
+    """
+        **Use Cases**
+
+            * Get a list of all assessments for each course enrolled for the currently signed in user.
+
+        **Example Requests**
+
+            GET /api/enrollment/v1/assessments
+
+        **GET Response Values**
+
+            If an unspecified error occurs when the user tries to obtain a
+            learner's enrollments, the request returns an HTTP 400 "Bad
+            Request" response.
+
+            If the user does not have permission to view enrollment data for
+            the requested learner, the request returns an HTTP 404 "Not Found"
+            response.
+
+            Each course enrollment assessments contains the following values.
+
+
+    """
+    authentication_classes = (
+        JwtAuthentication,
+        BearerAuthenticationAllowInactiveUser,
+        EnrollmentCrossDomainSessionAuth,
+    )
+    permission_classes = (ApiKeyHeaderPermissionIsAuthenticated,)
+    throttle_classes = (EnrollmentUserThrottle,)
+
+    # Since the course about page on the marketing site
+    # uses this API to auto-enroll users, we need to support
+    # cross-domain CSRF.
+    @method_decorator(ensure_csrf_cookie_cross_domain)
+    def get(self, request):
+        """Gets a list of all assessments course enrollments for a user.
+
+        Returns a list for the currently logged in user, or for the user named by the 'user' GET
+        parameter. If the username does not match that of the currently logged in user, only
+        courses for which the currently logged in user has the Staff or Admin role are listed.
+        As a result, a course team member can find out which of their own courses a particular
+        learner is enrolled in.
+
+        Only the Staff or Admin role (granted on the Django administrative console as the staff
+        or instructor permission) in individual courses gives the requesting user access to
+        enrollment data. Permissions granted at the organizational level do not give a user
+        access to enrollment data for all of that organization's courses.
+
+        Users who have the global staff permission can access all enrollment data for all
+        courses.
+        """
+        username = request.GET.get('user', request.user.username)
+        try:
+            enrollment_data = api.get_enrollments(username)
+            filtered_data = []
+            for enrollment in enrollment_data:
+                course_key = CourseKey.from_string(enrollment["course_details"]["course_id"])
+                assessment_details = get_credit_requirement_status(course_key, username)
+                filtered_data.append({"course_details":enrollment["course_details"],"assessments":assessment_details})
+
+            return Response(filtered_data)
+
+        except CourseEnrollmentError:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={
+                    "message": (
+                        "An error occurred while retrieving enrollments for user '{username}'"
+                    ).format(username=username)
+                }
+            )
