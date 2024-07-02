@@ -1331,3 +1331,11 @@ def ist_to_utc(item):
             item[date] = '-'
     return item
 
+
+@login_required
+def user_assessment_tracker_link(request):
+   return request.user.email
+   
+    # get_credit_requirement_status(course_key, student.username)
+    # return render(request, 'user_tracker_link.html', {'data': data, 'program_image_url': configuration_helpers.get_value("MKTG_URLS", True)["HEADER_LOGO"]})
+
