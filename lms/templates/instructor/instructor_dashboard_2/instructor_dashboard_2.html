@@ -68,9 +68,6 @@ from openedx.core.djangolib.markup import HTML
   <script type="text/javascript" src="${static.url('js/utils/animation.js')}"></script>
 
 
-
-  ##Scripts for Reports
-
   <link rel="stylesheet" href="https://static.talentsprint.com/edx_styles/instructor-may.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.css">
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -128,7 +125,7 @@ from openedx.core.djangolib.markup import HTML
           <h2 class="hd hd-2 instructor-dashboard-title">${_("Instructor Dashboard")}</h2>
           <div class="wrap-instructor-info studio-view">
             %if studio_url:
-            <a class="instructor-info-action" href="${studio_url}">${_("View Course in Studio")}</a>
+            <a class="instructor-info-action" href="${studio_url}">${_("Edit Course")}</a>
             %endif
           </div>
 
