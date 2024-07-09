@@ -45,7 +45,7 @@ class CourseSummary(serializers.Serializer):
     """
     Serializer for Assessmentes Objects.
     """
-    details = serializers.CharField()
+    name = serializers.CharField()
     date_blocks = AssessmentsSerializerDatesSummary(many=True)   
 
 
