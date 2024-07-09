@@ -48,14 +48,15 @@ class CourseSummary(serializers.Serializer):
     name = serializers.CharField()
     date_blocks = AssessmentsSerializerDatesSummary(many=True)   
 
-    # def to_representation(self, instance):
-    #     representation = super().to_representation(instance)
-    #     filtered_date_blocks = [
-    #         date_block for date_block in representation.get('date_blocks', [])
-    #         if date_block.get('date_type') == 'assignment-due-date'
-    #     ]
-    #     representation['date_blocks'] = filtered_date_blocks
-    #     return representation
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # filtered_date_blocks = [
+        #     date_block for date_block in representation.get('date_blocks', [])
+        #     if date_block.get('date_type') == 'assignment-due-date'
+        # ]
+        sorted_date_blocks = sorted(representation.get('date_blocks', []), key=lambda x: x['date'])
+        representation['date_blocks'] = sorted_date_blocks
+        return representation
 
 class AssessmentsSerializer(serializers.Serializer):
     """
@@ -63,3 +64,14 @@ class AssessmentsSerializer(serializers.Serializer):
     """
     courses = CourseSummary(many=True)
     user_timezone = serializers.CharField()
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # Retrieve courses data
+        courses_data = representation.get('courses', [])
+
+        # Sort courses based on the earliest 'date' in date_blocks
+        sorted_courses = sorted(courses_data, key=lambda x: min(x.get('date_blocks', []), key=lambda y: y['date'])['date'])
+        
+        # Return sorted courses
+        return sorted_courses
