@@ -91,10 +91,12 @@ class AssessmentsTabView(RetrieveAPIView):
 
             if CourseEnrollment.is_enrolled(request.user, course_key):
                 blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-                log.info(blocks)
+                new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
+                for block in new_blocks:
+                    log.info(blocks)
                 response_data["courses"].append({
                     'name':user_course["course_details"]["course_name"],
-                    'date_blocks': [block for block in blocks if not isinstance(block, TodaysDate)]
+                    'date_blocks': new_blocks
                 })
 
         # User locale settings
