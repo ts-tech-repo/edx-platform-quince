@@ -86,13 +86,14 @@ class AssessmentsTabView(RetrieveAPIView):
             course_key = CourseKey.from_string(course_key_string)
             # is_staff = bool(has_access(request.user, 'staff', course_key))
             course = get_course_or_403(request.user, 'load', course_key, check_if_enrolled=False)
-            blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-            log.info(blocks)
-            response_data["courses"].append({
-                'details':course_key_string,
-                'date_blocks': [block for block in blocks if not isinstance(block, TodaysDate)]
-            })
-            log.info(course_key_string)
+
+            if CourseEnrollment.is_enrolled(request.user, course_key):
+                blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
+                log.info(blocks)
+                response_data["courses"].append({
+                    'details':course_key_string,
+                    'date_blocks': [block for block in blocks if not isinstance(block, TodaysDate)]
+                })
 
         # User locale settings
         user_timezone_locale = user_timezone_locale_prefs(request)
