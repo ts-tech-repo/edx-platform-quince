@@ -87,11 +87,13 @@ class AssessmentsTabView(RetrieveAPIView):
             # is_staff = bool(has_access(request.user, 'staff', course_key))
             course = get_course_or_403(request.user, 'load', course_key, check_if_enrolled=False)
 
+            _, request.user = setup_masquerade(request, course_key, staff_access=is_staff, reset_masquerade_data=True)
+
             if CourseEnrollment.is_enrolled(request.user, course_key):
                 blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
                 log.info(blocks)
                 response_data["courses"].append({
-                    'details':course_key_string,
+                    'name':user_course["course_details"]["course_name"],
                     'date_blocks': [block for block in blocks if not isinstance(block, TodaysDate)]
                 })
 
@@ -100,4 +102,4 @@ class AssessmentsTabView(RetrieveAPIView):
         response_data['user_timezone']=user_timezone_locale['user_timezone']
         context = self.get_serializer_context()
         serializer = self.get_serializer_class()(response_data, context=context)
-        return Response(response_data)
+        return Response(serializer.data)
