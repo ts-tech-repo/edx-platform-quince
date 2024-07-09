@@ -24,6 +24,9 @@ from openedx.core.lib.api.authentication import BearerAuthenticationAllowInactiv
 from openedx.features.content_type_gating.models import ContentTypeGatingConfig
 from openedx.core.djangoapps.enrollments.data import get_course_enrollments
 
+import logging
+
+log = logging.getLogger(__name__)
 
 class AssessmentsTabView(RetrieveAPIView):
     """
@@ -86,6 +89,7 @@ class AssessmentsTabView(RetrieveAPIView):
 
             if CourseEnrollment.is_enrolled(request.user, course_key):
                 blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
+                log.info(blocks)
                 response_data["courses"].append({
                     'details':course_key_string,
                     'date_blocks': [block for block in blocks if not isinstance(block, TodaysDate)]

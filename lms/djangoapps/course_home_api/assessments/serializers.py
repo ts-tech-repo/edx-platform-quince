@@ -5,6 +5,7 @@ Assessments Tab Serializers. Represents the relevant assessments with due dates.
 
 
 from rest_framework import serializers
+from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
 
 
 class AssessmentsSerializerDatesSummary(serializers.Serializer):
@@ -48,7 +49,7 @@ class CourseSummary(serializers.Serializer):
     date_blocks = AssessmentsSerializerDatesSummary(many=True)   
 
 
-class AssessmentsSerializer():
+class AssessmentsSerializer(serializers.Serializer):
     """
     Serializer for the Dates Tab
     """
