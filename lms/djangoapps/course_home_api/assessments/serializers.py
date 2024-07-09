@@ -48,14 +48,14 @@ class CourseSummary(serializers.Serializer):
     name = serializers.CharField()
     date_blocks = AssessmentsSerializerDatesSummary(many=True)   
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        filtered_date_blocks = [
-            date_block for date_block in representation.get('date_blocks', [])
-            if date_block.get('date_type') == 'assignment-due-date'
-        ]
-        representation['date_blocks'] = filtered_date_blocks
-        return representation
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     filtered_date_blocks = [
+    #         date_block for date_block in representation.get('date_blocks', [])
+    #         if date_block.get('date_type') == 'assignment-due-date'
+    #     ]
+    #     representation['date_blocks'] = filtered_date_blocks
+    #     return representation
 
 class AssessmentsSerializer(serializers.Serializer):
     """
