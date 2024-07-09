@@ -84,7 +84,7 @@ class AssessmentsTabView(RetrieveAPIView):
         for i, user_course in enumerate(user_courses):
             course_key_string = user_course["course_details"]["course_id"]
             course_key = CourseKey.from_string(course_key_string)
-            # is_staff = bool(has_access(request.user, 'staff', course_key))
+            is_staff = bool(has_access(request.user, 'staff', course_key))
             course = get_course_or_403(request.user, 'load', course_key, check_if_enrolled=False)
 
             _, request.user = setup_masquerade(request, course_key, staff_access=is_staff, reset_masquerade_data=True)
