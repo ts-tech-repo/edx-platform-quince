@@ -65,10 +65,9 @@ class AssessmentsSerializer(serializers.Serializer):
     courses = CourseSummary(many=True)
     user_timezone = serializers.CharField()
 
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
+    def get_courses(self, instance):
         # Retrieve courses data
-        courses_data = representation.get('courses', [])
+        courses_data = instance.get('courses', [])
 
         # Sort courses based on the earliest 'date' in date_blocks
         sorted_courses = sorted(courses_data, key=lambda x: min(x.get('date_blocks', []), key=lambda y: y['date'])['date'])
