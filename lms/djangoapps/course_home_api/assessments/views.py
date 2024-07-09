@@ -77,7 +77,7 @@ class AssessmentsTabView(RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         user = User.objects.get(email = request.user.email)
         user_courses = get_course_enrollments(user.username)
-        data = []
+        response_data = {"courses":[]}
         for i, user_course in enumerate(user_courses):
             course_key_string = user_course["course_details"]["course_id"]
             course_key = CourseKey.from_string(course_key_string)
@@ -86,15 +86,14 @@ class AssessmentsTabView(RetrieveAPIView):
 
             if CourseEnrollment.is_enrolled(request.user, course_key):
                 blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-                data.append({
-                    'course_details':user_course["course_details"],
-                    'course_date_blocks': [block for block in blocks if not isinstance(block, TodaysDate)]
+                response_data["courses"].append({
+                    'details':course_key_string,
+                    'date_blocks': [block for block in blocks if not isinstance(block, TodaysDate)]
                 })
-                # context = self.get_serializer_context()
-                # context['learner_is_full_access'] = learner_is_full_access
-                # serializer = self.get_serializer_class()(data, context=context)
 
         # User locale settings
         user_timezone_locale = user_timezone_locale_prefs(request)
-        data.append({'user_timezone':user_timezone_locale['user_timezone']})
-        return Response(data)
+        response_data['user_timezone']=user_timezone_locale['user_timezone']
+        context = self.get_serializer_context()
+        serializer = self.get_serializer_class()(response_data, context=context)
+        return Response(response_data)
