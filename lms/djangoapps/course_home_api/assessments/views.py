@@ -9,6 +9,7 @@ from opaque_keys.edx.keys import CourseKey
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.contrib.auth.models import AnonymousUser, User
 
 from common.djangoapps.student.models import CourseEnrollment
 from lms.djangoapps.course_goals.models import UserActivity
@@ -73,17 +74,17 @@ class AssessmentsTabView(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = AssessmentsSerializer
 
-    def get(self, request, *args, **kwargs):    
+    def get(self, request, *args, **kwargs):
         user = User.objects.get(email = request.user.email)
         user_courses = get_course_enrollments(user.username)
         data = []
         for i, user_course in enumerate(user_courses):
-            course_key_String = user_course["course_details"]["course_id"]
+            course_key_string = user_course["course_details"]["course_id"]
             course_key = CourseKey.from_string(course_key_string)
-            is_staff = bool(has_access(request.user, 'staff', course_key))
+            # is_staff = bool(has_access(request.user, 'staff', course_key))
             course = get_course_or_403(request.user, 'load', course_key, check_if_enrolled=False)
 
-            if CourseEnrollment.is_enrolled(request.user, course_key) and not is_staff:
+            if CourseEnrollment.is_enrolled(request.user, course_key):
                 blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
                 data.append({
                     'course_details':user_course["course_details"],
@@ -95,5 +96,5 @@ class AssessmentsTabView(RetrieveAPIView):
 
         # User locale settings
         user_timezone_locale = user_timezone_locale_prefs(request)
-        data['user_timezone'] = user_timezone_locale['user_timezone']
+        data.append({'user_timezone':user_timezone_locale['user_timezone']})
         return Response(data)
