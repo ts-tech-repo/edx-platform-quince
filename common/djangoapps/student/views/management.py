@@ -1332,7 +1332,6 @@ def ist_to_utc(item):
             item[date] = '-'
     return item
 
-
 @csrf_exempt
 def extras_get_user_enrolled_courses(request):
     user_email = request.POST.get("user_email")
@@ -1356,3 +1355,12 @@ def _get_active_inactive_courses(user):
         else:
             user_active_inactive_courses.update({user_course["course_details"]["course_id"] : "Dropped"})
     return user_active_inactive_courses
+
+@login_required
+def user_assessments_tracker_link(request):
+    root_url = configuration_helpers.get_value('LMS_ROOT_URL', settings.LMS_ROOT_URL)
+    log.info("%s URL ",root_url)
+    data = requests.get(root_url + "/api/course_home/v1/assessments").json()
+    log.info(data)
+    return render(request, 'user_assessment_tracker_link.html', {'data': data, 'program_image_url': configuration_helpers.get_value("MKTG_URLS", True)["HEADER_LOGO"]})
+
