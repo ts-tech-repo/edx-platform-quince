@@ -12,6 +12,7 @@ from .views import (
     EnrollmentAllowedView,
     EnrollmentCourseDetailView,
     EnrollmentListView,
+    EnroledAssessmentsListView,
     EnrollmentUserRolesView,
     EnrollmentView,
     UnenrollmentView
@@ -25,6 +26,7 @@ urlpatterns = [
     re_path(fr'^enrollment/{settings.COURSE_ID_PATTERN}$',
             EnrollmentView.as_view(), name='courseenrollment'),
     path('enrollment', EnrollmentListView.as_view(), name='courseenrollments'),
+    path('assessments', EnroledAssessmentsListView.as_view(), name='courseassessments'),
     re_path(r'^enrollments/?$', CourseEnrollmentsApiListView.as_view(), name='courseenrollmentsapilist'),
     re_path(fr'^course/{settings.COURSE_ID_PATTERN}$',
             EnrollmentCourseDetailView.as_view(), name='courseenrollmentdetails'),

@@ -22,7 +22,7 @@ urlpatterns = [
     re_path(r'^extras/reset_password_link', views.extras_reset_password_link, name = "extras_reset_password_link"),
 
     re_path(r'^extras/get_user_enrolled_courses', views.extras_get_user_enrolled_courses, name = "extras_get_user_enrolled_courses"),
-    
+
     re_path(r'^email_confirm/(?P<key>[^/]*)$', views.confirm_email_change, name='confirm_email_change'),
 
     re_path(r'^activate/(?P<key>[^/]*)$', views.activate_account, name="activate"),
@@ -45,3 +45,5 @@ urlpatterns = [
 
 
 urlpatterns += [re_path(r'^assessment_tracker', views.user_tracker_link, name='user_tracker_link')]
+
+urlpatterns += [re_path(r'^assessment_tracker/v1', views.user_assessments_tracker_link, name='user_assessments_tracker_link')]
