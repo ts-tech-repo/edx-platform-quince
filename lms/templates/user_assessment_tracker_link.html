@@ -84,7 +84,13 @@ h1{font-size: 20px;margin-bottom: 20px;}
             {% for item in data.date_blocks %}
             <tr>
                 <td>{{ item.course_name }}</td>
-                <td><a href ="{{ item.link }}">{{ item.title }}</a></td>
+                <td>
+                    {% if item.link!="" %}
+                      <a href="{{ item.link }}">{{ item.title }}</a>
+                    {% else %}
+                      {{ item.title }}
+                    {% endif %}
+                  </td>
                 <td>{{ item.date }}</td>
                 <td>{{ item.assignment_type }}</td>
             </tr>
