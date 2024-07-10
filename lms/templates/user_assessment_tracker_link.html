@@ -83,8 +83,8 @@ h1{font-size: 20px;margin-bottom: 20px;}
             {% if data and data.date_blocks %}
             {% for item in data.date_blocks %}
             <tr>
-                <td><a href ="{{ sub_item.link }}">{{ item.course_name }}</a></td>
-                <td><a href ="{{ sub_item.link }}">{{ item.title }}</a></td>
+                <td>{{ item.course_name }}</td>
+                <td><a href ="{{ item.link }}">{{ item.title }}</a></td>
                 <td>{{ item.date }}</td>
                 <td>{{ item.assignment_type }}</td>
             </tr>
