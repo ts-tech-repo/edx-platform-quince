@@ -21,7 +21,7 @@ from django.contrib.sites.models import Site
 from django.core.validators import ValidationError, validate_email
 from django.core.cache import cache
 from openedx.core.djangoapps.enrollments.api import add_enrollment
-from common.djangoapps.student.helpers import DISABLE_UNENROLL_CERT_STATES, cert_info, do_create_account
+from common.djangoapps.student.helpers import DISABLE_UNENROLL_CERT_STATES, cert_info, do_create_account, get_assessments_for_courses
 from django.core.exceptions import ObjectDoesNotExist
 from openedx.core.djangoapps.user_authn.views.registration_form import AccountCreationForm
 from django.shortcuts import redirect, render
@@ -1358,9 +1358,7 @@ def _get_active_inactive_courses(user):
 
 @login_required
 def user_assessments_tracker_link(request):
-    root_url = configuration_helpers.get_value('LMS_ROOT_URL', settings.LMS_ROOT_URL)
-    log.info("%s URL ",root_url)
-    data = requests.get(root_url + "/api/course_home/v1/assessments").json()
+    data = get_assessments_for_courses(request)
     log.info(data)
     return render(request, 'user_assessment_tracker_link.html', {'data': data, 'program_image_url': configuration_helpers.get_value("MKTG_URLS", True)["HEADER_LOGO"]})
 
