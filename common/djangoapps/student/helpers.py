@@ -61,6 +61,15 @@ from openedx.core.djangoapps.user_authn.utils import is_safe_login_or_logout_red
 from openedx.core.lib.time_zone_utils import get_time_zone_offset
 from xmodule.data import CertificatesDisplayBehaviors  # lint-amnesty, pylint: disable=wrong-import-order
 
+from openedx.core.djangoapps.enrollments.data import get_course_enrollments
+from opaque_keys.edx.keys import CourseKey
+from lms.djangoapps.course_home_api.assessments.serializers import AssessmentsSerializer
+from lms.djangoapps.course_home_api.utils import get_course_or_403
+from lms.djangoapps.courseware.access import has_access
+from lms.djangoapps.courseware.courses import get_course_date_blocks
+from lms.djangoapps.courseware.masquerade import setup_masquerade
+
+
 # Enumeration of per-course verification statuses
 # we display on the student dashboard.
 VERIFY_STATUS_NEED_TO_VERIFY = "verify_need_to_verify"
@@ -916,3 +925,30 @@ def get_course_dates_for_email(user, course_id, request):
 
     course_date_list = list(map(_remove_date_key_from_course_dates, course_date_list))
     return course_date_list
+
+
+def get_assessments_for_courses(request):
+    user = User.objects.get(email = request.user.email)
+    user_courses = get_course_enrollments(user.username)
+    response_data = {"courses":[]}
+    for i, user_course in enumerate(user_courses):
+        course_key_string = user_course["course_details"]["course_id"]
+        course_key = CourseKey.from_string(course_key_string)
+        is_staff = bool(has_access(request.user, 'staff', course_key))
+        course = get_course_or_403(request.user, 'load', course_key, check_if_enrolled=False)
+
+        _, request.user = setup_masquerade(request, course_key, staff_access=is_staff, reset_masquerade_data=True)
+
+        if CourseEnrollment.is_enrolled(request.user, course_key):
+            blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
+            new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
+            response_data["courses"].append({
+                'name':user_course["course_details"]["course_name"],
+                'date_blocks': new_blocks
+            })
+
+    # User locale settings
+    user_timezone_locale = user_timezone_locale_prefs(request)
+    response_data['user_timezone']=user_timezone_locale['user_timezone']
+    return AssessmentsSerializer(response_data).data
+    
