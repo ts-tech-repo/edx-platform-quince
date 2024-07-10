@@ -76,6 +76,18 @@ RELATIVE_DATES_DISABLE_RESET_FLAG = CourseWaffleFlag(f'{WAFFLE_FLAG_NAMESPACE}.r
 # .. toggle_tickets: https://openedx.atlassian.net/browse/AA-36
 CALENDAR_SYNC_FLAG = CourseWaffleFlag(f'{WAFFLE_FLAG_NAMESPACE}.calendar_sync', __name__)  # lint-amnesty, pylint: disable=toggle-missing-annotation
 
+# .. toggle_name: completion.enable_completion_tracking
+# .. toggle_implementation: CourseWaffleFlag
+# .. toggle_default: False
+# .. toggle_description: This course flag enables a course tool (which is a tool that is added on a course home page)
+#   that sends course assignment calendars to course students, whenever they click on the "Subscribe to calendar
+#   updates" button. The email contains an ics attachment that students can then use to sync with their own calendar
+#   apps.
+# .. toggle_use_cases: temporary
+# .. toggle_creation_date: 2024-07-06
+# .. toggle_tickets: https://openedx.atlassian.net/browse/AA-36
+ENABLE_COMPLETION_TRACKING_FLAG = CourseWaffleFlag('completion.enable_completion_tracking', __name__)  # lint-amnesty, pylint: disable=toggle-missing-annotation
+
 
 def course_home_page_title(_course):
     """
