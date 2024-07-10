@@ -12,6 +12,7 @@ class AssessmentsSerializerDatesSummary(serializers.Serializer):
     """
     Serializer for Assessmentes Objects.
     """
+    course_name = serializers.CharField(default=None) 
     assignment_type = serializers.CharField(default=None)
     complete = serializers.BooleanField(allow_null=True)
     date = serializers.DateTimeField()
@@ -48,14 +49,14 @@ class CourseSummary(serializers.Serializer):
     name = serializers.CharField()
     date_blocks = AssessmentsSerializerDatesSummary(many=True)   
 
-    def to_representation(self, instance):
+        def to_representation(self, instance):
         representation = super().to_representation(instance)
-        # filtered_date_blocks = [
-        #     date_block for date_block in representation.get('date_blocks', [])
-        #     if date_block.get('date_type') == 'assignment-due-date'
-        # ]
-        sorted_date_blocks = sorted(representation.get('date_blocks', []), key=lambda x: x['date'])
-        representation['date_blocks'] = sorted_date_blocks
+        course_name = representation.pop('name')  # Get and remove the course name
+
+        # Add course name to each date_block
+        for date_block in representation['date_blocks']:
+            date_block['course_name'] = course_name
+
         return representation
 
 class AssessmentsSerializer(serializers.Serializer):
@@ -65,12 +66,19 @@ class AssessmentsSerializer(serializers.Serializer):
     courses = CourseSummary(many=True)
     user_timezone = serializers.CharField()
 
-    def get_courses(self, instance):
-        # Retrieve courses data
-        courses_data = instance.get('courses', [])
-
-        # Sort courses based on the earliest 'date' in date_blocks
-        sorted_courses = sorted(courses_data, key=lambda x: min(x.get('date_blocks', []), key=lambda y: y['date'])['date'])
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
         
-        # Return sorted courses
-        return sorted_courses
+        # Collect all date_blocks from all courses
+        all_date_blocks = []
+        for course in representation['courses']:
+            all_date_blocks.extend(course['date_blocks'])
+        
+        # Filter and sort date_blocks by 'date' field
+        filtered_sorted_date_blocks = sorted(all_date_blocks, key=lambda x: x['date'])
+        
+        # Return the final structure
+        return {
+            'date_blocks': filtered_sorted_date_blocks,
+            'user_timezone': representation['user_timezone']
+        }
