@@ -50,7 +50,7 @@ from openedx.core.djangoapps.programs.models import ProgramsApiConfig
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
 from openedx.core.djangoapps.user_authn.views.login import redirect_to_lms_login
 from openedx.features.enterprise_support.api import enterprise_enabled
-
+from lms.djangoapps.instructor.views import course_log as instructor_course_log_views
 RESET_COURSE_DEADLINES_NAME = 'reset_course_deadlines'
 RENDER_XBLOCK_NAME = 'render_xblock'
 RENDER_VIDEO_XBLOCK_NAME = 'render_public_video_xblock'
@@ -543,7 +543,13 @@ urlpatterns += [
         instructor_dashboard_views.instructor_dashboard_2,
         name='instructor_dashboard',
     ),
-
+    re_path(
+        r'^extras/{}/get_course_log'.format(
+            settings.COURSE_ID_PATTERN,
+            ),
+        instructor_course_log_views.extras_get_course_log,
+        name  = 'extras_get_course_log'
+    ),
     re_path(
         r'^courses/{}/set_course_mode_price$'.format(
             settings.COURSE_ID_PATTERN,
