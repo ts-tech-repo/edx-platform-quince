@@ -951,7 +951,7 @@ def get_assessments_for_courses(request):
                 'date_blocks': new_blocks
             })
 
-            response_data["sections"].appned({
+            response_data["sections"].append({
                 'section_scores':section_scores,
             })
 
