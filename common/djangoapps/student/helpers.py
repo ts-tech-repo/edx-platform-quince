@@ -929,7 +929,7 @@ def get_course_dates_for_email(user, course_id, request):
 def get_assessments_for_courses(request):
     user = User.objects.get(email = request.user.email)
     user_courses = get_course_enrollments(user.username)
-    response_data = {"courses":[]}
+    response_data = {"courses":[], "sections":[]}
     for i, user_course in enumerate(user_courses):
         course_key_string = user_course["course_details"]["course_id"]
         course_key = CourseKey.from_string(course_key_string)
@@ -948,8 +948,11 @@ def get_assessments_for_courses(request):
 
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
-                'section_scores':section_scores,
                 'date_blocks': new_blocks
+            })
+
+            response_data["sections"].appned({
+                'section_scores':section_scores,
             })
 
     # User locale settings
