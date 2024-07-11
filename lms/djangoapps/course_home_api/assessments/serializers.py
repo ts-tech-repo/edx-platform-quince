@@ -138,12 +138,12 @@ class CourseSummary(serializers.Serializer):
 
         return representation
 
-    def check_grade(merged_subsections, first_component_block_id):
+    def check_grade(self, merged_subsections, first_component_block_id):
         if merged_subsections and first_component_block_id:
             for each_one in merged_subsections:
                 if each_one["block_key"]==first_component_block_id:
-                    return each_one["has_graded_assignment"]
-        return False
+                    return "Graded" if each_one["has_graded_assignment"] else "Under Review"
+        return "-"
 
 class AssessmentsSerializer(serializers.Serializer):
     """
