@@ -63,11 +63,22 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
         return subsection.show_grades(self.context['staff_access'])
 
 
+merged_subsections = []
+
 class SectionScoresSerializer(ReadOnlySerializer):
     """
     Serializer for sections in section_scores
     """
-    subsections = SubsectionScoresSerializer(source='sections', many=True)
+    section_scores = SubsectionScoresSerializer(source='sections', many=True)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        
+        for course in representation['section_scores']:
+            merged_subsections.extend(course)
+
+        return representation
+
         
 class AssessmentsSerializerDatesSummary(serializers.Serializer):
     """
@@ -108,17 +119,12 @@ class CourseSummary(serializers.Serializer):
     Serializer for Assessmentes Objects.
     """
     name = serializers.CharField()
-    section_scores = SectionScoresSerializer(many=True)
     date_blocks = AssessmentsSerializerDatesSummary(many=True)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         course_name = representation.pop('name')  # Get and remove the course name
-        merged_subsections = []
-        for section in representation['section_scores']:
-            merged_subsections.extend(section['subsections'])
         
-        log.info(merged_subsections)
         # Add course name to each date_block
         start_date = ""
         for date_block in representation['date_blocks']:
@@ -143,6 +149,7 @@ class AssessmentsSerializer(serializers.Serializer):
     Serializer for the Dates Tab
     """
     courses = CourseSummary(many=True)
+    sections = SectionScoresSerializer(many=True)
     user_timezone = serializers.CharField(allow_null=True)
         
     def to_representation(self, instance):
