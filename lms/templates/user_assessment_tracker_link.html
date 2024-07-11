@@ -73,25 +73,31 @@ h1{font-size: 20px;margin-bottom: 20px;}
     <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
         <thead>
             <tr class="header">
-                <th>Course Name</th>
-                <th>Title</th>
-                <th>Date</th>
-                <th>Status</th>
+                <th>Assessment</th>
+                <th>Module</th>
+                <th>Faculty</th>
+                <th>Release Date</th>
+                <th>Due Date</th>
+                <th>Submission Status</th>
+                <th>Evaluation Status</th>
             </tr>
         </thead>
         <tbody id="tableData">
             {% if data and data.date_blocks %}
             {% for item in data.date_blocks %}
             <tr>
-                <td>{{ item.course_name }}</td>
                 <td>
                     {% if item.link!="" %}
                       <a href="{{ item.link }}">{{ item.title }}</a>
                     {% else %}
                       {{ item.title }}
                     {% endif %}
-                  </td>
+                </td>
+                <td>{{ item.course_name }}</td>
+                <td>-</td>
+                <td>{{ item.start_date }}</td>
                 <td>{{ item.date }}</td>
+                <td>{{ item.assignment_type }}</td>
                 <td>{{ item.assignment_type }}</td>
             </tr>
             {% endfor %}

@@ -66,7 +66,6 @@ from opaque_keys.edx.keys import CourseKey
 from lms.djangoapps.course_home_api.assessments.serializers import AssessmentsSerializer
 from lms.djangoapps.course_home_api.utils import get_course_or_403
 from lms.djangoapps.courseware.access import has_access
-from lms.djangoapps.courseware.courses import get_course_date_blocks
 from lms.djangoapps.courseware.masquerade import setup_masquerade
 
 
