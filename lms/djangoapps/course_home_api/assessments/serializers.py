@@ -85,7 +85,7 @@ class AssessmentsSerializer(serializers.Serializer):
                 # date_block['due_date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
                 # if 'start_date' in date_block:
                 #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
-            all_date_blocks.extend(course['date_blocks'])
+                all_date_blocks.extend(course['date_blocks'])
         
         # Filter and sort date_blocks by 'date' field
         filtered_sorted_date_blocks = sorted(all_date_blocks, key=lambda x: x['date'])
