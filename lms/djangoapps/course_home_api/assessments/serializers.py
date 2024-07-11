@@ -84,7 +84,7 @@ class AssessmentsSerializer(serializers.Serializer):
         for course in representation['courses']:
             for date_block in course['date_blocks']:
                 # Convert date to user timezone
-                date_block['date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
+                date_block['due_date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
                 if 'start_date' in date_block:
                     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
             all_date_blocks.extend(course['date_blocks'])
