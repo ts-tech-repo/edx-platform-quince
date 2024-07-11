@@ -19,8 +19,51 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
     has_graded_assignment = serializers.BooleanField(source='graded')
     learner_has_access = serializers.SerializerMethodField()
 
+      def get_override(self, subsection):
+        """Proctoring or grading score override"""
+        if subsection.override is None:
+            return None
+        else:
+            return {
+                "system": subsection.override.system,
+                "reason": subsection.override.override_reason,
+            }
+
     def get_block_key(self, subsection):
         return str(subsection.location)
+
+    def get_problem_scores(self, subsection):
+        """Problem scores for this subsection"""
+        problem_scores = [
+            {
+                'earned': score.earned,
+                'possible': score.possible,
+            }
+            for score in subsection.problem_scores.values()
+        ]
+        return problem_scores
+
+    def get_url(self, subsection):
+        """
+        Returns the URL for the subsection while taking into account if the course team has
+        marked the subsection's visibility as hide after due.
+        """
+        hide_url_date = subsection.end if subsection.self_paced else subsection.due
+        if (not self.context['staff_access'] and subsection.hide_after_due and hide_url_date
+                and datetime.now(UTC) > hide_url_date):
+            return None
+
+        relative_path = reverse('jump_to', args=[self.context['course_key'], subsection.location])
+        request = self.context['request']
+        return request.build_absolute_uri(relative_path)
+
+    def get_show_grades(self, subsection):
+        return subsection.show_grades(self.context['staff_access'])
+
+    def get_learner_has_access(self, subsection):
+        course_blocks = self.context['course_blocks']
+        return not course_blocks.get_xblock_field(subsection.location, 'contains_gated_content', False)
+
 
 class SectionScoresSerializer(ReadOnlySerializer):
     """
