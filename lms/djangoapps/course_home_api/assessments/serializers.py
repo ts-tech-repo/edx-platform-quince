@@ -17,9 +17,8 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
     assignment_type = serializers.CharField(source='format')
     block_key = serializers.SerializerMethodField()
     has_graded_assignment = serializers.BooleanField(source='graded')
-    learner_has_access = serializers.SerializerMethodField()
 
-      def get_override(self, subsection):
+    def get_override(self, subsection):
         """Proctoring or grading score override"""
         if subsection.override is None:
             return None
@@ -59,10 +58,6 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
 
     def get_show_grades(self, subsection):
         return subsection.show_grades(self.context['staff_access'])
-
-    def get_learner_has_access(self, subsection):
-        course_blocks = self.context['course_blocks']
-        return not course_blocks.get_xblock_field(subsection.location, 'contains_gated_content', False)
 
 
 class SectionScoresSerializer(ReadOnlySerializer):
@@ -143,12 +138,12 @@ class CourseSummary(serializers.Serializer):
 
         return representation
 
-    def check_grade(merged_subsections, first_component_block_id):
+    def check_grade(self, merged_subsections, first_component_block_id):
         if merged_subsections and first_component_block_id:
             for each_one in merged_subsections:
                 if each_one["block_key"]==first_component_block_id:
-                    return each_one["has_graded_assignment"]
-        return False
+                    return "Graded" if each_one["has_graded_assignment"] else "Under Review"
+        return "-"
 
 class AssessmentsSerializer(serializers.Serializer):
     """
