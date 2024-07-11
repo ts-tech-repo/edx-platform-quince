@@ -19,6 +19,8 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
     has_graded_assignment = serializers.BooleanField(source='graded')
     learner_has_access = serializers.SerializerMethodField()
 
+    def get_block_key(self, subsection):
+        return str(subsection.location)
 
 class SectionScoresSerializer(ReadOnlySerializer):
     """
