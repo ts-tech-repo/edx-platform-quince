@@ -4,9 +4,7 @@ Assessments Tab Serializers. Represents the relevant assessments with due dates.
 """
 
 import pytz
-# from django.utils import timezone
 from datetime import datetime
-# from pytz import UTC
 
 from rest_framework import serializers
 from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
@@ -84,9 +82,9 @@ class AssessmentsSerializer(serializers.Serializer):
         for course in representation['courses']:
             for date_block in course['date_blocks']:
                 # Convert date to user timezone
-                date_block['due_date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
-                if 'start_date' in date_block:
-                    date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
+                # date_block['due_date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
+                # if 'start_date' in date_block:
+                #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
             all_date_blocks.extend(course['date_blocks'])
         
         # Filter and sort date_blocks by 'date' field
