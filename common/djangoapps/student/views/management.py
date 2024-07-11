@@ -10,6 +10,10 @@ import uuid
 import requests
 import json
 
+import time
+import hmac
+import base64
+import hashlib
 import pytz
 
 from collections import namedtuple
@@ -1363,3 +1367,32 @@ def user_assessments_tracker_link(request):
     log.info(output_dict)
     return render(request, 'user_assessment_tracker_link.html', {'data': output_dict, 'program_image_url': configuration_helpers.get_value("MKTG_URLS", True)["HEADER_LOGO"]})
 
+@login_required
+def extras_start_mettl_test(request):
+   test_id = request.GET["test_id"]
+   HTTPVerb = "POST"
+   URL = "https://api.mettl.com/v1/schedules/" + test_id + "/candidates"
+   #PUBLICKEY = "95d3af46-0bd7-4610-a759-b46060e80760"
+   #PRIVATEKEY = "beedfbbe-b1a8-47c7-aaa8-f11843d29393"
+   PUBLICKEY = configuration_helpers.get_value("METTL_PUBLIC_KEY", "3c57d2f3-dd6c-4c10-9407-2f56a0b7ec1f")
+   PRIVATEKEY = configuration_helpers.get_value("METTL_PRIVATE_KEY", "bc9dac7c-04e5-4602-af62-ccc4894dc864")
+   registration_details = json.dumps({"registrationDetails":[{"Email Address" : request.user.email, "First Name" : request.user.username}]})
+   timestamp = str(int(time.time()))
+   message = HTTPVerb + URL + '\n' + PUBLICKEY + '\n' + registration_details + '\n' + timestamp
+   sign = urllib.parse.quote(str(base64.b64encode(hmac.new(bytes(PRIVATEKEY, 'UTF-8') ,bytes(message, 'UTF-8') , digestmod=hashlib.sha1).digest()), "utf-8"))
+   #sign = str(base64.b64encode(hmac.new(bytes(PRIVATEKEY, encoding='utf8'), bytes(message, encoding='utf8'), digestmod = hashlib.sha1).digest())).replace('+', '%2B')
+
+   headers={"Content-Type" : "application/x-www-form-urlencoded"}
+   payload = {"rd" : registration_details, "ak" : PUBLICKEY, "asgn" : sign, "ts" : timestamp}
+   response = requests.post(URL, headers = headers, data = payload).json()
+   log.error(payload)
+   log.error(response)
+   if response["status"] == "SUCCESS":
+      if response["registrationStatus"][0]["url"] is not None:
+           return redirect(response["registrationStatus"][0]["url"])
+      elif response["registrationStatus"][0]["status"] == "Completed":
+           return render(request, 'mettl_test_status.html', {"message" : "You have already completed your exam.Thank you!"})
+      elif response["registrationStatus"][0]["status"] == "InValid":
+           return render(request, 'mettl_test_status.html',{"message" : configuration_helpers.get_value("METTL_ERROR_MESSAGE", "You are not allowed to attend this exam owing to insufficient attendance. Please contact Support team")})
+
+   return render(request, 'mettl_test_status.html', {"message" : "Uh ho! Something went wrong. Please contact support <br><a href=mailto:{0}>{0}</a>".format(configuration_helpers.get_value("contact_mailing_address", ""))})
