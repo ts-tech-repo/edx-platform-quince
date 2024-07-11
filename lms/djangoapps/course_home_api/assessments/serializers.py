@@ -102,7 +102,7 @@ class CourseSummary(serializers.Serializer):
         if merged_subsections and first_component_block_id:
             for each_one in merged_subsections:
                 if each_one["block_key"]==first_component_block_id:
-                    return has_graded_assignment
+                    return each_one["has_graded_assignment"]
 
 class AssessmentsSerializer(serializers.Serializer):
     """
