@@ -3,8 +3,10 @@
 Assessments Tab Serializers. Represents the relevant assessments with due dates.
 """
 
-import pytz
-from django.utils import timezone
+# import pytz
+# from django.utils import timezone
+from datetime import datetime
+
 from rest_framework import serializers
 from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
 
@@ -74,8 +76,8 @@ class AssessmentsSerializer(serializers.Serializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         
-        user_timezone_str = representation.get('user_timezone', 'UTC')
-        user_timezone = pytz.timezone(user_timezone_str) if user_timezone_str else pytz.utc
+        user_timezone = representation.get('user_timezone', 'UTC')
+        # user_timezone = pytz.timezone(user_timezone_str) if user_timezone_str else pytz.utc
         
         # Collect all date_blocks from all courses
         all_date_blocks = []
@@ -98,8 +100,13 @@ class AssessmentsSerializer(serializers.Serializer):
     
     def convert_to_user_timezone(self, date, user_timezone):
         if date:
-            utc_date = timezone.make_aware(date, timezone.utc)
-            user_date = utc_date.astimezone(user_timezone)
-            formatted_date = user_date.strftime('%b %d, %Y %I:%M %p')
+            block_date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')
+            block_date = block_date.replace(tzinfo=UTC)
+            block_date = block_date.astimezone(user_timezone)
+            formatted_date = block_date.strftime('%b %d, %Y %I:%M %p')
+            
+            # utc_date = timezone.make_aware(date, timezone.utc)
+            # user_date = utc_date.astimezone(user_timezone)
+            # formatted_date = user_date.strftime('%b %d, %Y %I:%M %p')
             return formatted_date
         return date
