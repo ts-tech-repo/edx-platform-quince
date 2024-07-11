@@ -69,6 +69,7 @@ from .tools import get_units_with_due_date, title_or_url
 import json
 import requests
 from lms.djangoapps.instructor_analytics.basic import enrolled_students_features
+from lms.djangoapps.instructor.views.course_log import get_course_unit_log
 
 log = logging.getLogger(__name__)
 
@@ -246,6 +247,8 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
     )
 
     certificate_invalidations = CertificateInvalidation.get_certificate_invalidations(course_key)
+
+    sections.append(_section_course_log(course, access))
 
     context = {
         'course': course,
@@ -805,6 +808,16 @@ def is_ecommerce_course(course_key):
     """
     sku_count = len([mode.sku for mode in CourseMode.modes_for_course(course_key) if mode.sku])
     return sku_count > 0
+
+def _section_course_log(course, access):
+    section_data = {
+        'section_key': 'course_log',
+        'section_display_name': _('Course Log'),
+        'access': access,
+        'course_id': str(course.id),
+        'course_logs' : get_course_unit_log(str(course.id))
+    }
+    return section_data
 
 
 # For enrolled students
