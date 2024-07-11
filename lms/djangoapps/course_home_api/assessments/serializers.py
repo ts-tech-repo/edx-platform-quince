@@ -98,6 +98,12 @@ class CourseSummary(serializers.Serializer):
 
         return representation
 
+    def check_grade(merged_subsections, first_component_block_id):
+        if merged_subsections and first_component_block_id:
+            for each_one in merged_subsections:
+                if each_one["block_key"]==first_component_block_id:
+                    return has_graded_assignment
+
 class AssessmentsSerializer(serializers.Serializer):
     """
     Serializer for the Dates Tab
@@ -128,13 +134,6 @@ class AssessmentsSerializer(serializers.Serializer):
             'date_blocks': filtered_sorted_date_blocks,
             'user_timezone': representation['user_timezone']
         }
-    
-        
-    def check_grade(merged_subsections, first_component_block_id):
-        if merged_subsections and first_component_block_id:
-            for each_one in merged_subsections:
-                if each_one["block_key"]==first_component_block_id:
-                    return has_graded_assignment
     
 
     def convert_to_user_timezone(self, date, user_timezone):
