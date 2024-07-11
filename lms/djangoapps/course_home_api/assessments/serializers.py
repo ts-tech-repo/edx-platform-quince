@@ -62,23 +62,26 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
     def get_show_grades(self, subsection):
         return subsection.show_grades(self.context['staff_access'])
 
-
 merged_subsections = []
+class SubsectionScoresSerializerOuter(ReadOnlySerializer):
+    """
+    Serializer for sections in subsections
+    """
+    subsections = SubsectionScoresSerializer(many=True)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        
+        for course in representation['subsections']:
+            merged_subsections.extend(course)
+
+        return representation
 
 class SectionScoresSerializer(ReadOnlySerializer):
     """
     Serializer for sections in section_scores
     """
-    section_scores = SubsectionScoresSerializer(source='sections', many=True)
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        
-        for course in representation['section_scores']:
-            merged_subsections.extend(course)
-
-        return representation
-
+    section_scores = SubsectionScoresSerializerOuter(many=True)
         
 class AssessmentsSerializerDatesSummary(serializers.Serializer):
     """
