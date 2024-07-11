@@ -54,8 +54,12 @@ class CourseSummary(serializers.Serializer):
         course_name = representation.pop('name')  # Get and remove the course name
 
         # Add course name to each date_block
+        start_date = ""
         for date_block in representation['date_blocks']:
             date_block['course_name'] = course_name
+            if date_block['date_type'] == 'course-start-date':
+                start_date = date_block['date']
+            date_block['start_date'] = start_date
 
         return representation
 
