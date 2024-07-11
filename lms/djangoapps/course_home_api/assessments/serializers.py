@@ -77,12 +77,16 @@ class CourseSummary(serializers.Serializer):
     Serializer for Assessmentes Objects.
     """
     name = serializers.CharField()
+    section_scores = SectionScoresSerializer(many=True)
     date_blocks = AssessmentsSerializerDatesSummary(many=True)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         course_name = representation.pop('name')  # Get and remove the course name
-
+        merged_subsections = []
+        for section in representation['section_scores']:
+            merged_subsections.extend(section['subsections'])
+        
         # Add course name to each date_block
         start_date = ""
         for date_block in representation['date_blocks']:
@@ -98,22 +102,17 @@ class AssessmentsSerializer(serializers.Serializer):
     Serializer for the Dates Tab
     """
     courses = CourseSummary(many=True)
-    section_scores = SectionScoresSerializer(many=True)
     user_timezone = serializers.CharField(allow_null=True)
         
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        merged_subsections = []
-        for section in representation['section_scores']:
-            merged_subsections.extend(section['subsections'])
         
         user_timezone = representation.get('user_timezone', 'UTC')
         
         # Collect all date_blocks from all courses
         all_date_blocks = []
         for course in representation['courses']:
-            for date_block in course['date_blocks']:
-                date_block["is_graded"] = self.check_grade(merged_subsections, date_block['first_component_block_id'])
+            # for date_block in course['date_blocks']:
                 # Convert date to user timezone
                 # date_block['due_date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
                 # if 'start_date' in date_block:
