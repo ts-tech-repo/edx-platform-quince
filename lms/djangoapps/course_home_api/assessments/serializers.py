@@ -4,11 +4,14 @@ Assessments Tab Serializers. Represents the relevant assessments with due dates.
 """
 
 import pytz
+import logging
 from datetime import datetime
 
 from rest_framework import serializers
 from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
 from lms.djangoapps.course_home_api.serializers import ReadOnlySerializer
+
+log = logging.getLogger("edx.student")
 
 class SubsectionScoresSerializer(ReadOnlySerializer):
     """
@@ -65,18 +68,6 @@ class SectionScoresSerializer(ReadOnlySerializer):
     Serializer for sections in section_scores
     """
     subsections = SubsectionScoresSerializer(source='sections', many=True)
-
-
-class CustomGradesSerializer():
-    section_scores = SectionScoresSerializer(many=True)
-    
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        merged_subsections = []
-        for section in representation['section_scores']:
-            merged_subsections.extend(section['subsections'])
-        return {'subsections': merged_subsections}
-
         
 class AssessmentsSerializerDatesSummary(serializers.Serializer):
     """
@@ -127,6 +118,7 @@ class CourseSummary(serializers.Serializer):
         for section in representation['section_scores']:
             merged_subsections.extend(section['subsections'])
         
+        log.info(merged_subsections)
         # Add course name to each date_block
         start_date = ""
         for date_block in representation['date_blocks']:
@@ -141,6 +133,7 @@ class CourseSummary(serializers.Serializer):
     def check_grade(self, merged_subsections, first_component_block_id):
         if merged_subsections and first_component_block_id:
             for each_one in merged_subsections:
+                log.info(each_one["has_graded_assignment"])
                 if each_one["block_key"]==first_component_block_id:
                     return "Graded" if each_one["has_graded_assignment"] else "Under Review"
         return "-"
