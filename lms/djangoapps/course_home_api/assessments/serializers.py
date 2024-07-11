@@ -8,6 +8,7 @@ from datetime import datetime
 
 from rest_framework import serializers
 from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
+from lms.djangoapps.course_home_api.serializers import ReadOnlySerializer
 
 
 class AssessmentsSerializerDatesSummary(serializers.Serializer):
@@ -70,10 +71,14 @@ class AssessmentsSerializer(serializers.Serializer):
     Serializer for the Dates Tab
     """
     courses = CourseSummary(many=True)
+    section_scores = SectionScoresSerializer(many=True)
     user_timezone = serializers.CharField(allow_null=True)
         
     def to_representation(self, instance):
         representation = super().to_representation(instance)
+        merged_subsections = []
+        for section in representation['section_scores']:
+            merged_subsections.extend(section['subsections'])
         
         user_timezone = representation.get('user_timezone', 'UTC')
         
@@ -81,11 +86,12 @@ class AssessmentsSerializer(serializers.Serializer):
         all_date_blocks = []
         for course in representation['courses']:
             for date_block in course['date_blocks']:
+                date_block["is_graded"] = self.check_grade(merged_subsections, date_block['first_component_block_id'])
                 # Convert date to user timezone
                 # date_block['due_date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
                 # if 'start_date' in date_block:
                 #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
-                all_date_blocks.extend(course['date_blocks'])
+            all_date_blocks.extend(course['date_blocks'])
         
         # Filter and sort date_blocks by 'date' field
         filtered_sorted_date_blocks = sorted(all_date_blocks, key=lambda x: x['date'])
@@ -96,6 +102,14 @@ class AssessmentsSerializer(serializers.Serializer):
             'user_timezone': representation['user_timezone']
         }
     
+        
+    def check_grade(merged_subsections, first_component_block_id):
+        if merged_subsections and first_component_block_id:
+            for each_one in merged_subsections:
+                if each_one["block_key"]==first_component_block_id:
+                    return has_graded_assignment
+    
+
     def convert_to_user_timezone(self, date, user_timezone):
         if date:
             # Parsing the datetime string to datetime object
@@ -111,3 +125,30 @@ class AssessmentsSerializer(serializers.Serializer):
             formatted_user_time = user_time.strftime("%b %d, %Y %I:%M %p")
             return formatted_user_time
         return date
+
+class SubsectionScoresSerializer(ReadOnlySerializer):
+    """
+    Serializer for subsections in section_scores
+    """
+    assignment_type = serializers.CharField(source='format')
+    block_key = serializers.SerializerMethodField()
+    has_graded_assignment = serializers.BooleanField(source='graded')
+    learner_has_access = serializers.SerializerMethodField()
+
+
+class SectionScoresSerializer(ReadOnlySerializer):
+    """
+    Serializer for sections in section_scores
+    """
+    subsections = SubsectionScoresSerializer(source='sections', many=True)
+
+
+class CustomGradesSerializer():
+    section_scores = SectionScoresSerializer(many=True)
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        merged_subsections = []
+        for section in representation['section_scores']:
+            merged_subsections.extend(section['subsections'])
+        return {'subsections': merged_subsections}

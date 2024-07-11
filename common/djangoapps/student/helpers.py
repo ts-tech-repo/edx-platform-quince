@@ -63,11 +63,11 @@ from xmodule.data import CertificatesDisplayBehaviors  # lint-amnesty, pylint: d
 
 from openedx.core.djangoapps.enrollments.data import get_course_enrollments
 from opaque_keys.edx.keys import CourseKey
-from lms.djangoapps.course_home_api.assessments.serializers import AssessmentsSerializer
+from lms.djangoapps.course_home_api.assessments.serializers import AssessmentsSerializer, CustomGradesSerializer
 from lms.djangoapps.course_home_api.utils import get_course_or_403
 from lms.djangoapps.courseware.access import has_access
 from lms.djangoapps.courseware.masquerade import setup_masquerade
-
+from openedx.core.djangoapps.content.block_structure.api import get_block_structure_manager
 
 # Enumeration of per-course verification statuses
 # we display on the student dashboard.
@@ -943,6 +943,7 @@ def get_assessments_for_courses(request):
             new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
+                'section_scores':_get_grades(course_key),
                 'date_blocks': new_blocks
             })
 
@@ -950,4 +951,9 @@ def get_assessments_for_courses(request):
     user_timezone_locale = user_timezone_locale_prefs(request)
     response_data['user_timezone']=user_timezone_locale['user_timezone']
     return AssessmentsSerializer(response_data).data
-    
+
+def _get_grades():
+    collected_block_structure = get_block_structure_manager(course_key).get_collected()
+    course_grade = CourseGradeFactory().read(student, collected_block_structure=collected_block_structure)
+    return list(course_grade.chapter_grades.values())
+    # return CustomGradesSerializer(data).data
