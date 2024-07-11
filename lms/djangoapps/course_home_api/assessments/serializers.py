@@ -10,7 +10,34 @@ from rest_framework import serializers
 from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
 from lms.djangoapps.course_home_api.serializers import ReadOnlySerializer
 
+class SubsectionScoresSerializer(ReadOnlySerializer):
+    """
+    Serializer for subsections in section_scores
+    """
+    assignment_type = serializers.CharField(source='format')
+    block_key = serializers.SerializerMethodField()
+    has_graded_assignment = serializers.BooleanField(source='graded')
+    learner_has_access = serializers.SerializerMethodField()
 
+
+class SectionScoresSerializer(ReadOnlySerializer):
+    """
+    Serializer for sections in section_scores
+    """
+    subsections = SubsectionScoresSerializer(source='sections', many=True)
+
+
+class CustomGradesSerializer():
+    section_scores = SectionScoresSerializer(many=True)
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        merged_subsections = []
+        for section in representation['section_scores']:
+            merged_subsections.extend(section['subsections'])
+        return {'subsections': merged_subsections}
+
+        
 class AssessmentsSerializerDatesSummary(serializers.Serializer):
     """
     Serializer for Assessmentes Objects.
@@ -126,29 +153,3 @@ class AssessmentsSerializer(serializers.Serializer):
             return formatted_user_time
         return date
 
-class SubsectionScoresSerializer(ReadOnlySerializer):
-    """
-    Serializer for subsections in section_scores
-    """
-    assignment_type = serializers.CharField(source='format')
-    block_key = serializers.SerializerMethodField()
-    has_graded_assignment = serializers.BooleanField(source='graded')
-    learner_has_access = serializers.SerializerMethodField()
-
-
-class SectionScoresSerializer(ReadOnlySerializer):
-    """
-    Serializer for sections in section_scores
-    """
-    subsections = SubsectionScoresSerializer(source='sections', many=True)
-
-
-class CustomGradesSerializer():
-    section_scores = SectionScoresSerializer(many=True)
-    
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        merged_subsections = []
-        for section in representation['section_scores']:
-            merged_subsections.extend(section['subsections'])
-        return {'subsections': merged_subsections}
