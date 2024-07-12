@@ -137,7 +137,8 @@ User = get_user_model()
 ThreadType = Literal["discussion", "question"]
 ViewType = Literal["unread", "unanswered"]
 ThreadOrderingType = Literal["last_activity_at", "comment_count", "vote_count"]
-
+import logging
+log = logging.getLogger("edx.student")
 
 class DiscussionTopic:
     """
@@ -822,6 +823,7 @@ def _add_additional_response_fields(
         for discussion_entity in serialized_discussion_entities:
             discussion_entity['users'] = _get_users(discussion_entity_type, discussion_entity, username_profile_dict)
 
+    log.info(serialized_discussion_entities)
     return serialized_discussion_entities
 
 
