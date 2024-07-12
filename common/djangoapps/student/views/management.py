@@ -973,3 +973,32 @@ def change_email_settings(request):
         )
 
     return JsonResponse({"success": True})
+
+@csrf_exempt
+def extras_update_user_details(request):
+        data = json.loads(request.body)
+        log.info(data)
+        try:
+                oldEmail = data["other"]["email"]
+                firstName = data["other"]["firstname"]
+                lastName = data["other"]["lastname"]
+                newEmail = data["other"]["newemail"]
+                old_user = User.objects.get(email = oldEmail)
+
+        except ObjectDoesNotExist:
+                return HttpResponse("User doesn't exists")
+        if newEmail and newEmail != oldEmail:
+                try:
+                        new_user = User.objects.get(email = newEmail)
+                        if new_user:
+                                return HttpResponse("User already exists with new email.")
+                except ObjectDoesNotExist:
+                        old_user.email = newEmail
+
+        #update firstname lastname if email not passed
+        if firstName is not None:
+                old_user.first_name = firstName
+        if lastName is not None:
+                old_user.last_name = lastName
+        old_user.save()
+        return HttpResponse("Saved")

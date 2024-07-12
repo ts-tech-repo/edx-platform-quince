@@ -23,6 +23,7 @@ from openedx.core.apidocs import api_info
 from openedx.core.djangoapps.password_policy import compliance as password_policy_compliance
 from openedx.core.djangoapps.password_policy.forms import PasswordPolicyAwareAdminAuthForm
 from openedx.core import toggles as core_toggles
+from common.djangoapps.student.views.management import extras_update_user_details
 
 
 django_autodiscover()
@@ -108,6 +109,8 @@ urlpatterns = oauth2_urlpatterns + [
             name='course_search_index_handler'
             ),
     re_path(fr'^course/{settings.COURSE_KEY_PATTERN}?$', contentstore_views.course_handler, name='course_handler'),
+
+    re_path(r'^extras/update_user_details', extras_update_user_details, name = 'extras_update_user_details'),
 
     re_path(fr'^checklists/{settings.COURSE_KEY_PATTERN}?$',
             contentstore_views.checklists_handler,
