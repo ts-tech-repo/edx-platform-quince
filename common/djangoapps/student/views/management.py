@@ -1425,3 +1425,33 @@ def extras_update_user_details(request):
                 old_user.last_name = lastName
         old_user.save()
         return HttpResponse("Saved")
+
+@login_required
+def extras_get_mettl_report(request):
+
+
+    test_id = request.GET["test_id"]
+
+    if test_id is None:
+        return HttpResponse("Please contact Support")
+
+
+    HTTPVerb = "GET"
+    PUBLICKEY = configuration_helpers.get_value("METTL_PUBLIC_KEY", "f4861900-b683-4f78-877c-358f3efe2839")
+    PRIVATEKEY = configuration_helpers.get_value("METTL_PRIVATE_KEY", "283ebc4a-c77d-4bfb-b302-20f046e38038")
+    URL = "https://api.mettl.com/v1/schedules/{0}/candidates/{1}".format(test_id, request.user.email)
+
+    timestamp = str(int(time.time()))
+    message = HTTPVerb + URL + '\n' + PUBLICKEY + '\n' + timestamp
+    sign = str(base64.b64encode(hmac.new(bytes(PRIVATEKEY, 'UTF-8') ,bytes(message, 'UTF-8') , digestmod=hashlib.sha1).digest()), "utf-8")
+    URL = "{url}?ak={access_key}&ts={timestamp}&asgn={sign}".format(url = URL, access_key = PUBLICKEY, timestamp = timestamp, sign = sign)
+
+    response = requests.get(URL).json()
+
+    log.info(response)
+
+    if response["status"] != "SUCCESS" :
+        return HttpResponse("Please Contact Support")
+
+
+
