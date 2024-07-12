@@ -1396,3 +1396,32 @@ def extras_start_mettl_test(request):
            return render(request, 'mettl_test_status.html',{"message" : configuration_helpers.get_value("METTL_ERROR_MESSAGE", "You are not allowed to attend this exam owing to insufficient attendance. Please contact Support team")})
 
    return render(request, 'mettl_test_status.html', {"message" : "Uh ho! Something went wrong. Please contact support <br><a href=mailto:{0}>{0}</a>".format(configuration_helpers.get_value("contact_mailing_address", ""))})
+
+@csrf_exempt
+def extras_update_user_details(request):
+        data = json.loads(request.body)
+        log.info(data)
+        try:
+                oldEmail = data["other"]["email"]
+                firstName = data["other"]["firstname"]
+                lastName = data["other"]["lastname"]
+                newEmail = data["other"]["newemail"]
+                old_user = User.objects.get(email = oldEmail)
+
+        except ObjectDoesNotExist:
+                return HttpResponse("User doesn't exists")
+        if newEmail and newEmail != oldEmail:
+                try:
+                        new_user = User.objects.get(email = newEmail)
+                        if new_user:
+                                return HttpResponse("User already exists with new email.")
+                except ObjectDoesNotExist:
+                        old_user.email = newEmail
+
+        #update firstname lastname if email not passed
+        if firstName is not None:
+                old_user.first_name = firstName
+        if lastName is not None:
+                old_user.last_name = lastName
+        old_user.save()
+        return HttpResponse("Saved")
