@@ -1408,8 +1408,8 @@ def extras_get_mettl_report(request):
 
 
     HTTPVerb = "GET"
-    PUBLICKEY = configuration_helpers.get_value("METTL_PUBLIC_KEY", "f4861900-b683-4f78-877c-358f3efe2839")
-    PRIVATEKEY = configuration_helpers.get_value("METTL_PRIVATE_KEY", "283ebc4a-c77d-4bfb-b302-20f046e38038")
+    PUBLICKEY = configuration_helpers.get_value("METTL_PUBLIC_KEY", "3c57d2f3-dd6c-4c10-9407-2f56a0b7ec1f")
+    PRIVATEKEY = configuration_helpers.get_value("METTL_PRIVATE_KEY", "bc9dac7c-04e5-4602-af62-ccc4894dc864")
     URL = "https://api.mettl.com/v1/schedules/{0}/candidates/{1}".format(test_id, request.user.email)
 
     timestamp = str(int(time.time()))
