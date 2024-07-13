@@ -887,6 +887,7 @@ def get_course_dates_for_email(user, course_id, request):
     date_blocks = get_course_date_blocks(course, user, request, include_access=True, include_past_dates=True)
     date_blocks = [block for block in date_blocks if not isinstance(block, TodaysDate)]
     blocks = DateSummarySerializer(date_blocks, many=True).data
+    log.info(DateSummarySerializer(date_blocks, many=True))
 
     today = datetime.now(user_timezone)
     course_date = {
