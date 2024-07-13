@@ -819,7 +819,8 @@ def prepare_content(
                 endorser and
                 ("username" in fields or has_permission(endorser, "endorse_comment", course_key))
         ):
-            endorsement["username"] = endorser.username
+            #endorsement["username"] = endorser.username
+            endorsement["username"] = "{0} ({1})".format(endorser.first_name, endorser.username)
         else:
             del endorsement["user_id"]
 
@@ -855,6 +856,10 @@ def prepare_content(
     else:
         # Remove any group information that might remain if the course had previously been divided.
         content.pop('group_id', None)
+    if "username" in content and content["username"]:
+        extras_user = User.objects.get(username = content["username"])
+        content["username"] = "{0} ({1})".format(extras_user.first_name, extras_user.username)
+
 
     return content
 
