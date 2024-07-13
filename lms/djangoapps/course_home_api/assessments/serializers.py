@@ -154,7 +154,8 @@ class AssessmentsSerializer(serializers.Serializer):
     """
     Serializer for the Dates Tab
     """
-    courses = CourseSummary(many=True)
+
+    courses = CourseSummary(serializers.SerializerMethodField(), many=True)
     sections = SectionScoresSerializer(many=True)
     log.info(sections)
     user_timezone = serializers.CharField(allow_null=True)
