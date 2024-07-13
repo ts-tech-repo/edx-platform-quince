@@ -63,7 +63,7 @@ from xmodule.data import CertificatesDisplayBehaviors  # lint-amnesty, pylint: d
 
 from openedx.core.djangoapps.enrollments.data import get_course_enrollments
 from opaque_keys.edx.keys import CourseKey
-from lms.djangoapps.course_home_api.assessments.serializers import AssessmentsSerializer
+from lms.djangoapps.course_home_api.assessments.serializers import AssessmentsSerializer, AssessmentsSerializerDatesSummary
 from lms.djangoapps.course_home_api.utils import get_course_or_403
 from lms.djangoapps.courseware.access import has_access
 from lms.djangoapps.courseware.masquerade import setup_masquerade
@@ -958,6 +958,4 @@ def get_assessments_for_courses(request):
     # User locale settings
     user_timezone_locale = user_timezone_locale_prefs(request)
     response_data['user_timezone']=user_timezone_locale['user_timezone']
-    assessment_serializer = AssessmentsSerializer(response_data)
-    log.info(assessment_serializer)
-    return AssessmentsSerializer(response_data, many=True).data
+    return AssessmentsSerializerDatesSummary(many=True).data

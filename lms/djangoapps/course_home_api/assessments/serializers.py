@@ -155,9 +155,8 @@ class AssessmentsSerializer(serializers.Serializer):
     Serializer for the Dates Tab
     """
 
-    courses = CourseSummary(serializers.SerializerMethodField(), many=True)
+    courses = CourseSummary(many=True)
     sections = SectionScoresSerializer(many=True)
-    log.info(sections)
     user_timezone = serializers.CharField(allow_null=True)
         
     def to_representation(self, instance):
@@ -180,10 +179,8 @@ class AssessmentsSerializer(serializers.Serializer):
         
         # Return the final structure
         return {
-            "data" : {
                 'date_blocks': filtered_sorted_date_blocks,
                 'user_timezone': representation['user_timezone']
-            }
         }
     
 
