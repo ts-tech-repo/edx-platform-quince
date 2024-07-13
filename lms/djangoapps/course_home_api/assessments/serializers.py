@@ -176,8 +176,10 @@ class AssessmentsSerializer(serializers.Serializer):
         
         # Return the final structure
         return {
-            'date_blocks': filtered_sorted_date_blocks,
-            'user_timezone': representation['user_timezone']
+            "data" : {
+                'date_blocks': filtered_sorted_date_blocks,
+                'user_timezone': representation['user_timezone']
+            }
         }
     
 
