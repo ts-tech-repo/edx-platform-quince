@@ -71,7 +71,6 @@ class DatesTabView(RetrieveAPIView):
     )
     permission_classes = (IsAuthenticated,)
     serializer_class = DatesTabSerializer
-    log.info(serializer_class)
 
     def get(self, request, *args, **kwargs):
         course_key_string = kwargs.get('course_key_string')
