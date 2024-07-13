@@ -82,7 +82,9 @@ class SectionScoresSerializer(ReadOnlySerializer):
     """
     Serializer for sections in section_scores
     """
+    log.info("HEre")
     section_scores = SubsectionScoresSerializerOuter(many=True)
+    log.info(section_scores)
         
 class AssessmentsSerializerDatesSummary(serializers.Serializer):
     """
@@ -153,8 +155,8 @@ class AssessmentsSerializer(serializers.Serializer):
     Serializer for the Dates Tab
     """
     courses = CourseSummary(many=True)
-    log.info(courses)
     sections = SectionScoresSerializer(many=True)
+    log.info(sections)
     user_timezone = serializers.CharField(allow_null=True)
         
     def to_representation(self, instance):
