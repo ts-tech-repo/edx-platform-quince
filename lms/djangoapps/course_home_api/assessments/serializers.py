@@ -72,9 +72,10 @@ class SubsectionScoresSerializerOuter(ReadOnlySerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         
-        for course in representation['subsections']:
-            merged_subsections.extend(course)
-        log.info(representation)
+        if "subsections" in representation:
+            for course in representation['subsections']:
+                merged_subsections.extend(course)
+
         return representation
 
 class SectionScoresSerializer(ReadOnlySerializer):
