@@ -929,7 +929,7 @@ def get_course_dates_for_email(user, course_id, request):
 def get_assessments_for_courses(request):
     user = User.objects.get(email = request.user.email)
     user_courses = get_course_enrollments(user.username)
-    response_data = {"courses":[], "sections":[]}
+    response_data = {"courses":[]}
     for i, user_course in enumerate(user_courses):
         course_key_string = user_course["course_details"]["course_id"]
         course_key = CourseKey.from_string(course_key_string)
@@ -941,21 +941,19 @@ def get_assessments_for_courses(request):
         if CourseEnrollment.is_enrolled(request.user, course_key):
             blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
             new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
-
-            collected_block_structure = get_block_structure_manager(course_key).get_collected()
-            course_grade = CourseGradeFactory().read(request.user, collected_block_structure=collected_block_structure)
-            section_scores = list(course_grade.chapter_grades.values())
-
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
+                'section_scores':_get_grades(course_key, request.user),
                 'date_blocks': new_blocks
-            })
-
-            response_data["sections"].append({
-                'section_scores':section_scores,
             })
 
     # User locale settings
     user_timezone_locale = user_timezone_locale_prefs(request)
     response_data['user_timezone']=user_timezone_locale['user_timezone']
-    return AssessmentsSerializer(many=True).assessment_representation(response_data)
+    return AssessmentsSerializer(response_data).data
+
+def _get_grades(course_key, student):
+    collected_block_structure = get_block_structure_manager(course_key).get_collected()
+    course_grade = CourseGradeFactory().read(student, collected_block_structure=collected_block_structure)
+    return list(course_grade.chapter_grades.values())
+    # return CustomGradesSerializer(data).data
