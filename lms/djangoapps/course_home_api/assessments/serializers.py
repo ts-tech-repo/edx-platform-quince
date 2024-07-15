@@ -130,10 +130,10 @@ class CourseSummary(serializers.Serializer):
         representation = super().to_representation(instance)
         course_name = representation.pop('name')  # Get and remove the course name
 
+        merged_subsections = SubsectionScoresSerializerOuter(many=True)
         # Add course name to each date_block
         start_date = ""
         for date_block in representation['date_blocks']:
-            log.info(merged_subsections)
             date_block['course_name'] = course_name
             date_block["is_graded"] = self.check_grade(merged_subsections, date_block['first_component_block_id'])
             if date_block['date_type'] == 'course-start-date':
