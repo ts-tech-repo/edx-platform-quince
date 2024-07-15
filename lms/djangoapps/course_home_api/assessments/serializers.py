@@ -185,7 +185,8 @@ class AssessmentsSerializer(serializers.Serializer):
         # Return the final structure
         return {
             'date_blocks': filtered_sorted_date_blocks,
-            'user_timezone': representation['user_timezone']
+            'user_timezone': representation['user_timezone'],
+            'problem_blocks' : representation["problem_blocks"]
         }
     
     def convert_to_user_timezone(self, date, user_timezone):
