@@ -171,6 +171,7 @@ class AssessmentsSerializer(serializers.Serializer):
                 if date_block["first_component_block_id"]:
                     try:
                         student_module_info = StudentModule.objects.get(student_id = representation["student_id"], module_state_key = date_block["first_component_block_id"])
+                        log.info(_get_block_by_usage_key(student_module_info.module_state_key))
                         if "submission_uuid" in student_module_info.state:
                             date_block["submission_status"] = "Submitted"
                         else:
@@ -178,7 +179,7 @@ class AssessmentsSerializer(serializers.Serializer):
                     except Exception as ObjectDoesNotExist:
                         date_block["submission_status"] = "Not Submitted"
 
-                    log.info(_get_block_by_usage_key(date_block["first_component_block_id"]))
+                    
             all_date_blocks.extend(course["date_blocks"])
         
         # Filter and sort date_blocks by 'date' field
