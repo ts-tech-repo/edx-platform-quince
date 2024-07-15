@@ -84,7 +84,7 @@ h1{font-size: 20px;margin-bottom: 20px;}
         <tbody id="tableData">
             {% if data and data.date_blocks %}
             {% for item in data.date_blocks %}
-            {% if ("Open Response Assessment" in item.title and "(Self Assessment)" in item.title) or "Open Response Assessment" not in item.title %}
+            {% if ("Open Response Assessment" in item.title and "Self Assessment" in item.title) or "Open Response Assessment" not in item.title %}
             <tr>
                 <td>{{ item.course_name }}</td>
                 <td>
