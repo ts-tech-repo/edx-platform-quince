@@ -1452,6 +1452,8 @@ def extras_get_mettl_report(request):
 
     if response["status"] != "SUCCESS" :
         return HttpResponse("Please Contact Support")
+        
+    return redirect(response["candidate"]["testStatus"]["htmlReport"])
 
 @csrf_exempt
 def extras_get_last_login(request):
