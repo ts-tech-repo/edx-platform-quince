@@ -1,74 +1,84 @@
 # pylint: disable=abstract-method
 """
-Course Home Serializers.
+Assessments Tab Serializers. Represents the relevant assessments with due dates.
 """
 
-from opaque_keys.edx.keys import CourseKey
+
 from rest_framework import serializers
-
-from lms.djangoapps.courseware.utils import verified_upgrade_deadline_link
-from openedx.core.djangoapps.courseware_api.utils import serialize_upgrade_info
-from openedx.features.content_type_gating.models import ContentTypeGatingConfig
-from openedx.features.course_experience import DISPLAY_COURSE_SOCK_FLAG
-from openedx.features.course_experience.utils import dates_banner_should_display
+from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
 
 
-class ReadOnlySerializer(serializers.Serializer):
-    """Serializers have an abstract create & update, but we often don't need them. So this silences the linter."""
-    def create(self, validated_data):
-        pass
-
-    def update(self, instance, validated_data):
-        pass
-
-
-class DatesBannerSerializer(ReadOnlySerializer):
+class AssessmentsSerializerDatesSummary(serializers.Serializer):
     """
-    Serializer Mixin for displaying the dates banner.
-    Can be added to any serializer who's tab wants to display it.
+    Serializer for Assessmentes Objects.
     """
-    dates_banner_info = serializers.SerializerMethodField()
+    course_name = serializers.CharField(default=None) 
+    assignment_type = serializers.CharField(default=None)
+    complete = serializers.BooleanField(allow_null=True)
+    date = serializers.DateTimeField()
+    date_type = serializers.CharField()
+    description = serializers.CharField()
+    learner_has_access = serializers.SerializerMethodField()
+    link = serializers.SerializerMethodField()
+    link_text = serializers.CharField()
+    title = serializers.CharField()
+    extra_info = serializers.CharField()
+    first_component_block_id = serializers.SerializerMethodField()
 
-    def get_dates_banner_info(self, _):
-        """
-        Serializer mixin for returning date banner info.  Gets its input from
-        the views course_key_string url parameter and the request's user object.
-        """
-        info = {
-            'missed_deadlines': False,
-            'content_type_gating_enabled': False,
+    def get_learner_has_access(self, block):
+        """Whether the learner is blocked (gated) from this content or not"""
+        if isinstance(block, VerificationDeadlineDate):
+            # This date block isn't an assignment, so doesn't have contains_gated_content set for it
+            return self.context.get('learner_is_full_access', False)
+
+        return not getattr(block, 'contains_gated_content', False)
+
+    def get_link(self, block):
+        if block.link:
+            return block.link
+        return ''
+
+    def get_first_component_block_id(self, block):
+        return getattr(block, 'first_component_block_id', '')
+
+
+class CourseSummary(serializers.Serializer):
+    """
+    Serializer for Assessmentes Objects.
+    """
+    name = serializers.CharField()
+    date_blocks = AssessmentsSerializerDatesSummary(many=True)   
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        course_name = representation.pop('name')  # Get and remove the course name
+
+        # Add course name to each date_block
+        for date_block in representation['date_blocks']:
+            date_block['course_name'] = course_name
+
+        return representation
+
+class AssessmentsSerializer(serializers.Serializer):
+    """
+    Serializer for the Dates Tab
+    """
+    courses = CourseSummary(many=True)
+    user_timezone = serializers.CharField()
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        
+        # Collect all date_blocks from all courses
+        all_date_blocks = []
+        for course in representation['courses']:
+            all_date_blocks.extend(course['date_blocks'])
+        
+        # Filter and sort date_blocks by 'date' field
+        filtered_sorted_date_blocks = sorted(all_date_blocks, key=lambda x: x['date'])
+        
+        # Return the final structure
+        return {
+            'date_blocks': filtered_sorted_date_blocks,
+            'user_timezone': representation['user_timezone']
         }
-        course_key_string = self.context['view'].kwargs.get('course_key_string')
-        if course_key_string:
-            course_key = CourseKey.from_string(course_key_string)
-            request = self.context['request']
-            missed_deadlines, missed_gated_content = dates_banner_should_display(course_key, request.user)
-            info['missed_deadlines'] = missed_deadlines
-            info['missed_gated_content'] = missed_gated_content
-            info['content_type_gating_enabled'] = ContentTypeGatingConfig.enabled_for_enrollment(
-                user=request.user,
-                course_key=course_key,
-            )
-            info['verified_upgrade_link'] = verified_upgrade_deadline_link(request.user, course_id=course_key)
-        return info
-
-
-class VerifiedModeSerializer(ReadOnlySerializer):
-    """
-    Serializer Mixin for displaying verified mode upgrade information.
-
-    Requires 'course_overview', 'enrollment', and 'request' from self.context.
-    """
-    can_show_upgrade_sock = serializers.SerializerMethodField()
-    verified_mode = serializers.SerializerMethodField()
-
-    def get_can_show_upgrade_sock(self, _):
-        course_overview = self.context['course_overview']
-        return DISPLAY_COURSE_SOCK_FLAG.is_enabled(course_overview.id)
-
-    def get_verified_mode(self, _):
-        """Return verified mode information, or None."""
-        course_overview = self.context['course_overview']
-        enrollment = self.context['enrollment']
-        request = self.context['request']
-        return serialize_upgrade_info(request.user, course_overview, enrollment)
