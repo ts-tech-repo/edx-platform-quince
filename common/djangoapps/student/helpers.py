@@ -952,6 +952,6 @@ def get_assessments_for_courses(request):
     user_timezone_locale = user_timezone_locale_prefs(request)
     response_data['user_timezone']=user_timezone_locale['user_timezone']
     response_data["student_id"] = user.id
-    log.info(user_timezone_locale)
+    log.info(response_data)
     return AssessmentsSerializer(response_data).data
     
