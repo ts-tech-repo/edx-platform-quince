@@ -965,10 +965,12 @@ def get_assessments_for_courses(request):
         published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
         
         problem_versions = {}
+        child_blocks = []
         for version in published_version["blocks"]:
-            if version["block_type"] != "problem":
+            if version["block_type"] != "problem" or version["block_id"] in child_blocks:
                 continue
             parent_unit_name, parent_unit_id, children = find_block_parents(published_version, version["block_id"])
+            child_blocks.append(",".join(children))
             problem_versions.update({parent_unit_name : {"parent_unit_name" : parent_unit_name, "parent_unit_id" : parent_unit_id, "children" : children}})
 
         
