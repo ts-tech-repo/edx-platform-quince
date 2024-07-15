@@ -931,12 +931,13 @@ def get_course_dates_for_email(user, course_id, request):
 def find_block_parents(version, block_id):
 
     for block in version["blocks"]:
-        if block["block_type"] == "vertical" and block_id in [i[-1] for i in block["fields"]["children"]]:
+        children = [i[-1] for i in block["fields"]["children"]]
+        if block["block_type"] == "vertical" and block_id in children:
             unit_name = block["fields"]["display_name"]
             unit_id = block["block_id"]
             break
-    log.info(block["fields"]["children"])
-    return unit_name, unit_id, block["fields"]["children"]
+    log.info(children)
+    return unit_name, unit_id, children
 
 def get_assessments_for_courses(request):
     user = User.objects.get(email = request.user.email)
