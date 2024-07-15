@@ -953,7 +953,10 @@ def get_assessments_for_courses(request):
         structure_collection = split_modulestore.db_connection.structures
         course_definition = active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run})
         published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
-        log.info(published_version)
+        
+        
+        for version in published_version:
+            log.info(version)
         
 
     # User locale settings
