@@ -174,7 +174,7 @@ class AssessmentsSerializer(serializers.Serializer):
                             date_block["submission_status"] = "Submitted"
                         else:
                             date_block["submission_status"] = "In Progress"
-                    except Exception as StudentModule.DoesNotExist:
+                    except Exception as ObjectDoesNotExist:
                         date_block["submission_status"] = "Not Submitted"
 
 
