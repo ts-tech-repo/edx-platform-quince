@@ -8,6 +8,7 @@ from datetime import datetime
 
 import pytz
 from lms.djangoapps.courseware.block_render import _get_block_by_usage_key, get_block_by_usage_id
+from lms.djangoapps.courseware.courses import get_problems_in_section
 from lms.djangoapps.courseware.models import StudentModule
 from rest_framework import serializers
 from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
@@ -170,7 +171,7 @@ class AssessmentsSerializer(serializers.Serializer):
                 if date_block["first_component_block_id"]:
                     try:
                         student_module_info = StudentModule.objects.get(student_id = representation["student_id"], module_state_key = date_block["first_component_block_id"])
-                        log.info(_get_block_by_usage_key(student_module_info.module_state_key))
+                        log.info(get_problems_in_section("block-v1:QUINCE+EE951-Q1+2025+type@sequential+block@af991f36b4d7448c9ad785191c414f1d"))
                         if "submission_uuid" in student_module_info.state:
                             date_block["submission_status"] = "Submitted"
                         else:
