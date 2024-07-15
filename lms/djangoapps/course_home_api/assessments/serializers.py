@@ -171,7 +171,7 @@ class AssessmentsSerializer(serializers.Serializer):
                 if date_block["first_component_block_id"]:
                     try:
                         student_module_info = StudentModule.objects.get(student_id = representation["student_id"], module_state_key = date_block["first_component_block_id"])
-                        log.info(get_problems_in_section("https://staging.quince.talentsprint.com/learning/course/course-v1:QUINCE+EE951-Q1+2025/block-v1:QUINCE+EE951-Q1+2025+type@sequential+block@af991f36b4d7448c9ad785191c414f1d"))
+                        log.info(get_problems_in_section())
                         if "submission_uuid" in student_module_info.state:
                             date_block["submission_status"] = "Submitted"
                         else:
