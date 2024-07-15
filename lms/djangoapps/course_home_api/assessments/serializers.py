@@ -77,7 +77,7 @@ class SubsectionScoresSerializerOuter(ReadOnlySerializer):
         for course in representation['subsections']:
             merged_subsections.extend(course)
 
-        return representation
+        return {"merged_subsections" : merged_subsections}
 
 class SectionScoresSerializer(ReadOnlySerializer):
     """
