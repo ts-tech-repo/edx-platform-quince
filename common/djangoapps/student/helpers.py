@@ -956,7 +956,7 @@ def get_assessments_for_courses(request):
         
         
         for version in published_version:
-            log.info(version)
+            log.info(type(version))
         
 
     # User locale settings
