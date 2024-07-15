@@ -936,8 +936,25 @@ def find_block_parents(version, block_id):
             unit_name = block["fields"]["display_name"]
             unit_id = block["block_id"]
             break
-    log.info(children)
     return unit_name, unit_id, children
+
+def _get_problem_versions(course_key):
+    split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
+    active_version_collection = split_modulestore.db_connection.course_index
+    structure_collection = split_modulestore.db_connection.structures
+    course_definition = active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run})
+    published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
+    
+    problem_versions = {}
+    child_blocks = []
+    for version in published_version["blocks"]:
+        if version["block_type"] != "problem" or version["block_id"] in child_blocks:
+            continue
+        parent_unit_name, parent_unit_id, children = find_block_parents(published_version, version["block_id"])
+        child_blocks.append(",".join(children))
+        problem_versions.update({parent_unit_name : {"parent_unit_name" : parent_unit_name, "parent_unit_id" : parent_unit_id, "children" : children}})
+    
+    return problem_versions
 
 def get_assessments_for_courses(request):
     user = User.objects.get(email = request.user.email)
@@ -956,25 +973,10 @@ def get_assessments_for_courses(request):
             new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
-                'date_blocks': new_blocks
+                'date_blocks': new_blocks,
+                "problem_blocks" : _get_problem_versions(course_key)
             })
-        split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
-        active_version_collection = split_modulestore.db_connection.course_index
-        structure_collection = split_modulestore.db_connection.structures
-        course_definition = active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run})
-        published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
         
-        problem_versions = {}
-        child_blocks = []
-        for version in published_version["blocks"]:
-            if version["block_type"] != "problem" or version["block_id"] in child_blocks:
-                continue
-            parent_unit_name, parent_unit_id, children = find_block_parents(published_version, version["block_id"])
-            child_blocks.append(",".join(children))
-            problem_versions.update({parent_unit_name : {"parent_unit_name" : parent_unit_name, "parent_unit_id" : parent_unit_id, "children" : children}})
-
-        
-
     # User locale settings
     user_timezone_locale = user_timezone_locale_prefs(request)
     response_data['user_timezone']=user_timezone_locale['user_timezone']

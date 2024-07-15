@@ -157,10 +157,10 @@ class AssessmentsSerializer(serializers.Serializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         user_timezone = representation["user_timezone"]
+        log.info(representation["problem_blocks"])
         # Collect all date_blocks from all courses
         all_date_blocks = []
         for course in representation['courses']:
-            log.info(course["date_blocks"])
             for date_block in course["date_blocks"]:
                 # if 'start_date' in date_block:
                 #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
