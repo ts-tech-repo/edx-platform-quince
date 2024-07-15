@@ -169,7 +169,7 @@ class AssessmentsSerializer(serializers.Serializer):
                 #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
                 date_block["submission_status"] = "-"
                 if date_block["first_component_block_id"]:
-                    student_module_info = StudentModule.objects.filter(student_id = representation["student_id"], module_id = date_block["first_component_block_id"])
+                    student_module_info = StudentModule.objects.filter(student_id = representation["student_id"], module_state_key = date_block["first_component_block_id"])
                     if not student_module_info:
                         date_block["submission_status"] = "Not Submitted"
                     else:
