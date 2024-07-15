@@ -125,7 +125,7 @@ class CourseSummary(serializers.Serializer):
     """
     name = serializers.CharField()
     date_blocks = AssessmentsSerializerDatesSummary(many=True)   
-    merged_subsections = SubsectionScoresSerializerOuter(many=True).data
+    merged_subsections = SubsectionScoresSerializerOuter(many=True)
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         course_name = representation.pop('name')  # Get and remove the course name
