@@ -170,8 +170,11 @@ class AssessmentsSerializer(serializers.Serializer):
                     student_module_info = StudentModule.objects.filter(student_id = representation["student_id"], module_state_key = date_block["first_component_block_id"])
                     if not student_module_info:
                         date_block["submission_status"] = "Not Submitted"
-                    else:
+                    elif "submission_uuid" in student_module_info:
                         date_block["submission_status"] = "Submitted"
+                    else:
+                        date_block["submission_status"] = "In Progress"
+
             all_date_blocks.extend(course["date_blocks"])
         
         # Filter and sort date_blocks by 'date' field
