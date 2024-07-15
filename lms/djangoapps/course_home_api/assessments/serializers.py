@@ -137,7 +137,7 @@ class CourseSummary(serializers.Serializer):
             if date_block['date_type'] == 'course-start-date':
                 start_date = date_block['date']
             date_block['start_date'] = start_date
-
+        log.info(representation)
         return representation
     
     def check_grade(self, merged_subsections, first_component_block_id):
@@ -159,7 +159,6 @@ class AssessmentsSerializer(serializers.Serializer):
         representation = super().to_representation(instance)
         
         user_timezone = representation["user_timezone"]
-        log.info(user_timezone)
         # Collect all date_blocks from all courses
         all_date_blocks = []
         for course in representation['courses']:
