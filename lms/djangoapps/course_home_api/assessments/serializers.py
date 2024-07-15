@@ -133,6 +133,7 @@ class CourseSummary(serializers.Serializer):
         start_date = ""
         visited_blocks = []
         for date_block in representation['date_blocks']:
+            log.info(date_block)
             if "title" in date_block and date_block["title"] not in visited_blocks:
                 visited_blocks.append(date_block["title"])
                 date_block['course_name'] = course_name
