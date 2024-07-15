@@ -160,12 +160,15 @@ class AssessmentsSerializer(serializers.Serializer):
         user_timezone = representation["user_timezone"]
         # Collect all date_blocks from all courses
         all_date_blocks = []
+        visited_blocks = []
         for course in representation['courses']:
             for date_block in course["date_blocks"]:
-                log.info(date_block)
-                # if 'start_date' in date_block:
-                #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
-                all_date_blocks.extend(course['date_blocks'])
+                if "title" in date_block and date_block["title"] not in visited_blocks:
+                    visited_blocks.append(date_block["title"])
+                    log.info(date_block)
+                    # if 'start_date' in date_block:
+                    #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
+                    all_date_blocks.extend(course['date_blocks'])
         
         # Filter and sort date_blocks by 'date' field
         filtered_sorted_date_blocks = sorted(all_date_blocks, key=lambda x: x['date'])
