@@ -941,7 +941,11 @@ def get_assessments_for_courses(request):
 
         if CourseEnrollment.is_enrolled(request.user, course_key):
             blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-            new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
+            visited_blocks, new_blocks = [], []
+            for block in blocks:
+                if "title" in block and block["title"] not in visited_blocks:
+                    new_blocks.append(block)
+            # new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
                 'date_blocks': new_blocks
