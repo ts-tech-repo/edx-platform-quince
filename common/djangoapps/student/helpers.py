@@ -958,4 +958,4 @@ def get_assessments_for_courses(request):
     # User locale settings
     user_timezone_locale = user_timezone_locale_prefs(request)
     response_data['user_timezone']=user_timezone_locale['user_timezone']
-    return AssessmentsSerializer(many=True).assessment_representation
+    return AssessmentsSerializer(many=True).assessment_representation(response_data)
