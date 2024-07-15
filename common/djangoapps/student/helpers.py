@@ -965,6 +965,7 @@ def get_assessments_for_courses(request):
         for version in published_version["blocks"]:
             if version["block_type"] != "problem":
                 continue
+            log.info(version["block_id"])
             log.info(find_block_parents(published_version, version["block_id"]))
         
 
