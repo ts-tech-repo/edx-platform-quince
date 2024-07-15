@@ -63,7 +63,7 @@ from xmodule.data import CertificatesDisplayBehaviors  # lint-amnesty, pylint: d
 
 from openedx.core.djangoapps.enrollments.data import get_course_enrollments
 from opaque_keys.edx.keys import CourseKey
-from lms.djangoapps.course_home_api.assessments.serializers import AssessmentsSerializer, AssessmentsSerializerDatesSummary
+from lms.djangoapps.course_home_api.assessments.serializers import AssessmentsSerializer, CustomGradesSerializer
 from lms.djangoapps.course_home_api.utils import get_course_or_403
 from lms.djangoapps.courseware.access import has_access
 from lms.djangoapps.courseware.masquerade import setup_masquerade
@@ -941,9 +941,14 @@ def get_assessments_for_courses(request):
         if CourseEnrollment.is_enrolled(request.user, course_key):
             blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
             new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
+
+            collected_block_structure = get_block_structure_manager(course_key).get_collected()
+            course_grade = CourseGradeFactory().read(request.user, collected_block_structure=collected_block_structure)
+            section_scores = list(course_grade.chapter_grades.values())
+
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
-                'section_scores':_get_grades(course_key, request.user),
+                'section_scores':section_scores,
                 'date_blocks': new_blocks
             })
 
@@ -951,9 +956,3 @@ def get_assessments_for_courses(request):
     user_timezone_locale = user_timezone_locale_prefs(request)
     response_data['user_timezone']=user_timezone_locale['user_timezone']
     return AssessmentsSerializer(response_data).data
-
-def _get_grades(course_key, student):
-    collected_block_structure = get_block_structure_manager(course_key).get_collected()
-    course_grade = CourseGradeFactory().read(student, collected_block_structure=collected_block_structure)
-    return list(course_grade.chapter_grades.values())
-    # return CustomGradesSerializer(data).data
