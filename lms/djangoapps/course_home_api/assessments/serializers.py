@@ -17,6 +17,7 @@ class AssessmentsSerializerDatesSummary(serializers.Serializer):
     assignment_type = serializers.CharField(default=None)
     complete = serializers.BooleanField(allow_null=True)
     date = serializers.DateTimeField()
+    start_date = serializers.DateTimeField()
     date_type = serializers.CharField()
     description = serializers.CharField()
     learner_has_access = serializers.SerializerMethodField()
@@ -57,6 +58,7 @@ class CourseSummary(serializers.Serializer):
         # Add course name to each date_block
         for date_block in representation['date_blocks']:
             date_block['course_name'] = course_name
+            log.info(date_block)
 
         return representation
 
@@ -74,7 +76,6 @@ class AssessmentsSerializer(serializers.Serializer):
         all_date_blocks = []
         for course in representation['courses']:
             for date_block in course["date_blocks"]:
-                log.info(date_block)
             all_date_blocks.extend(course['date_blocks'])
         
         # Filter and sort date_blocks by 'date' field
