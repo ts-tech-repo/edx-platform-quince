@@ -167,7 +167,8 @@ class AssessmentsSerializer(serializers.Serializer):
                 # if 'start_date' in date_block:
                 #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
                 log.info(date_block)
-                log.info(StudentModule.objects.get(pk=date_block["first_component_block_id"]))
+                if date_block["first_component_block_id"]:
+                    log.info(StudentModule.objects.get(pk=date_block["first_component_block_id"]))
             all_date_blocks.extend(course["date_blocks"])
         
         # Filter and sort date_blocks by 'date' field
