@@ -131,7 +131,7 @@ class CourseSummary(serializers.Serializer):
         course_name = representation.pop('name')  # Get and remove the course name
 
         
-        log.info(representation["merged_subsections"])
+        log.info(merged_subsections.data)
         # Add course name to each date_block
         start_date = ""
         for date_block in representation['date_blocks']:
