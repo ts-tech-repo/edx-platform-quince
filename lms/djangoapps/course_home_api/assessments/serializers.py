@@ -169,7 +169,7 @@ class AssessmentsSerializer(serializers.Serializer):
                     log.info(course["date_blocks"])
                     # if 'start_date' in date_block:
                     #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
-                    all_date_blocks.extend(date_block)
+                    all_date_blocks.extend(date_block[0])
         log.info(visited_blocks)
         
         # Filter and sort date_blocks by 'date' field
