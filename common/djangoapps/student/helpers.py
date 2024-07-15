@@ -943,7 +943,8 @@ def get_assessments_for_courses(request):
             blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
             visited_blocks, new_blocks = [], []
             for block in blocks:
-                if not isinstance(block, TodaysDate) and "title" in block and block["title"] not in visited_blocks:
+                if not isinstance(block, TodaysDate):
+                    log.info(block)
                     new_blocks.append(block)
             # new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
             response_data["courses"].append({
