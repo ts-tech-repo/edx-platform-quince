@@ -952,10 +952,10 @@ def get_assessments_for_courses(request):
         active_version_collection = split_modulestore.db_connection.course_index
         structure_collection = split_modulestore.db_connection.structures
         course_definition = active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run})
-        published_version  = json.loads(structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]}))
+        published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
         
         
-        for version in published_version:
+        for key, version in published_version.items():
             log.info(version)
         
 
