@@ -10,7 +10,79 @@ import pytz
 from rest_framework import serializers
 from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
 import logging
+from lms.djangoapps.course_home_api.serializers import ReadOnlySerializer
+
 log = logging.getLogger(__name__)
+
+class SubsectionScoresSerializer(ReadOnlySerializer):
+    """
+    Serializer for subsections in section_scores
+    """
+    assignment_type = serializers.CharField(source='format')
+    block_key = serializers.SerializerMethodField()
+    has_graded_assignment = serializers.BooleanField(source='graded')
+
+    def get_override(self, subsection):
+        """Proctoring or grading score override"""
+        if subsection.override is None:
+            return None
+        else:
+            return {
+                "system": subsection.override.system,
+                "reason": subsection.override.override_reason,
+            }
+
+    def get_block_key(self, subsection):
+        return str(subsection.location)
+
+    def get_problem_scores(self, subsection):
+        """Problem scores for this subsection"""
+        problem_scores = [
+            {
+                'earned': score.earned,
+                'possible': score.possible,
+            }
+            for score in subsection.problem_scores.values()
+        ]
+        return problem_scores
+
+    def get_url(self, subsection):
+        """
+        Returns the URL for the subsection while taking into account if the course team has
+        marked the subsection's visibility as hide after due.
+        """
+        hide_url_date = subsection.end if subsection.self_paced else subsection.due
+        if (not self.context['staff_access'] and subsection.hide_after_due and hide_url_date
+                and datetime.now(pytz.UTC) > hide_url_date):
+            return None
+
+        relative_path = reverse('jump_to', args=[self.context['course_key'], subsection.location])
+        request = self.context['request']
+        return request.build_absolute_uri(relative_path)
+
+    def get_show_grades(self, subsection):
+        return subsection.show_grades(self.context['staff_access'])
+
+merged_subsections = []
+class SubsectionScoresSerializerOuter(ReadOnlySerializer):
+    """
+    Serializer for sections in subsections
+    """
+    subsections = SubsectionScoresSerializer(many=True)
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        
+        for course in representation['subsections']:
+            merged_subsections.extend(course)
+
+        return representation
+
+class SectionScoresSerializer(ReadOnlySerializer):
+    """
+    Serializer for sections in section_scores
+    """
+    section_scores = SubsectionScoresSerializerOuter()
 
 class AssessmentsSerializerDatesSummary(serializers.Serializer):
     """
@@ -61,11 +133,20 @@ class CourseSummary(serializers.Serializer):
         start_date = ""
         for date_block in representation['date_blocks']:
             date_block['course_name'] = course_name
+            date_block["is_graded"] = self.check_grade(merged_subsections, date_block['first_component_block_id'])
             if date_block['date_type'] == 'course-start-date':
                 start_date = date_block['date']
             date_block['start_date'] = start_date
 
         return representation
+    
+    def check_grade(self, merged_subsections, first_component_block_id):
+        if merged_subsections and first_component_block_id:
+            for each_one in merged_subsections:
+                log.info(each_one["has_graded_assignment"])
+                if each_one["block_key"]==first_component_block_id:
+                    return "Graded" if each_one["has_graded_assignment"] else "Under Review"
+        return "-"
 
 class AssessmentsSerializer(serializers.Serializer):
     """
