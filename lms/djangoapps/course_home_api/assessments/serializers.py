@@ -7,6 +7,7 @@ Assessments Tab Serializers. Represents the relevant assessments with due dates.
 from datetime import datetime
 
 import pytz
+from lms.djangoapps.courseware.models import StudentModule
 from rest_framework import serializers
 from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
 import logging
@@ -162,9 +163,10 @@ class AssessmentsSerializer(serializers.Serializer):
         # Collect all date_blocks from all courses
         all_date_blocks = []
         for course in representation['courses']:
-            # for date_block in course["date_blocks"]:
-            #     # if 'start_date' in date_block:
-            #     #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
+            for date_block in course["date_blocks"]:
+                # if 'start_date' in date_block:
+                #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
+                log.info(StudentModule.objects.get(pk=date_block["first_component_block_id"]))
             all_date_blocks.extend(course["date_blocks"])
         
         # Filter and sort date_blocks by 'date' field
