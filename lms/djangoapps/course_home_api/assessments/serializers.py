@@ -73,7 +73,7 @@ class AssessmentsSerializer(serializers.Serializer):
         # Collect all date_blocks from all courses
         all_date_blocks = []
         for course in representation['courses']:
-            for date_block in course["date-blocks"]:
+            for date_block in course["date_blocks"]:
                 log.info(date_block)
             all_date_blocks.extend(course['date_blocks'])
         
