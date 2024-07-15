@@ -133,7 +133,7 @@ class CourseSummary(serializers.Serializer):
         start_date = ""
         visited_blocks = []
         for date_block in representation['date_blocks']:
-            if "title" in date_block and (date_block["course_name"] + date_block["title"]) not in visited_blocks:
+            if "title" in date_block and date_block["course_name"] and (date_block["course_name"] + date_block["title"]) not in visited_blocks:
                 visited_blocks.append((date_block["course_name"] + date_block["title"]))
                 date_block['course_name'] = course_name
                 date_block["is_graded"] = self.check_grade(merged_subsections, date_block['first_component_block_id'])
