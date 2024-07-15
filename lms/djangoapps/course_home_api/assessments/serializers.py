@@ -78,6 +78,7 @@ class AssessmentsSerializer(serializers.Serializer):
         representation = super().to_representation(instance)
         
         user_timezone = representation.get('user_timezone', 'UTC')
+        log.info(user_timezone)
         # Collect all date_blocks from all courses
         all_date_blocks = []
         for course in representation['courses']:
