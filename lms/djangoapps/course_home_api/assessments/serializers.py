@@ -167,14 +167,17 @@ class AssessmentsSerializer(serializers.Serializer):
                 #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
                 date_block["submission_status"] = "-"
                 if date_block["first_component_block_id"]:
-                    student_module_info = StudentModule.objects.get(student_id = representation["student_id"], module_state_key = date_block["first_component_block_id"])
-                    log.info(student_module_info)
-                    if not student_module_info:
+                    try:
+                        student_module_info = StudentModule.objects.get(student_id = representation["student_id"], module_state_key = date_block["first_component_block_id"])
+                        log.info(student_module_info)
+                        if "submission_uuid" in student_module_info.state:
+                            date_block["submission_status"] = "Submitted"
+                        else:
+                            date_block["submission_status"] = "In Progress"
+                    except Exception as StudentModule.DoesNotExist:
                         date_block["submission_status"] = "Not Submitted"
-                    elif "submission_uuid" in student_module_info.state:
-                        date_block["submission_status"] = "Submitted"
-                    else:
-                        date_block["submission_status"] = "In Progress"
+
+
 
             all_date_blocks.extend(course["date_blocks"])
         
