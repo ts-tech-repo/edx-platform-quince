@@ -935,7 +935,8 @@ def find_block_parents(version, block_id):
             unit_name = block["fields"]["display_name"]
             unit_id = block["block_id"]
             break
-    return unit_name
+    log.info(block["fields"]["children"])
+    return unit_name, unit_id, block["fields"]["children"]
 
 def get_assessments_for_courses(request):
     user = User.objects.get(email = request.user.email)
@@ -962,12 +963,13 @@ def get_assessments_for_courses(request):
         course_definition = active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run})
         published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
         
-        
+        problem_versions = {}
         for version in published_version["blocks"]:
             if version["block_type"] != "problem":
                 continue
-            log.info(version["block_id"])
-            log.info(find_block_parents(published_version, version["block_id"]))
+            parent_unit_name, parent_unit_id, children = find_block_parents(published_version, version["block_id"])
+            problem_versions.update({parent_unit_name : {"parent_unit_name" : parent_unit_name, "parent_unit_id" : parent_unit_id, "children" : children}})
+
         
 
     # User locale settings
