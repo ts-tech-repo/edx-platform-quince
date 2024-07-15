@@ -125,13 +125,13 @@ class CourseSummary(serializers.Serializer):
     """
     name = serializers.CharField()
     date_blocks = AssessmentsSerializerDatesSummary(many=True)   
-
+    merged_subsections = SubsectionScoresSerializerOuter(many=True).data
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         course_name = representation.pop('name')  # Get and remove the course name
 
-        merged_subsections = SubsectionScoresSerializerOuter(many=True).data
-        log.info(merged_subsections)
+        
+        log.info(representation["merged_subsections"])
         # Add course name to each date_block
         start_date = ""
         for date_block in representation['date_blocks']:
