@@ -955,7 +955,7 @@ def get_assessments_for_courses(request):
         published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
         
         
-        for key, version in published_version.items():
+        for version in published_version["blocks"]:
             log.info(version)
         
 
