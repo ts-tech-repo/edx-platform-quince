@@ -140,6 +140,7 @@ class CourseSummary(serializers.Serializer):
                 if date_block['date_type'] == 'course-start-date':
                     start_date = date_block['date']
                 date_block['start_date'] = start_date
+        log.info(visited_blocks)
         return representation
     
     def check_grade(self, merged_subsections, first_component_block_id):
