@@ -23,6 +23,8 @@ urlpatterns = [
 
     re_path(r'^extras/get_user_enrolled_courses', views.extras_get_user_enrolled_courses, name = "extras_get_user_enrolled_courses"),
 
+    re_path(r'^extras/get_payment_details', views.extras_get_payment_details, name = "extras_get_payment_details"),
+
     re_path(r'^email_confirm/(?P<key>[^/]*)$', views.confirm_email_change, name='confirm_email_change'),
 
     re_path(r'^activate/(?P<key>[^/]*)$', views.activate_account, name="activate"),
