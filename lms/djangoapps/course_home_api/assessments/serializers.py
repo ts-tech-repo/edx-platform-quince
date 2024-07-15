@@ -155,6 +155,7 @@ class AssessmentsSerializer(serializers.Serializer):
     """
     courses = CourseSummary(many=True)
     user_timezone = serializers.CharField()
+    student_id = serializers.CharField()
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
