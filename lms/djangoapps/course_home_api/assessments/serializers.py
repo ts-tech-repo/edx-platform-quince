@@ -124,6 +124,7 @@ class CourseSummary(serializers.Serializer):
     Serializer for Assessmentes Objects.
     """
     name = serializers.CharField()
+    course_key = serializers.CharField()
     date_blocks = AssessmentsSerializerDatesSummary(many=True)   
     def to_representation(self, instance):
         representation = super().to_representation(instance)
