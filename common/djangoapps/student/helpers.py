@@ -68,6 +68,8 @@ from lms.djangoapps.course_home_api.utils import get_course_or_403
 from lms.djangoapps.courseware.access import has_access
 from lms.djangoapps.courseware.courses import get_course_date_blocks
 from lms.djangoapps.courseware.masquerade import setup_masquerade
+from xmodule.modulestore import ModuleStoreEnum
+from xmodule.modulestore.django import modulestore
 
 
 # Enumeration of per-course verification statuses
@@ -946,6 +948,12 @@ def get_assessments_for_courses(request):
                 'name':user_course["course_details"]["course_name"],
                 'date_blocks': new_blocks
             })
+        split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
+        active_version_collection = split_modulestore.db_connection.course_index
+        structure_collection = split_modulestore.db_connection.structures
+        course_definition = active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run})
+        published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
+        log.info(published_version)
         
 
     # User locale settings
