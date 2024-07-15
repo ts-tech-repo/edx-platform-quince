@@ -7,6 +7,7 @@ Assessments Tab Serializers. Represents the relevant assessments with due dates.
 from datetime import datetime
 
 import pytz
+from lms.djangoapps.courseware.block_render import _get_block_by_usage_key, get_block_by_usage_id
 from lms.djangoapps.courseware.models import StudentModule
 from rest_framework import serializers
 from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
@@ -177,8 +178,7 @@ class AssessmentsSerializer(serializers.Serializer):
                     except Exception as ObjectDoesNotExist:
                         date_block["submission_status"] = "Not Submitted"
 
-
-
+                    log.info(_get_block_by_usage_key(date_block["first_component_block_id"]))
             all_date_blocks.extend(course["date_blocks"])
         
         # Filter and sort date_blocks by 'date' field
