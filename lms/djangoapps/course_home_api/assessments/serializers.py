@@ -3,41 +3,14 @@
 Assessments Tab Serializers. Represents the relevant assessments with due dates.
 """
 
-import pytz
+# import pytz
+# from django.utils import timezone
 from datetime import datetime
 
 from rest_framework import serializers
 from lms.djangoapps.courseware.date_summary import VerificationDeadlineDate
-from lms.djangoapps.course_home_api.serializers import ReadOnlySerializer
-
-class SubsectionScoresSerializer(ReadOnlySerializer):
-    """
-    Serializer for subsections in section_scores
-    """
-    assignment_type = serializers.CharField(source='format')
-    block_key = serializers.SerializerMethodField()
-    has_graded_assignment = serializers.BooleanField(source='graded')
-    learner_has_access = serializers.SerializerMethodField()
 
 
-class SectionScoresSerializer(ReadOnlySerializer):
-    """
-    Serializer for sections in section_scores
-    """
-    subsections = SubsectionScoresSerializer(source='sections', many=True)
-
-
-class CustomGradesSerializer():
-    section_scores = SectionScoresSerializer(many=True)
-    
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        merged_subsections = []
-        for section in representation['section_scores']:
-            merged_subsections.extend(section['subsections'])
-        return {'subsections': merged_subsections}
-
-        
 class AssessmentsSerializerDatesSummary(serializers.Serializer):
     """
     Serializer for Assessmentes Objects.
@@ -77,16 +50,12 @@ class CourseSummary(serializers.Serializer):
     Serializer for Assessmentes Objects.
     """
     name = serializers.CharField()
-    section_scores = SectionScoresSerializer(many=True)
     date_blocks = AssessmentsSerializerDatesSummary(many=True)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         course_name = representation.pop('name')  # Get and remove the course name
-        merged_subsections = []
-        for section in representation['section_scores']:
-            merged_subsections.extend(section['subsections'])
-        
+
         # Add course name to each date_block
         start_date = ""
         for date_block in representation['date_blocks']:
@@ -108,15 +77,16 @@ class AssessmentsSerializer(serializers.Serializer):
         representation = super().to_representation(instance)
         
         user_timezone = representation.get('user_timezone', 'UTC')
+        # user_timezone = pytz.timezone(user_timezone_str) if user_timezone_str else pytz.utc
         
         # Collect all date_blocks from all courses
         all_date_blocks = []
         for course in representation['courses']:
-            # for date_block in course['date_blocks']:
+            for date_block in course['date_blocks']:
                 # Convert date to user timezone
-                # date_block['due_date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
-                # if 'start_date' in date_block:
-                #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
+                date_block['date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
+                if 'start_date' in date_block:
+                    date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
             all_date_blocks.extend(course['date_blocks'])
         
         # Filter and sort date_blocks by 'date' field
@@ -128,26 +98,15 @@ class AssessmentsSerializer(serializers.Serializer):
             'user_timezone': representation['user_timezone']
         }
     
-        
-    def check_grade(merged_subsections, first_component_block_id):
-        if merged_subsections and first_component_block_id:
-            for each_one in merged_subsections:
-                if each_one["block_key"]==first_component_block_id:
-                    return has_graded_assignment
-    
-
     def convert_to_user_timezone(self, date, user_timezone):
         if date:
-            # Parsing the datetime string to datetime object
-            utc_time = datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
-
-            # Assuming user's timezone is Asia/Kolkata
-            user_timezone = pytz.timezone(user_timezone)
-
-            # Converting the UTC time to user's timezone
-            user_time = utc_time.replace(tzinfo=pytz.utc).astimezone(user_timezone)
-
-            # Formatting the datetime as "Jun 27, 2024 05:30 AM"
-            formatted_user_time = user_time.strftime("%b %d, %Y %I:%M %p")
-            return formatted_user_time
+            block_date = datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')
+            block_date = block_date.replace(tzinfo=UTC)
+            block_date = block_date.astimezone(user_timezone)
+            formatted_date = block_date.strftime('%b %d, %Y %I:%M %p')
+            
+            # utc_date = timezone.make_aware(date, timezone.utc)
+            # user_date = utc_date.astimezone(user_timezone)
+            # formatted_date = user_date.strftime('%b %d, %Y %I:%M %p')
+            return formatted_date
         return date
