@@ -166,6 +166,7 @@ class AssessmentsSerializer(serializers.Serializer):
                 if "title" in date_block and (date_block["course_name"] + date_block["title"]) not in visited_blocks:
                     visited_blocks.append((date_block["course_name"] + date_block["title"]))
                     log.info(date_block)
+                    log.info(course["date_blocks"])
                     # if 'start_date' in date_block:
                     #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
                     all_date_blocks.extend(course['date_blocks'])
