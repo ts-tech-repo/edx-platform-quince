@@ -76,7 +76,7 @@ class AssessmentsSerializer(serializers.Serializer):
         all_date_blocks = []
         for course in representation['courses']:
             for date_block in course["date_blocks"]:
-            all_date_blocks.extend(course['date_blocks'])
+                all_date_blocks.extend(course['date_blocks'])
         
         # Filter and sort date_blocks by 'date' field
         filtered_sorted_date_blocks = sorted(all_date_blocks, key=lambda x: x['date'])
