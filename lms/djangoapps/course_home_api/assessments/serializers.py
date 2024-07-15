@@ -132,6 +132,7 @@ class CourseSummary(serializers.Serializer):
         # Add course name to each date_block
         start_date = ""
         for date_block in representation['date_blocks']:
+            log.info(date_block)
             date_block['course_name'] = course_name
             date_block["is_graded"] = self.check_grade(merged_subsections, date_block['first_component_block_id'])
             if date_block['date_type'] == 'course-start-date':
