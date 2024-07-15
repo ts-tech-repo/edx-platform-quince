@@ -82,9 +82,7 @@ class SectionScoresSerializer(ReadOnlySerializer):
     """
     Serializer for sections in section_scores
     """
-    log.info("HEre")
     section_scores = SubsectionScoresSerializerOuter(many=True)
-    log.info(section_scores)
         
 class AssessmentsSerializerDatesSummary(serializers.Serializer):
     """
@@ -159,28 +157,38 @@ class AssessmentsSerializer(serializers.Serializer):
     sections = SectionScoresSerializer(many=True)
     user_timezone = serializers.CharField(allow_null=True)
         
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
         
-        user_timezone = representation.get('user_timezone', 'UTC')
+    #     user_timezone = representation.get('user_timezone', 'UTC')
         
-        # Collect all date_blocks from all courses
+    #     # Collect all date_blocks from all courses
+    #     all_date_blocks = []
+    #     for course in representation['courses']:
+    #         # for date_block in course['date_blocks']:
+    #             # Convert date to user timezone
+    #             # date_block['due_date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
+    #             # if 'start_date' in date_block:
+    #             #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
+    #         all_date_blocks.extend(course['date_blocks'])
+        
+        # Filter and sort date_blocks by 'date' field
+        # filtered_sorted_date_blocks = sorted(all_date_blocks, key=lambda x: x['date'])
+    
+    def assessment_representation(assessment):
         all_date_blocks = []
-        for course in representation['courses']:
+        for course in assessment['courses']:
             # for date_block in course['date_blocks']:
                 # Convert date to user timezone
                 # date_block['due_date'] = self.convert_to_user_timezone(date_block['date'], user_timezone)
                 # if 'start_date' in date_block:
                 #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
-            all_date_blocks.extend(course['date_blocks'])
-        
-        # Filter and sort date_blocks by 'date' field
+            all_date_blocks.append(course['date_blocks'])
         filtered_sorted_date_blocks = sorted(all_date_blocks, key=lambda x: x['date'])
-        
+
         # Return the final structure
         return {
-                'date_blocks': filtered_sorted_date_blocks,
-                'user_timezone': representation['user_timezone']
+                'date_blocks': filtered_sorted_date_blocks
         }
     
 
