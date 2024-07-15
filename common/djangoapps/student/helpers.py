@@ -946,6 +946,7 @@ def get_assessments_for_courses(request):
                 'name':user_course["course_details"]["course_name"],
                 'date_blocks': new_blocks
             })
+        log.info(response_data)
 
     # User locale settings
     user_timezone_locale = user_timezone_locale_prefs(request)
