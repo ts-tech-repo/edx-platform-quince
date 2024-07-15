@@ -129,7 +129,6 @@ class CourseSummary(serializers.Serializer):
         representation = super().to_representation(instance)
         course_name = representation.pop('name')  # Get and remove the course name
 
-        log.info(representation)
         # Add course name to each date_block
         start_date = ""
         for date_block in representation['date_blocks']:
@@ -143,7 +142,6 @@ class CourseSummary(serializers.Serializer):
     def check_grade(self, merged_subsections, first_component_block_id):
         if merged_subsections and first_component_block_id:
             for each_one in merged_subsections:
-                log.info(each_one["has_graded_assignment"])
                 if each_one["block_key"]==first_component_block_id:
                     return "Graded" if each_one["has_graded_assignment"] else "Under Review"
         return "-"
@@ -162,6 +160,7 @@ class AssessmentsSerializer(serializers.Serializer):
         # Collect all date_blocks from all courses
         all_date_blocks = []
         for course in representation['courses']:
+            log.info(course["date_blocks"])
             for date_block in course["date_blocks"]:
                 # if 'start_date' in date_block:
                 #     date_block['start_date'] = self.convert_to_user_timezone(date_block['start_date'], user_timezone)
@@ -169,7 +168,6 @@ class AssessmentsSerializer(serializers.Serializer):
                 if date_block["first_component_block_id"]:
                     try:
                         student_module_info = StudentModule.objects.get(student_id = representation["student_id"], module_state_key = date_block["first_component_block_id"])
-                        log.info(student_module_info)
                         if "submission_uuid" in student_module_info.state:
                             date_block["submission_status"] = "Submitted"
                         else:
