@@ -935,6 +935,7 @@ def find_block_parents(version, block_id):
             unit_name = block["fields"]["display_name"]
             unit_id = block["block_id"]
             break
+    return unit_name
 
 def get_assessments_for_courses(request):
     user = User.objects.get(email = request.user.email)
