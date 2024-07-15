@@ -928,6 +928,13 @@ def get_course_dates_for_email(user, course_id, request):
     course_date_list = list(map(_remove_date_key_from_course_dates, course_date_list))
     return course_date_list
 
+def find_block_parents(version, block_id):
+
+    for block in version["blocks"]:
+        if block["block_type"] == "vertical" and block_id in [i[-1] for i in block["fields"]["children"]]:
+            unit_name = block["fields"]["display_name"]
+            unit_id = block["block_id"]
+            break
 
 def get_assessments_for_courses(request):
     user = User.objects.get(email = request.user.email)
@@ -958,7 +965,7 @@ def get_assessments_for_courses(request):
         for version in published_version["blocks"]:
             if version["block_type"] != "problem":
                 continue
-            log.info(version)
+            log.info(find_block_parents(published_version, version["block_id"]))
         
 
     # User locale settings
