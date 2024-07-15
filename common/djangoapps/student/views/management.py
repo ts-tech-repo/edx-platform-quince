@@ -1453,5 +1453,21 @@ def extras_get_mettl_report(request):
     if response["status"] != "SUCCESS" :
         return HttpResponse("Please Contact Support")
 
+@csrf_exempt
+def extras_get_last_login(request):
+        secret_key = configuration_helpers.get_value("EXTRAS_USER_DETAILS_TOKEN", "MZi7J7jArBgY8YoSFfvrpIqH65LXIuNA")
+        user_email = request.POST.get("email", "")
+        token = request.POST.get("token", "")
 
+        if secret_key != token:
+                return JsonResponse({})
+        if user_email == "" or user_email == None:
+                return JsonResponse({"Error": "Enter a valid Email"})
+
+        try:
+                user = User.objects.get(email = user_email)
+                return JsonResponse({"email": user.email, "username": user.username, "first_name": user.first_name, "last_name": user.last_name, "last_login": user.last_login})
+        except Exception as e:
+                log.info(e)
+                return JsonResponse({"ERROR": "Something went wrong"})
 
