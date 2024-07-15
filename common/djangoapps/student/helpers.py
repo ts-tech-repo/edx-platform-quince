@@ -973,6 +973,7 @@ def get_assessments_for_courses(request):
             new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
+                "course_key" : course_key,
                 'date_blocks': new_blocks,
                 "problem_blocks" : _get_problem_versions(course_key)
             })
