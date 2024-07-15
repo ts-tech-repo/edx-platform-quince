@@ -129,7 +129,6 @@ class CourseSummary(serializers.Serializer):
     date_blocks = AssessmentsSerializerDatesSummary(many=True)   
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        log.info(representation)
         course_name = representation.pop('name')  # Get and remove the course name
 
         # Add course name to each date_block
