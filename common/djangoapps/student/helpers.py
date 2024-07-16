@@ -953,14 +953,21 @@ def get_assessments_for_courses(request):
 
         _, request.user = setup_masquerade(request, course_key, staff_access=is_staff, reset_masquerade_data=True)
 
-        if CourseEnrollment.is_enrolled(request.user, course_key):
-            blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-            new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
-            response_data["courses"].append({
-                'name':user_course["course_details"]["course_name"],
-                "course_key" : course_key,
-                'date_blocks': blocks
-            })
+        blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
+        new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
+        split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
+        active_version_collection = split_modulestore.db_connection.course_index
+        structure_collection = split_modulestore.db_connection.structures
+        course_definition = active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run})
+
+        published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
+        for version in published_version["blocks"]:
+            log.info(version)
+        response_data["courses"].append({
+            'name':user_course["course_details"]["course_name"],
+            "course_key" : course_key,
+            'date_blocks': blocks
+        })
         
     # User locale settings
     user_timezone_locale = user_timezone_locale_prefs(request)
