@@ -611,7 +611,6 @@ def get_course_assignments(course_key, user, include_access=False):  # lint-amne
                 first_component_block_id = get_first_component_of_block(subsection_key, block_data)
                 contains_gated_content = include_access and block_data.get_xblock_field(
                     subsection_key, 'contains_gated_content', False)
-                log.info(subsection_key)
                 title = block_data.get_xblock_field(subsection_key, 'display_name', _('Assignment'))
 
                 assignment_type = block_data.get_xblock_field(subsection_key, 'format', None)
