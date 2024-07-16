@@ -992,15 +992,12 @@ def get_assessments_for_courses(request):
                                 temp["submission_status"] = "Submitted"
                     all_blocks_data.append(temp)
         
-        #Get User Timezone
-        user_timezone_locale = user_timezone_locale_prefs(request)
-        log.info(user_timezone_locale)
-
                         
                         
         filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
         return {
-            'date_blocks': filtered_sorted_date_blocks
+            'date_blocks': filtered_sorted_date_blocks,
+            "user_timezone" : user_timezone_locale_prefs(request)
         }
     #     response_data["courses"].append({
     #         'name':user_course["course_details"]["course_name"],
