@@ -1616,3 +1616,13 @@ def _get_url(request, class_id, admin=False, teacher = False):
     if admin:
         payload["profile"] = "teacher"
         return "https://talentsprint.onlineclass.site/identity-based-login?jwtToken={0}&redirectionUrl=/meeting/start/{1}".format(jwt.encode(payload, JWTSECRETTOKEN), class_id)
+
+@login_required
+def extras_get_almaConnect_link(request):
+    try:
+        email = request.user.email
+        org = request.GET['org']
+        r = requests.post("https://cdn.exec.talentsprint.com/app/getAlmaCocUrl", headers = {'content-type': 'application/json'}, data = json.dumps({"email" : email, "org" : org.upper()}))
+        return HttpResponse(r)
+    except Exception as err:
+        return HttpResponse("")
