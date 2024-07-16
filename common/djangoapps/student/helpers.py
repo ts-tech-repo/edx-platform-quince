@@ -969,8 +969,12 @@ def get_assessments_for_courses(request):
                     start = block_data.get_xblock_field(subsection_key, 'start')
                     due = block_data.get_xblock_field(subsection_key, 'due')
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : "-"}
-                    grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
-                    temp["is_graded"] = grades.earned_all
+                    try:
+                        grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
+                        temp["is_graded"] = grades.earned_all
+                    except Exception as DoesNotExistError:
+                        temp["is_graded"] = "-"
+                    
                     
 
                     units = block_data.get_children(subsection_key)
