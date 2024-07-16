@@ -953,7 +953,7 @@ def get_assessments_for_courses(request):
 
         if CourseEnrollment.is_enrolled(request.user, course_key):
             blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-            log.info(modulestore().get_course(course_key).children)
+            log.info(modulestore().get_course(course_key))
             new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
