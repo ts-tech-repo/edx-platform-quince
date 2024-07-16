@@ -973,25 +973,27 @@ def get_assessments_for_courses(request):
                     temp["is_graded"] = grades.earned_all
                     
 
-                # units = block_data.get_children(subsection_key)
-                
-                # start = block_data.get_xblock_field(subsection_key, 'start')
-                # due = block_data.get_xblock_field(subsection_key, 'due')
-                # while units:
-                #     unit = units.pop()
+                    units = block_data.get_children(subsection_key)
+                    while units:
+                        unit = units.pop()
                 #     title = block_data.get_xblock_field(unit, 'display_name')
                     
-                #     components = block_data.get_children(unit)
+                        components = block_data.get_children(unit)
                 #     grade = 0
-                #     for component in components:
+                        for component in components:
                 #         category = block_data.get_xblock_field(component, 'category', None)
                 #         due_date = block_data.get_xblock_field(component, 'submission_due')
                 #         start_date = block_data.get_xblock_field(component, 'submission_start')
                 #         temp = {"course_name" : user_course["course_details"]["course_name"], "title" : title, "start_date" : start, "date" : due, "link" : "-"}
-                #         block_id = get_first_component_of_block(unit, block_data)
+                            block_id = get_first_component_of_block(unit, block_data)
                 #         log.info(block_id)
                 #         if category in ["openassessment", "edx_sga"]:
-                #             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
+                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
+                            if not student_module_info:
+                                temp["submission_status"] = "Not Submitted"
+                            else:
+                                temp["submission_status"] = "Submitted"
+
                 #             try:
                 #                 log.info(get_subsection_grade(user.id, course_key, subsection_key))
                 #             except Exception as DoesNotExist:
