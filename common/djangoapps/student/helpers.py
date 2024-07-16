@@ -972,6 +972,7 @@ def get_assessments_for_courses(request):
                     components = block_data.get_children(unit)
                     for component in components:
                         category = block_data.get_xblock_field(component, 'category', None)
+                        log.info(category)
                         if category == "openassessment":
                             due_date = block_data.get_xblock_field(component, 'submission_due')
                             start_date = block_data.get_xblock_field(component, 'submission_start')
