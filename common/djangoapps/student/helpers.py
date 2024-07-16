@@ -988,17 +988,14 @@ def get_assessments_for_courses(request):
                         #         temp["submission_status"] = "In Progress"
                         # except Exception as ObjectDoesNotExist:
                         #     temp["submission_status"] = "Not Submitted"
-                        log.info(category)
-                        if category == "openassessment":
+                        if category in ["openassessment", "edx_sga"]:
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
-                            log.info(student_module_info)
-                            if not student_module_info:
+                            if student_module_info:
                                 temp["submission_status"] = "Not Submitted"
 
-                            elif "submission_uuid" in student_module_info.state:
-                                temp["submission_status"]  = "Submitted"
                             else:
-                                temp["submission_status"] = "In Progress"
+                                temp["submission_status"]  = "Submitted"
+                            
                         if category == "problem":
                             log.info(StudentModule.all_submitted_problems_read_only(course_key_string, [block_id], user.id))
                             student_module_info = StudentModule.all_submitted_problems_read_only(course_key_string, [block_id], user.id).first()
