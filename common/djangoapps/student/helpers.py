@@ -949,10 +949,9 @@ def find_block_parents(version, block_id):
 
 def get_assessments_for_courses(request):
     user = User.objects.get(email = request.user.email)
-    user_courses = get_course_enrollments(user.username)
+    user_courses = list(get_course_enrollments(user.username))
     response_data = {"courses":[]}
     for i, user_course in enumerate(user_courses):
-        log.info(list(user_courses))
         course_key_string = user_course["course_details"]["course_id"]
         course_key = CourseKey.from_string(course_key_string)
         is_staff = bool(has_access(request.user, 'staff', course_key))
