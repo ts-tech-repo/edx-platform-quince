@@ -995,7 +995,7 @@ def get_assessments_for_courses(request):
 
                         
                         
-        filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start'])
+        filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
         return {
             'date_blocks': filtered_sorted_date_blocks
         }
