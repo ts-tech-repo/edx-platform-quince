@@ -969,8 +969,8 @@ def get_assessments_for_courses(request):
                     due_date = block_data.get_xblock_field(unit, 'submission_due')
                     start_date = block_data.get_xblock_field(unit, 'submission_start')
                     temp = {"title" : title, "start_date" : start_date, "date" : due_date}
-                    log.info(temp)
                     children = block_data.get_children(unit)
+                    log.info(children)
 
         # split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
         # active_version_collection = split_modulestore.db_connection.course_index
