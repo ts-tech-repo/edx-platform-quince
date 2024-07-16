@@ -963,8 +963,6 @@ def get_assessments_for_courses(request):
         block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
         for section_key in block_data.get_children(course_usage_key):  
             for subsection_key in block_data.get_children(section_key):
-                due_date = block_data.get_xblock_field(subsection_key, 'submission_due')
-                start_date = block_data.get_xblock_field(subsection_key, 'submission_start')
                 units = block_data.get_children(subsection_key)
                 
                 while units:
@@ -972,21 +970,30 @@ def get_assessments_for_courses(request):
                     title = block_data.get_xblock_field(unit, 'display_name')
                     
                     components = block_data.get_children(unit)
+                    grade = 0
                     for component in components:
                         category = block_data.get_xblock_field(component, 'category', None)
-                        log.info(category)
-                        if category == "openassessment":
-                            temp = {"course_name" : user_course["course_details"]["course_name"], "title" : title, "start_date" : start_date, "date" : due_date, "link" : "-"}
-                            try:
-                                student_module_info = StudentModule.objects.get(student_id = user.id, module_state_key = get_first_component_of_block(unit, block_data))
-                                if "submission_uuid" in student_module_info.state:
-                                   temp["submission_status"]  = "Submitted"
-                                else:
-                                    temp["submission_status"] = "In Progress"
-                            except Exception as ObjectDoesNotExist:
-                                temp["submission_status"] = "Not Submitted"
+                        due_date = block_data.get_xblock_field(component, 'submission_due')
+                        start_date = block_data.get_xblock_field(component, 'submission_start')
+                        temp = {"course_name" : user_course["course_details"]["course_name"], "title" : title, "start_date" : start_date, "date" : due_date, "link" : "-"}
+                        try:
+                            student_module_info = StudentModule.objects.get(student_id = user.id, module_state_key = get_first_component_of_block(unit, block_data))
+                            if "submission_uuid" in student_module_info.state:
+                                temp["submission_status"]  = "Submitted"
+                            else:
+                                temp["submission_status"] = "In Progress"
+                        except Exception as ObjectDoesNotExist:
+                            temp["submission_status"] = "Not Submitted"
+
+                        if category == "problem":
+                            grade += student_module_info.grade
+                    
+                    temp["is_graded"] = grade
+                    all_blocks_data.append(temp)
                             
-                            all_blocks_data.append(temp)
+
+                        
+                        
         filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
         return {
             'date_blocks': filtered_sorted_date_blocks
