@@ -45,12 +45,13 @@ from lms.djangoapps.certificates.api import (
 )
 from lms.djangoapps.certificates.data import CertificateStatuses
 from lms.djangoapps.course_blocks.api import get_course_blocks
+from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.api import CourseGradeFactory
 from lms.djangoapps.instructor import access
 from lms.djangoapps.verify_student.models import VerificationDeadline
 from lms.djangoapps.verify_student.services import IDVerificationService
 from lms.djangoapps.verify_student.utils import is_verification_expiring_soon, verification_for_datetime
-from lms.djangoapps.courseware.courses import get_course, get_course_assignments, get_course_date_blocks, get_course_with_access, get_problems_in_section
+from lms.djangoapps.courseware.courses import get_course, get_course_assignments, get_course_date_blocks, get_course_with_access, get_first_component_of_block, get_problems_in_section
 from lms.djangoapps.courseware.user_state_client import DjangoXBlockUserStateClient
 
 from lms.djangoapps.courseware.date_summary import TodaysDate
@@ -966,11 +967,25 @@ def get_assessments_for_courses(request):
                 while units:
                     unit = units.pop()
                     title = block_data.get_xblock_field(unit, 'display_name')
-                    due_date = block_data.get_xblock_field(unit, 'submission_due')
-                    start_date = block_data.get_xblock_field(unit, 'submission_start')
-                    temp = {"title" : title, "start_date" : start_date, "date" : due_date}
-                    children = block_data.get_children(unit)
-                    log.info(children)
+                    
+                    components = block_data.get_children(unit)
+                    for component in components:
+                        category = block_data.get_xblock_field(component, 'category', None)
+                        if category == "openassessment":
+                            due_date = block_data.get_xblock_field(component, 'submission_due')
+                            start_date = block_data.get_xblock_field(component, 'submission_start')
+                            temp = {"title" : title, "start_date" : start_date, "date" : due_date}
+                            try:
+                                student_module_info = StudentModule.objects.get(student_id = user.id, module_state_key = get_first_component_of_block(unit, block_data))
+                                if "submission_uuid" in student_module_info.state:
+                                   temp["submission_status"]  = "Submitted"
+                                else:
+                                    temp["submission_status"] = "In Progress"
+                            except Exception as ObjectDoesNotExist:
+                                temp["submission_status"] = "Not Submitted"
+                            
+                            log.info(temp)
+
 
         # split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
         # active_version_collection = split_modulestore.db_connection.course_index
