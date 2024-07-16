@@ -132,7 +132,8 @@ class StudentModule(models.Model):
         queryset = cls.objects.filter(
             course_id=course_id,
             module_type='problem',
-            grade__isnull=False
+            grade__isnull=False,
+            module_state_key__in=module_state_keys
         )
         if student_id:
             queryset = queryset.filter(student_id=student_id)
