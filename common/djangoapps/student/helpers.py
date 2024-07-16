@@ -966,7 +966,10 @@ def get_assessments_for_courses(request):
                 while units:
                     unit = units.pop()
                     title = block_data.get_xblock_field(unit, 'display_name')
-                    log.info(title)
+                    due_date = block_data.get_xblock_field(unit, 'submission_due')
+                    start_date = block_data.get_xblock_field(unit, 'submission_start')
+                    temp = {"title" : title, "start_date" : start_date, "date" : due_date}
+                    log.info(temp)
                     children = block_data.get_children(unit)
 
         # split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
