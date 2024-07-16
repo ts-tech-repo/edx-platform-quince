@@ -37,7 +37,6 @@ from common.djangoapps.student.models import (
     username_exists_or_retired
 )
 from common.djangoapps.util.password_policy_validators import normalize_password
-from lms.djangoapps.ccx.utils import parse_date
 from lms.djangoapps.certificates.api import (
     certificates_viewable_for_course,
     has_self_generated_certificates_enabled,
