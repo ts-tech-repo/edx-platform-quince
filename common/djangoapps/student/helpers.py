@@ -955,12 +955,7 @@ def get_assessments_for_courses(request):
 
         blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
         new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
-        store = modulestore()
-        course_usage_key = store.make_course_usage_key(course_key)
-        block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
-        for section_key in block_data.get_children(course_usage_key):  
-            for subsection_key in block_data.get_children(section_key):
-                log.info(block_data.get_xblock_field(subsection_key, 'display_name',  _('Assignment')))
+        log.info(get_course_assignments(course_key, request.user))
         # split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
         # active_version_collection = split_modulestore.db_connection.course_index
         # structure_collection = split_modulestore.db_connection.structures
