@@ -1527,3 +1527,91 @@ def extras_userdetails(request):
         return JsonResponse(user_details);
     except User.DoesNotExist:
         return render(request, 'blank.html', {"message": "User Does Not Exist"})
+
+@login_required
+@csrf_exempt
+def extras_start_lens(request):
+
+    class_token = request.GET["class_token"]
+    class_id = class_token[:-8]
+    try:
+        if  "@talentsprint.com" in request.user.email:
+            #Course Admin
+            message, sessionCreated = _create_session(class_id, request.user.email)
+            if sessionCreated:
+
+                return redirect(_get_url(request, class_id, admin = True, teacher = False))
+            return HttpResponse("")
+
+
+        else:
+            #Student
+            return redirect(_get_url(request, class_id, admin = False, teacher = False))
+
+        return JsonResponse({})
+
+    except Exception as err:
+        log.info(err)
+        return HttpResponse("User {0} is not registered with lens.".format(request.user.email))
+
+
+def _create_session(class_id, email):
+
+    URL = "https://api.wiseapp.live"
+    HEADERS = {"user-agent":"VendorIntegrations/talentsprint",
+        "x-wise-namespace":"talentsprint",
+        "x-api-key":"b6d1c13d2294754817394751ee60d615",
+        "authorization":"Basic NjQ0OGQwNGRhM2I3OTQ0MDI5MjQzNjQxOmI2ZDFjMTNkMjI5NDc1NDgxNzM5NDc1MWVlNjBkNjE1",
+        "Content-Type" : "application/json"
+    }
+
+    r = requests.get(url = "{0}/user/v2/classes/{1}?full=true".format(URL, class_id), headers = HEADERS)
+
+    response = json.loads(r.text)
+
+    if response["status"] != 200:
+        log.info("Failed to fetch Class details {0}".format(response))
+        return "Class token passed in the url doesn't exist. Please pass appropriate class token and try again.", False
+
+    if response["data"]["zoomLink"]["join_url"]:
+        return "Meeting has already started", True
+
+    user_id = ""
+    for teacher in response["data"]["coTeachers"]:
+        if teacher.get("email", "") == email:
+            user_id = teacher["_id"]
+            break
+
+    if user_id == "":
+        log.info("Your email {0} is not registered with Lens".format(email))
+        return "Your email {0} is not registered with Lens".format(email), False
+
+    r = requests.post(url = "{0}/teacher/v2/goLive".format(URL), headers = HEADERS, data = json.dumps({"classId" : class_id, "onBehalfOfUserId" : user_id, "registerLens" : True, "enableRegistration" : True}))
+
+    response = json.loads(r.text)
+
+    log.info(response)
+
+    return "Session created successfully",True
+
+
+
+def _get_url(request, class_id, admin=False, teacher = False):
+
+    JWTSECRETTOKEN = "2bb0235c418cdbb44be89953fb387c56"
+    payload = {
+            "email": request.user.email,
+            "name": request.user.first_name,
+            "exp": int(time.mktime((datetime.datetime.now() + datetime.timedelta(minutes=2)).timetuple()))
+    }
+    if teacher:
+        payload["profile"] = "teacher"
+        return "https://talentsprint.onlineclass.site/identity-based-login?jwtToken={0}&redirectionUrl=/joinPublic/{1}".format(jwt.encode(payload, JWTSECRETTOKEN), class_id)
+
+    if not admin and not teacher:
+        payload["profile"] = "student"
+        return "https://talentsprint.onlineclass.site/identity-based-login?jwtToken={0}&redirectionUrl=/meeting/join/{1}".format(jwt.encode(payload, JWTSECRETTOKEN), class_id)
+
+    if admin:
+        payload["profile"] = "teacher"
+        return "https://talentsprint.onlineclass.site/identity-based-login?jwtToken={0}&redirectionUrl=/meeting/start/{1}".format(jwt.encode(payload, JWTSECRETTOKEN), class_id)
