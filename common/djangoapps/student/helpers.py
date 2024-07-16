@@ -12,6 +12,7 @@ from datetime import datetime
 
 import pytz
 
+from common.djangoapps.student.models.user import anonymous_id_for_user
 from completion.exceptions import UnavailableCompletionData
 from completion.utilities import get_key_to_last_completed_block
 from django.conf import settings
@@ -963,7 +964,7 @@ def get_assessments_for_courses(request):
         store = modulestore()
         course_usage_key = store.make_course_usage_key(course_key)
         block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
-        log.info(block_data)
+        log.info(anonymous_id_for_user(user, course_key))
         for section_key in block_data.get_children(course_usage_key):  
             for subsection_key in block_data.get_children(section_key):
                     start = block_data.get_xblock_field(subsection_key, 'start')
