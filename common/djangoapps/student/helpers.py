@@ -981,18 +981,10 @@ def get_assessments_for_courses(request):
                         temp = {"course_name" : user_course["course_details"]["course_name"], "title" : title, "start_date" : start, "date" : due, "link" : "-"}
                         block_id = get_first_component_of_block(unit, block_data)
                         log.info(block_id)
-                        # try:
-                        #     student_module_info = StudentModule.objects.get(student_id = user.id, module_state_key = block_id)
-                        #     if "submission_uuid" in student_module_info.state:
-                        #         temp["submission_status"]  = "Submitted"
-                        #     else:
-                        #         temp["submission_status"] = "In Progress"
-                        # except Exception as ObjectDoesNotExist:
-                        #     temp["submission_status"] = "Not Submitted"
                         if category in ["openassessment", "edx_sga"]:
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                             try:
-                                log.info(get_subsection_grade(user.id, course_key, block_id))
+                                log.info(get_subsection_grade(user.id, course_key, subsection_key))
                             except Exception as DoesNotExist:
                                 log.info("Grades doesn't exist")
                             if not student_module_info:
@@ -1002,7 +994,6 @@ def get_assessments_for_courses(request):
                                 temp["submission_status"]  = "Submitted"
                             
                         if category == "problem":
-                            log.info(StudentModule.all_submitted_problems_read_only(course_key_string, [block_id], user.id))
                             student_module_info = StudentModule.all_submitted_problems_read_only(course_key_string, [block_id], user.id).first()
                             if temp.get("submission_status", "") == "" and not student_module_info:
                                 temp["submission_status"] = "Not Submitted"
