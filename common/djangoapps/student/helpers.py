@@ -1000,10 +1000,10 @@ def get_assessments_for_courses(request):
                                 temp["submission_status"] = "In Progress"
                         if category == "problem":
                             student_module_info = StudentModule.all_submitted_problems_read_only(course_key_string, [block_id], user.id).first()
-                            if temp.get("submission_status", "") and not student_module_info:
+                            if temp.get("submission_status", "") == "" and not student_module_info:
                                 temp["submission_status"] = "Not Submitted"
 
-                            if student_module_info and  temp.get("submission_status", "") in ["Not Submitted", "Submitted"]:
+                            elif student_module_info and  temp.get("submission_status", "") in ["Not Submitted", "Submitted"]:
                                 temp["submission_status"] = "Submitted"
                             grade += student_module_info.grade
                     
