@@ -966,8 +966,9 @@ def get_assessments_for_courses(request):
         block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
         for section_key in block_data.get_children(course_usage_key):  
             for subsection_key in block_data.get_children(section_key):
-                    start = getattr(subsection_key, 'start', None)
+                    start = block_data.get_xblock_field(subsection_key, 'start')
                     due = block_data.get_xblock_field(subsection_key, 'due')
+                    log.info(type(start))
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
                         grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
@@ -994,9 +995,9 @@ def get_assessments_for_courses(request):
         
                         
                         
-        # filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
+        filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
         return {
-            'date_blocks': all_blocks_data,
+            'date_blocks': filtered_sorted_date_blocks,
             "user_timezone" : user_timezone_locale_prefs(request)
         }
     #     response_data["courses"].append({
