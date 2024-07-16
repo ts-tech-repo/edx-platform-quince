@@ -49,6 +49,7 @@ from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.api import CourseGradeFactory
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
 from lms.djangoapps.grades.models_api import get_subsection_grade
+from lms.djangoapps.grades.subsection_grade import ReadSubsectionGrade
 from lms.djangoapps.instructor import access
 from lms.djangoapps.verify_student.models import VerificationDeadline
 from lms.djangoapps.verify_student.services import IDVerificationService
@@ -968,7 +969,8 @@ def get_assessments_for_courses(request):
                     start = block_data.get_xblock_field(subsection_key, 'start')
                     due = block_data.get_xblock_field(subsection_key, 'due')
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : "-"}
-                    log.info(PersistentSubsectionGrade.prefetch(course_key, [user]))
+                    grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
+                    log.info(ReadSubsectionGrade(subsection_key, grades))
 
                 # units = block_data.get_children(subsection_key)
                 
