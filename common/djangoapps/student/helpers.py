@@ -978,16 +978,25 @@ def get_assessments_for_courses(request):
                         temp = {"course_name" : user_course["course_details"]["course_name"], "title" : title, "start_date" : start_date, "date" : due_date, "link" : "-"}
                         block_id = get_first_component_of_block(unit, block_data)
                         log.info(block_id)
-                        try:
-                            student_module_info = StudentModule.objects.get(student_id = user.id, module_state_key = block_id)
-                            if "submission_uuid" in student_module_info.state:
+                        # try:
+                        #     student_module_info = StudentModule.objects.get(student_id = user.id, module_state_key = block_id)
+                        #     if "submission_uuid" in student_module_info.state:
+                        #         temp["submission_status"]  = "Submitted"
+                        #     else:
+                        #         temp["submission_status"] = "In Progress"
+                        # except Exception as ObjectDoesNotExist:
+                        #     temp["submission_status"] = "Not Submitted"
+                        if category == "openassessment":
+                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
+                            if not student_module_info:
+                                temp["submission_status"] = "Not Submitted"
+
+                            elif "submission_uuid" in student_module_info.state:
                                 temp["submission_status"]  = "Submitted"
                             else:
                                 temp["submission_status"] = "In Progress"
-                        except Exception as ObjectDoesNotExist:
-                            temp["submission_status"] = "Not Submitted"
-                        log.info(StudentModule.get_state_by_params(course_key_string, [block_id], user.id))
                         if category == "problem":
+                            student_module_info = StudentModule.all_submitted_problems_read_only(course_key_string, [block_id], user.id)
                             log.info(student_module_info)
                             # grade += student_module_info.grade
                     

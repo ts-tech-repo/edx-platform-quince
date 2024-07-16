@@ -121,8 +121,9 @@ class StudentModule(models.Model):
     created = models.DateTimeField(auto_now_add=True, db_index=True)
     modified = models.DateTimeField(auto_now=True, db_index=True)
 
+    #KC pass student id
     @classmethod
-    def all_submitted_problems_read_only(cls, course_id):
+    def all_submitted_problems_read_only(cls, course_id, module_state_keys = [], student_id=None):
         """
         Return all model instances that correspond to problems that have been
         submitted for a given course. So module_type='problem' and a non-null
@@ -133,6 +134,8 @@ class StudentModule(models.Model):
             module_type='problem',
             grade__isnull=False
         )
+        if student_id:
+            queryset = queryset.filter(student_id=student_id)
         if "read_replica" in settings.DATABASES:
             return queryset.using("read_replica")
         else:
