@@ -47,6 +47,7 @@ from lms.djangoapps.certificates.data import CertificateStatuses
 from lms.djangoapps.course_blocks.api import get_course_blocks
 from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.api import CourseGradeFactory
+from lms.djangoapps.grades.models_api import get_subsection_grade
 from lms.djangoapps.instructor import access
 from lms.djangoapps.verify_student.models import VerificationDeadline
 from lms.djangoapps.verify_student.services import IDVerificationService
@@ -990,7 +991,7 @@ def get_assessments_for_courses(request):
                         #     temp["submission_status"] = "Not Submitted"
                         if category in ["openassessment", "edx_sga"]:
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
-                            log.info(student_module_info)
+                            log.info(get_subsection_grade(user.id, course_key_string, block_id))
                             if not student_module_info:
                                 temp["submission_status"] = "Not Submitted"
 
