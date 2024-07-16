@@ -990,12 +990,11 @@ def get_assessments_for_courses(request):
                             
                             if student_module_info:
                                 temp["submission_status"] = "Submitted"
-                            
-                            
-                            # else:
-                            #     temp["submission_status"] = "Submitted"
                     all_blocks_data.append(temp)
-                            
+        
+        #Get User Timezone
+        user_timezone_locale = user_timezone_locale_prefs(request)
+        log.info(user_timezone_locale)
 
                         
                         
