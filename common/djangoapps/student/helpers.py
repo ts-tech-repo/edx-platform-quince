@@ -51,7 +51,7 @@ from lms.djangoapps.verify_student.models import VerificationDeadline
 from lms.djangoapps.verify_student.services import IDVerificationService
 from lms.djangoapps.verify_student.utils import is_verification_expiring_soon, verification_for_datetime
 from lms.djangoapps.courseware.courses import get_course, get_course_assignments, get_course_date_blocks, get_course_with_access, get_problems_in_section
-from lms.djangoapps.courseware.user_state_client import iter_all_for_course
+from lms.djangoapps.courseware.user_state_client import DjangoXBlockUserStateClient
 
 from lms.djangoapps.courseware.date_summary import TodaysDate
 from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
@@ -955,7 +955,7 @@ def get_assessments_for_courses(request):
 
         if CourseEnrollment.is_enrolled(request.user, course_key):
             blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-            log.info(iter_all_for_course(course_key))
+            log.info(DjangoXBlockUserStateClient.iter_all_for_course(course_key))
             new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
