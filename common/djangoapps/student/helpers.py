@@ -1008,6 +1008,7 @@ def get_assessments_for_courses(request):
                             grade += student_module_info.grade
                     
                     temp["is_graded"] = grade
+                    grade = 0
                     all_blocks_data.append(temp)
                             
 
