@@ -971,6 +971,7 @@ def get_assessments_for_courses(request):
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
                         grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
+                        log.info(grades)
                         temp["is_graded"] = "Graded"
                     except Exception as DoesNotExistError:
                         temp["is_graded"] = "Un Graded"
@@ -1000,15 +1001,3 @@ def get_assessments_for_courses(request):
         'date_blocks': filtered_sorted_date_blocks,
         "user_timezone" : user_local_timezone if user_local_timezone["user_timezone"] is not None else {"user_timezone" : ""}
     }
-    #     response_data["courses"].append({
-    #         'name':user_course["course_details"]["course_name"],
-    #         "course_key" : course_key,
-    #         'date_blocks': blocks
-    #     })
-        
-    # # User locale settings
-    # user_timezone_locale = user_timezone_locale_prefs(request)
-    # response_data['user_timezone']=user_timezone_locale['user_timezone']
-    # response_data["student_id"] = user.id
-    # return AssessmentsSerializer(response_data).data
-    
