@@ -94,8 +94,8 @@ h1{font-size: 20px;margin-bottom: 20px;}
                     <a href="{{ item.link }}">{{ item.title }}</a>
                     {% endif %}
                 </td>
-                <td>{{ item.start_date }}</td>
-                <td>{{ item.date }}</td>
+                <td>{{ item.start_date | localtime }}</td>
+                <td>{{ item.date | localtime }}</td>
                 <td>{{item.submission_status}}</td>
                 <td>{{ item.is_graded }}</td>
             </tr>
