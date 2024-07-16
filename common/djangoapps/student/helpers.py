@@ -968,7 +968,7 @@ def get_assessments_for_courses(request):
             for subsection_key in block_data.get_children(section_key):
                     start = block_data.get_xblock_field(subsection_key, 'start')
                     due = block_data.get_xblock_field(subsection_key, 'due')
-                    temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : "-"}
+                    temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : "-", "submission_status" : "Submitted"}
                     try:
                         grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
                         temp["is_graded"] = grades.earned_all
@@ -981,13 +981,11 @@ def get_assessments_for_courses(request):
                     
                         components = block_data.get_children(unit)
                         for component in components:
-                            block_id = get_first_component_of_block(unit, block_data)
+                            block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if not student_module_info:
                                 temp["submission_status"] = "Not Submitted"
-                                continue
-                            for module_info in student_module_info:
-                                log.info(module_info)
+                            
                             
                             # else:
                             #     temp["submission_status"] = "Submitted"
