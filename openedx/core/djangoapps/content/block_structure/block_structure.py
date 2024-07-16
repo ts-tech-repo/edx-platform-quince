@@ -11,6 +11,7 @@ The following internal data structures are implemented:
 
 
 from copy import deepcopy
+from datetime import datetime
 from functools import partial
 from logging import getLogger
 
@@ -470,8 +471,12 @@ class BlockStructureBlockData(BlockStructure):
     
     def extras_get_xblock_field(self, usage_key, field_name, default=None):
         block_data = self._block_data_map.get(usage_key)
+        field = getattr(block_data, field_name, default)
         
-        return block_data if block_data else default
+        return datetime(
+            year=field.year, month=field.month, day=field.day,
+            hour=field.hour, minute=field.minute, second=field.second
+        )
 
     def override_xblock_field(self, usage_key, field_name, override_data):
         """
