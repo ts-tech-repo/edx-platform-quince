@@ -965,6 +965,8 @@ def get_assessments_for_courses(request):
             for subsection_key in block_data.get_children(section_key):
                 units = block_data.get_children(subsection_key)
                 
+                start = block_data.get_xblock_field(subsection_key, 'start')
+                due = block_data.get_xblock_field(subsection_key, 'due')
                 while units:
                     unit = units.pop()
                     title = block_data.get_xblock_field(unit, 'display_name')
@@ -975,7 +977,7 @@ def get_assessments_for_courses(request):
                         category = block_data.get_xblock_field(component, 'category', None)
                         due_date = block_data.get_xblock_field(component, 'submission_due')
                         start_date = block_data.get_xblock_field(component, 'submission_start')
-                        temp = {"course_name" : user_course["course_details"]["course_name"], "title" : title, "start_date" : start_date, "date" : due_date, "link" : "-"}
+                        temp = {"course_name" : user_course["course_details"]["course_name"], "title" : title, "start_date" : start, "date" : due, "link" : "-"}
                         block_id = get_first_component_of_block(unit, block_data)
                         log.info(block_id)
                         # try:
@@ -1003,7 +1005,6 @@ def get_assessments_for_courses(request):
 
                             if student_module_info and  temp.get("submission_status", "") in ["Not Submitted", "Submitted"]:
                                 temp["submission_status"] = "Submitted"
-                            # if student_module_info and temp.get("submission_status", "") in ["Submitted"]:
                             grade += student_module_info.grade
                     
                     temp["is_graded"] = grade
