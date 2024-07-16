@@ -990,7 +990,8 @@ def get_assessments_for_courses(request):
                         #     temp["submission_status"] = "Not Submitted"
                         if category in ["openassessment", "edx_sga"]:
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
-                            if student_module_info:
+                            log.info(student_module_info)
+                            if not student_module_info:
                                 temp["submission_status"] = "Not Submitted"
 
                             else:
