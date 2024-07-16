@@ -471,7 +471,7 @@ class BlockStructureBlockData(BlockStructure):
     def extras_get_xblock_field(self, usage_key, field_name, default=None):
         block_data = self._block_data_map.get(usage_key)
         
-        return getattr(block_data, field_name, default) if block_data else default
+        return block_data if block_data else default
 
     def override_xblock_field(self, usage_key, field_name, override_data):
         """
