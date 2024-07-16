@@ -986,7 +986,7 @@ def get_assessments_for_courses(request):
                                 temp["submission_status"] = "In Progress"
                         except Exception as ObjectDoesNotExist:
                             temp["submission_status"] = "Not Submitted"
-                        log.info(StudentModule.get_state_by_params(course_key_string, unit, user.id))
+                        log.info(StudentModule.get_state_by_params(course_key_string, component, user.id))
                         if category == "problem":
                             log.info(student_module_info)
                             # grade += student_module_info.grade
