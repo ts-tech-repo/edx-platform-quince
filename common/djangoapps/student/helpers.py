@@ -987,8 +987,8 @@ def get_assessments_for_courses(request):
                         # except Exception as ObjectDoesNotExist:
                         #     temp["submission_status"] = "Not Submitted"
                         if category == "openassessment":
-                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
-                            log.info(student_module_info.first())
+                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
+                            log.info(student_module_info)
                             if not student_module_info:
                                 temp["submission_status"] = "Not Submitted"
 
