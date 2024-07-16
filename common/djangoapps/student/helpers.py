@@ -992,7 +992,7 @@ def get_assessments_for_courses(request):
                         if category in ["openassessment", "edx_sga"]:
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                             try:
-                                log.info(get_subsection_grade(user.id, course_key_string, block_id))
+                                log.info(get_subsection_grade(user.id, course_key, block_id))
                             except Exception as DoesNotExist:
                                 log.info("Grades doesn't exist")
                             if not student_module_info:

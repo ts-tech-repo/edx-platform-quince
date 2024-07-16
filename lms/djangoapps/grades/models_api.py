@@ -67,7 +67,8 @@ def get_subsection_grade(user_id, course_key_or_id, usage_key_or_id):
     """
     course_key = _get_key(course_key_or_id, CourseKey)
     usage_key = _get_key(usage_key_or_id, UsageKey)
-
+    log.info(course_key)
+    log.info(usage_key)
     return _PersistentSubsectionGrade.objects.get(
         user_id=user_id,
         course_id=course_key,
