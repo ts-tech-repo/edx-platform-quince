@@ -986,7 +986,8 @@ def get_assessments_for_courses(request):
                             temp["submission_status"] = "Not Submitted"
 
                         if category == "problem":
-                            grade += student_module_info.grade
+                            log.info(student_module_info)
+                            # grade += student_module_info.grade
                     
                     temp["is_graded"] = grade
                     all_blocks_data.append(temp)
