@@ -960,16 +960,14 @@ def get_assessments_for_courses(request):
 
         _, request.user = setup_masquerade(request, course_key, staff_access=is_staff, reset_masquerade_data=True)
 
-        blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-        new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
         all_blocks_data = []
         store = modulestore()
         course_usage_key = store.make_course_usage_key(course_key)
         block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
+        log.info(block_data)
         for section_key in block_data.get_children(course_usage_key):  
             for subsection_key in block_data.get_children(section_key):
                     start = block_data.get_xblock_field(subsection_key, 'start')
-                    log.info(start)
                     due = block_data.get_xblock_field(subsection_key, 'due')
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
@@ -986,7 +984,6 @@ def get_assessments_for_courses(request):
                         for component in components:
                             block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
-                            log.info(student_module_info)
                             if not temp.get("submission_status", None):
                                 if not student_module_info:
                                     temp["submission_status"] = "Not Submitted"
@@ -1000,7 +997,7 @@ def get_assessments_for_courses(request):
         filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
         user_local_timezone = user_timezone_locale_prefs(request)
         return {
-            'date_blocks': all_blocks_data,
+            'date_blocks': filtered_sorted_date_blocks,
             "user_timezone" : user_local_timezone if user_local_timezone["user_timezone"] is not None else {"user_timezone" : ""}
         }
     #     response_data["courses"].append({
