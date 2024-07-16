@@ -999,6 +999,7 @@ def get_assessments_for_courses(request):
                             else:
                                 temp["submission_status"] = "In Progress"
                         if category == "problem":
+                            log.info(StudentModule.all_submitted_problems_read_only(course_key_string, [block_id], user.id))
                             student_module_info = StudentModule.all_submitted_problems_read_only(course_key_string, [block_id], user.id).first()
                             if temp.get("submission_status", "") == "" and not student_module_info:
                                 temp["submission_status"] = "Not Submitted"
