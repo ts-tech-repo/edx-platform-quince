@@ -986,7 +986,7 @@ def get_assessments_for_courses(request):
                                 temp["submission_status"] = "In Progress"
                         except Exception as ObjectDoesNotExist:
                             temp["submission_status"] = "Not Submitted"
-                        # log.info(StudentModule.get_state_by_params(course_key_string, block_id, user.id))
+                        log.info(StudentModule.get_state_by_params(course_key_string, unit, user.id))
                         if category == "problem":
                             log.info(student_module_info)
                             # grade += student_module_info.grade
@@ -997,9 +997,9 @@ def get_assessments_for_courses(request):
 
                         
                         
-        filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
+        # filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
         return {
-            'date_blocks': filtered_sorted_date_blocks
+            'date_blocks': all_blocks_data
         }
     #     response_data["courses"].append({
     #         'name':user_course["course_details"]["course_name"],
