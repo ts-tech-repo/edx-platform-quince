@@ -171,7 +171,6 @@ class AssessmentsSerializer(serializers.Serializer):
                 if date_block["first_component_block_id"]:
                     try:
                         student_module_info = StudentModule.objects.get(student_id = representation["student_id"], module_state_key = date_block["first_component_block_id"])
-                        log.info(get_problems_in_section())
                         if "submission_uuid" in student_module_info.state:
                             date_block["submission_status"] = "Submitted"
                         else:
