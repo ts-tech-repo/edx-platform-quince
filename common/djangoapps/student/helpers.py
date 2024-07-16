@@ -956,6 +956,7 @@ def get_assessments_for_courses(request):
 
         blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
         new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
+        all_blocks_data = []
         store = modulestore()
         course_usage_key = store.make_course_usage_key(course_key)
         block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
@@ -984,32 +985,20 @@ def get_assessments_for_courses(request):
                             except Exception as ObjectDoesNotExist:
                                 temp["submission_status"] = "Not Submitted"
                             
-                            log.info(temp)
-
-
-        # split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
-        # active_version_collection = split_modulestore.db_connection.course_index
-        # structure_collection = split_modulestore.db_connection.structures
-        # course_definition = active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run})
-
-        # published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
-        # blocks = []
-        # for version in published_version["blocks"]:
-        #     if version["block_type"] in ("course", "course_info", "about",  "chapter"):
-        #         continue
-        #     if version["block_type"] == "openassessment":
-        #         temp  = {"title" : version["fields"]["display_name"], "start_date" : , "due_date" : , "submission_status" : , "is_graded" : }
-        #         blocks.append(temp)
-        #     log.info(version)
-        response_data["courses"].append({
-            'name':user_course["course_details"]["course_name"],
-            "course_key" : course_key,
-            'date_blocks': blocks
-        })
+                            all_blocks_data.append(temp)
+        filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
+        return {
+            'date_blocks': filtered_sorted_date_blocks
+        }
+    #     response_data["courses"].append({
+    #         'name':user_course["course_details"]["course_name"],
+    #         "course_key" : course_key,
+    #         'date_blocks': blocks
+    #     })
         
-    # User locale settings
-    user_timezone_locale = user_timezone_locale_prefs(request)
-    response_data['user_timezone']=user_timezone_locale['user_timezone']
-    response_data["student_id"] = user.id
-    return AssessmentsSerializer(response_data).data
+    # # User locale settings
+    # user_timezone_locale = user_timezone_locale_prefs(request)
+    # response_data['user_timezone']=user_timezone_locale['user_timezone']
+    # response_data["student_id"] = user.id
+    # return AssessmentsSerializer(response_data).data
     
