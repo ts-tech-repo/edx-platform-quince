@@ -1626,3 +1626,22 @@ def extras_get_almaConnect_link(request):
         return HttpResponse(r)
     except Exception as err:
         return HttpResponse("")
+
+@csrf_exempt
+def extras_certificate(request):
+    try:
+        data = {"org" : request.POST.get("org", None), "username" : request.POST.get("username", None), "cohort_name" : request.POST.get("cohort_name", None)}
+        r = requests.post("https://cdn.exec.talentsprint.com/app/certificates", headers = {'content-type': 'application/json'}, data = json.dumps(data))
+        return JsonResponse(json.loads(r.text))
+    except Exception as err:
+        return ""
+
+@csrf_exempt
+def extras_transcript(request):
+    try:
+        data = {"org" : request.POST.get("org", None), "username" : request.POST.get("username", None), "cohort_name" : request.POST.get("cohort_name", None)}
+        r = requests.post("https://cdn.exec.talentsprint.com/app/transcripts", headers = {'content-type': 'application/json'}, data = json.dumps(data))
+        log.info(r.text)
+        return JsonResponse(json.loads(r.text))
+    except Exception as err:
+        return ""
