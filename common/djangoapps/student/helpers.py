@@ -962,6 +962,8 @@ def get_assessments_for_courses(request):
 
         published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
         for version in published_version["blocks"]:
+            if version["block_type"] in ("course", "course_info", "about",  "chapter"):
+                continue
             log.info(version)
         response_data["courses"].append({
             'name':user_course["course_details"]["course_name"],
