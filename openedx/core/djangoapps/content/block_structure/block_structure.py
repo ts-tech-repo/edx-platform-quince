@@ -474,8 +474,7 @@ class BlockStructureBlockData(BlockStructure):
         field = getattr(block_data, field_name, default)
         
         return datetime(
-            year=field.year, month=field.month, day=field.day,
-            hour=field.hour, minute=field.minute, second=field.second
+            year=field.year, month=field.month, day=field.day
         )
 
     def override_xblock_field(self, usage_key, field_name, override_data):
