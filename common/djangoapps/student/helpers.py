@@ -963,6 +963,8 @@ def get_assessments_for_courses(request):
         block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
         for section_key in block_data.get_children(course_usage_key):  
             for subsection_key in block_data.get_children(section_key):
+                due_date = block_data.get_xblock_field(subsection_key, 'submission_due')
+                start_date = block_data.get_xblock_field(subsection_key, 'submission_start')
                 units = block_data.get_children(subsection_key)
                 
                 while units:
@@ -974,8 +976,6 @@ def get_assessments_for_courses(request):
                         category = block_data.get_xblock_field(component, 'category', None)
                         log.info(category)
                         if category == "openassessment":
-                            due_date = block_data.get_xblock_field(component, 'submission_due')
-                            start_date = block_data.get_xblock_field(component, 'submission_start')
                             temp = {"course_name" : user_course["course_details"]["course_name"], "title" : title, "start_date" : start_date, "date" : due_date, "link" : "-"}
                             try:
                                 student_module_info = StudentModule.objects.get(student_id = user.id, module_state_key = get_first_component_of_block(unit, block_data))
