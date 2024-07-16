@@ -3,6 +3,7 @@ Provides Python APIs exposed from Grades models.
 """
 
 
+import logging
 from opaque_keys.edx.keys import CourseKey, UsageKey
 
 from lms.djangoapps.grades.models import PersistentCourseGrade as _PersistentCourseGrade
@@ -10,6 +11,7 @@ from lms.djangoapps.grades.models import PersistentSubsectionGrade as _Persisten
 from lms.djangoapps.grades.models import PersistentSubsectionGradeOverride as _PersistentSubsectionGradeOverride
 from lms.djangoapps.grades.models import VisibleBlocks as _VisibleBlocks
 from lms.djangoapps.utils import _get_key
+log = logging.getLogger("edx.student")
 
 
 def prefetch_grade_overrides_and_visible_blocks(user, course_key):
@@ -67,7 +69,8 @@ def get_subsection_grade(user_id, course_key_or_id, usage_key_or_id):
     """
     course_key = _get_key(course_key_or_id, CourseKey)
     usage_key = _get_key(usage_key_or_id, UsageKey)
-
+    log.info(course_key)
+    log.info(usage_key)
     return _PersistentSubsectionGrade.objects.get(
         user_id=user_id,
         course_id=course_key,
