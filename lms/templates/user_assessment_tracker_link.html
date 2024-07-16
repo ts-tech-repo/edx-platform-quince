@@ -91,7 +91,7 @@ h1{font-size: 20px;margin-bottom: 20px;}
                     {% if item.link == '' %}
                     {{ item.title }}
                     {% else %}
-                    <a href="{{ item.link }}">{{ item.title }}</a>
+                    <a href="{{ item.link }}" target = "_blank">{{ item.title }}</a>
                     {% endif %}
                 </td>
 		<td>{{item.start_date}}</td>
