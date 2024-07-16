@@ -46,6 +46,7 @@ from lms.djangoapps.certificates.api import (
 from lms.djangoapps.certificates.data import CertificateStatuses
 from lms.djangoapps.course_blocks.api import get_course_blocks
 from lms.djangoapps.grades.api import CourseGradeFactory
+from lms.djangoapps.grades.rest_api.v1.views import SubmissionHistoryView
 from lms.djangoapps.instructor import access
 from lms.djangoapps.verify_student.models import VerificationDeadline
 from lms.djangoapps.verify_student.services import IDVerificationService
@@ -955,7 +956,7 @@ def get_assessments_for_courses(request):
 
         if CourseEnrollment.is_enrolled(request.user, course_key):
             blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-            log.info(DjangoXBlockUserStateClient.iter_all_for_course(course_key))
+            log.info(SubmissionHistoryView.get_problem_blocks(course_key))
             new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
