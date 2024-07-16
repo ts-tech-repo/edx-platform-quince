@@ -982,12 +982,15 @@ def get_assessments_for_courses(request):
                         components = block_data.get_children(unit)
                         for component in components:
                             block_id = get_first_component_of_block(unit, block_data)
-                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
-                            log.info(student_module_info)
+                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if not student_module_info:
                                 temp["submission_status"] = "Not Submitted"
-                            else:
-                                temp["submission_status"] = "Submitted"
+                                continue
+                            for module_info in student_module_info:
+                                log.info(module_info)
+                            
+                            # else:
+                            #     temp["submission_status"] = "Submitted"
                     all_blocks_data.append(temp)
                             
 
