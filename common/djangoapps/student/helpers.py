@@ -967,7 +967,7 @@ def get_assessments_for_courses(request):
                     start = block_data.get_xblock_field(subsection_key, 'start')
                     due = block_data.get_xblock_field(subsection_key, 'due')
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : "-"}
-                    log.info(get_subsection_grade(user.id, course_key, subsection_key).subsection)
+                    log.info(get_subsection_grade(user.id, course_key, subsection_key).split(" "))
 
                 # units = block_data.get_children(subsection_key)
                 
