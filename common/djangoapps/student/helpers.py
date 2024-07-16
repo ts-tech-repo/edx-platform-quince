@@ -50,7 +50,7 @@ from lms.djangoapps.instructor import access
 from lms.djangoapps.verify_student.models import VerificationDeadline
 from lms.djangoapps.verify_student.services import IDVerificationService
 from lms.djangoapps.verify_student.utils import is_verification_expiring_soon, verification_for_datetime
-from lms.djangoapps.courseware.courses import get_course_date_blocks, get_course_with_access
+from lms.djangoapps.courseware.courses import get_course, get_course_date_blocks, get_course_with_access
 from lms.djangoapps.courseware.date_summary import TodaysDate
 from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
 from lms.djangoapps.course_home_api.dates.serializers import DateSummarySerializer
@@ -938,23 +938,6 @@ def find_block_parents(version, block_id):
             break
     return unit_name, unit_id, children
 
-def _get_problem_versions(course_key):
-    split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
-    active_version_collection = split_modulestore.db_connection.course_index
-    structure_collection = split_modulestore.db_connection.structures
-    course_definition = active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run})
-    published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
-    
-    problem_versions = {}
-    child_blocks = []
-    for version in published_version["blocks"]:
-        if version["block_type"] != "problem" or version["block_id"] in child_blocks:
-            continue
-        parent_unit_name, parent_unit_id, children = find_block_parents(published_version, version["block_id"])
-        child_blocks.append(",".join(children))
-        problem_versions.update({parent_unit_name : {"parent_unit_name" : parent_unit_name, "parent_unit_id" : parent_unit_id, "children" : children}})
-    
-    return problem_versions
 
 def get_assessments_for_courses(request):
     user = User.objects.get(email = request.user.email)
@@ -970,12 +953,12 @@ def get_assessments_for_courses(request):
 
         if CourseEnrollment.is_enrolled(request.user, course_key):
             blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
+            log.info(get_course(course_key, 3))
             new_blocks = [block for block in blocks if not isinstance(block, TodaysDate)]
             response_data["courses"].append({
                 'name':user_course["course_details"]["course_name"],
                 "course_key" : course_key,
-                'date_blocks': blocks,
-                "problem_blocks" : _get_problem_versions(course_key)
+                'date_blocks': blocks
             })
         
     # User locale settings
