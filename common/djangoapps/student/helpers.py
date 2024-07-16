@@ -975,7 +975,7 @@ def get_assessments_for_courses(request):
                         if category == "openassessment":
                             due_date = block_data.get_xblock_field(component, 'submission_due')
                             start_date = block_data.get_xblock_field(component, 'submission_start')
-                            temp = {"title" : title, "start_date" : start_date, "date" : due_date}
+                            temp = {"title" : title, "start_date" : start_date, "date" : due_date, "link" : "-"}
                             try:
                                 student_module_info = StudentModule.objects.get(student_id = user.id, module_state_key = get_first_component_of_block(unit, block_data))
                                 if "submission_uuid" in student_module_info.state:
