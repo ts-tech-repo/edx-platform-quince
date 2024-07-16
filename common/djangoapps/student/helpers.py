@@ -977,6 +977,7 @@ def get_assessments_for_courses(request):
                         start_date = block_data.get_xblock_field(component, 'submission_start')
                         temp = {"course_name" : user_course["course_details"]["course_name"], "title" : title, "start_date" : start_date, "date" : due_date, "link" : "-"}
                         block_id = get_first_component_of_block(unit, block_data)
+                        log.info(block_id)
                         try:
                             student_module_info = StudentModule.objects.get(student_id = user.id, module_state_key = block_id)
                             if "submission_uuid" in student_module_info.state:
