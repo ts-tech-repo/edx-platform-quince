@@ -10,6 +10,8 @@ import urllib.parse
 from collections import OrderedDict
 from datetime import datetime
 
+import pytz
+
 from completion.exceptions import UnavailableCompletionData
 from completion.utilities import get_key_to_last_completed_block
 from django.conf import settings
@@ -35,6 +37,7 @@ from common.djangoapps.student.models import (
     username_exists_or_retired
 )
 from common.djangoapps.util.password_policy_validators import normalize_password
+from lms.djangoapps.ccx.utils import parse_date
 from lms.djangoapps.certificates.api import (
     certificates_viewable_for_course,
     has_self_generated_certificates_enabled,
@@ -966,9 +969,8 @@ def get_assessments_for_courses(request):
         block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
         for section_key in block_data.get_children(course_usage_key):  
             for subsection_key in block_data.get_children(section_key):
-                    start = block_data.get_xblock_field(subsection_key, 'start')
+                    start = parse_date(block_data.get_xblock_field(subsection_key, 'start')).replace(tzinfo=pytz.UTC)
                     due = block_data.get_xblock_field(subsection_key, 'due')
-                    log.info(type(start))
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
                         grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
