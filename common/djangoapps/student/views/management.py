@@ -1363,6 +1363,7 @@ def _get_active_inactive_courses(user):
 @login_required
 def user_assessments_tracker_link(request):
     data = get_assessments_for_courses(request)
+    log.info(data)
     output_dict = json.loads(json.dumps(data))
     return render(request, 'user_assessment_tracker_link.html', {'data': output_dict, 'program_image_url': configuration_helpers.get_value("MKTG_URLS", True)["HEADER_LOGO"]})
 
