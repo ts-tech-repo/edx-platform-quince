@@ -1008,7 +1008,7 @@ def get_assessments_for_courses(request):
                             elif student_module_info:
                                 temp["submission_status"] = "Submitted"
 
-                            grade += student_module_info.grade
+                            grade += (student_module_info.grade if student_module_info else 0)
                     
                     temp["is_graded"] = grade
                     grade = 0
