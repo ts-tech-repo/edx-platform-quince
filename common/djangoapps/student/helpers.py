@@ -974,9 +974,7 @@ def get_assessments_for_courses(request):
                         temp["is_graded"] = grades.earned_all
                     except Exception as DoesNotExistError:
                         temp["is_graded"] = "-"
-                    
-                    
-
+                  
                     units = block_data.get_children(subsection_key)
                     while units:
                         unit = units.pop()
@@ -985,11 +983,11 @@ def get_assessments_for_courses(request):
                         for component in components:
                             block_id = get_first_component_of_block(unit, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
+                            log.info(student_module_info)
                             if not student_module_info:
                                 temp["submission_status"] = "Not Submitted"
                             else:
                                 temp["submission_status"] = "Submitted"
-                    grade = 0
                     all_blocks_data.append(temp)
                             
 
