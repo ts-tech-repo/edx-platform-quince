@@ -94,8 +94,8 @@ h1{font-size: 20px;margin-bottom: 20px;}
                     <a href="{{ item.link }}">{{ item.title }}</a>
                     {% endif %}
                 </td>
-                <td>{{ item.start_date | localtime }}</td>
-                <td>{{ item.date | localtime }}</td>
+		<td>{{item.start_date}}</td>
+                <td>{{ item.date }}</td>
                 <td>{{item.submission_status}}</td>
                 <td>{{ item.is_graded }}</td>
             </tr>
@@ -113,17 +113,10 @@ h1{font-size: 20px;margin-bottom: 20px;}
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.jqueryui.min.js"></script>
 <script src="https://cdn.datatables.net/scroller/2.2.0/js/dataTables.scroller.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.11/moment-timezone-with-data-2010-2020.min.js"></script>
+
 <script>
         $(document).ready(function() {
-
-$.fn.dataTable.ext.type.order['moment-date-pre'] = function(data) {
-    if (data === '-') {
-        return ('1000-01-01T00:00:00');
-    } else {
-        return moment(data, 'MMM DD, YYYY h:mm A').format('YYYY-MM-DDTHH:mm:ss');
-    }
-};
-
 // Uncommented custom search functionality
 $.fn.dataTable.ext.search.push(function(settings, searchData, index, rowData, counter) {
     var searchValue = settings.oPreviousSearch.sSearch.toLowerCase();
@@ -167,7 +160,6 @@ var table = new DataTable('#example', {
     }],
     order: [[3, 'desc']]
 });
-
 // Search functionality on keyup
 $('#example_filter input').on('keyup', function() {
     table.search(this.value).draw();
@@ -187,6 +179,30 @@ var maxCharacters = 28;
             var wrappedText = words.join(' ');
             $(this).html(wrappedText);
         });
+get_user_timezone = {{data.user_timezone | safe }}
+user_set_zone = get_user_timezone["user_timezone"]
+$('table td:nth-child(3)').each(function () {
+            var text = $(this).text();
+	//console.log(moment.utc(text, 'MMM. D, YYYY [at] h:mm A z').local().format('YYYY-MM-DD HH:mm:ss'))
+		utcCutoff  = moment.utc(text, 'MMM. D, YYYY [at] h:mm A z');
+		if (user_set_zone != "") {
+			$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm"))
+		}else {
+			$(this).text(moment.utc(text, 'MMM. D, YYYY [at] h:mm A z').local().format('YYYY-MM-DD HH:mm'))
+		}
+});
+$('table td:nth-child(4)').each(function () {
+            var text = $(this).text();
+		if(text != "None") {
+			utcCutoff  = moment.utc(text, 'MMM. D, YYYY [at] h:mm A z');
+			if (user_set_zone != "") {
+				$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm"))
+			}else {
+				$(this).text(moment.utc(text, 'MMM. D, YYYY [at] h:mm A z').local().format('YYYY-MM-DD HH:mm'))
+			}
+		}
+});
+
 </script>
 </body>
 </html>
