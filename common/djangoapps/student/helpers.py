@@ -988,7 +988,7 @@ def get_assessments_for_courses(request):
                                 if not student_module_info:
                                     temp["submission_status"] = "Not Submitted"
                             
-                            elif student_module_info:
+                            if student_module_info:
                                 temp["submission_status"] = "Submitted"
                             
                             
