@@ -953,7 +953,6 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
                     log.info("In If")
                 else:
                     handler_instance = instance
-                    log.info("In Else")
                 resp = handler_instance.handle(handler, req, suffix)
                 if suffix == 'problem_check' \
                         and course \
