@@ -962,6 +962,8 @@ def get_assessments_for_courses(request):
                     log.info(subsection_key)
                     start = block_data.get_xblock_field(subsection_key, 'submission_start')
                     due = block_data.get_xblock_field(subsection_key, 'submission_due')
+                    log.info(start)
+                    log.info(due)
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
                         grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
@@ -974,6 +976,7 @@ def get_assessments_for_courses(request):
                   
                     units = block_data.get_children(subsection_key)
                     if not units:
+                        temp = {}
                         continue
                     while units:
                         unit = units.pop()
