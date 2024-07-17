@@ -997,9 +997,9 @@ def get_assessments_for_courses(request):
                                     submission_id = StudentItem.objects.get(**student_item)
                                     sga_submissions = Submission.objects.filter(student_item=submission_id).first()
                                     log.info(sga_submissions.answer.get("finalized"))
-                                    if sga_submissions.answer.finalized:
+                                    if sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "Submitted"
-                                    elif not sga_submissions.answer.finalized:
+                                    elif not sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "In Progress"
                                 except Exception as err:
                                     temp["submission_status"] = "Not Submitted"
