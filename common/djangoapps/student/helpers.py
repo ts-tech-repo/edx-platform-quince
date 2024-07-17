@@ -82,7 +82,7 @@ from lms.djangoapps.courseware.courses import get_course_date_blocks
 from lms.djangoapps.courseware.masquerade import setup_masquerade
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
-from submissions.models import StudentItem
+from submissions.models import StudentItem, Submission
 
 # Enumeration of per-course verification statuses
 # we display on the student dashboard.
@@ -994,7 +994,8 @@ def get_assessments_for_courses(request):
                             log.info(student_item)
                             try:
                                 submission_id = StudentItem.objects.get(**student_item)
-                                log.info(submission_id)
+                                sga_submissions = Submission.objects.filter(student_item=submission_id)
+                                log.info(sga_submissions)
                             except Exception as err:
                                 log.info("Error")
 
