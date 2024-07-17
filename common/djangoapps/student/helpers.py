@@ -989,13 +989,14 @@ def get_assessments_for_courses(request):
                         for component in components:
                             category = block_data.get_xblock_field(component, 'category')
                             block_id = get_first_component_of_block(component, block_data)
-                            # if category == "edx_sga":
-                                # submission_id = store.get_item(component).student_submission_id(anonymous_id_for_user(request.user, course_key_string))
-
-                                # log.info(submission_id)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
-                            for module_info in student_module_info:
-                                log.info(json.loads(module_info.state).get("uploaded_sha1"))
+                            for student_module in student_module_info:
+                                block_id = student_module.module_state_key
+                                block = store.get_item(block_id)
+                                submission_id = block.student_submission_id(
+                                    anonymous_id_for_user(request.user, course_key_string)
+                                )
+
                             if not temp.get("submission_status", None):
                                 if not student_module_info:
                                     temp["submission_status"] = "Not Submitted"
