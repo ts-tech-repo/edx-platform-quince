@@ -988,7 +988,7 @@ def get_assessments_for_courses(request):
                     
                         components = block_data.get_children(unit)
                         for component in components:
-                            log.info(handle_xblock_callback(request, "course-v1:QUINCE+EE951-Q1+2025", "block-v1:QUINCE+EE951-Q1+2025+type@edx_sga+block@cda96a8630234195bed48e6289f07ecb", "get_staff_grading_data").text)
+                            log.info(handle_xblock_callback(request, "course-v1:QUINCE+EE951-Q1+2025", "block-v1:QUINCE+EE951-Q1+2025+type@edx_sga+block@cda96a8630234195bed48e6289f07ecb", "get_staff_grading_data").read())
                             block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if not temp.get("submission_status", None):
