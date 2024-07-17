@@ -960,8 +960,8 @@ def get_assessments_for_courses(request):
         for section_key in block_data.get_children(course_usage_key):  
             for subsection_key in block_data.get_children(section_key):
                     log.info(subsection_key)
-                    start = block_data.get_xblock_field(subsection_key, 'submission_start')
-                    due = block_data.get_xblock_field(subsection_key, 'submission_due')
+                    start = block_data.get_xblock_field(subsection_key, 'start')
+                    due = block_data.get_xblock_field(subsection_key, 'due')
                     log.info(start)
                     log.info(due)
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
