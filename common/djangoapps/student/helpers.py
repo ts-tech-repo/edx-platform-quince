@@ -82,7 +82,7 @@ from lms.djangoapps.courseware.courses import get_course_date_blocks
 from lms.djangoapps.courseware.masquerade import setup_masquerade
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
-from xblock.django.request import django_to_webob_request, webob_to_django_response
+from submissions.models import StudentItem
 
 # Enumeration of per-course verification statuses
 # we display on the student dashboard.
@@ -993,7 +993,7 @@ def get_assessments_for_courses(request):
                             for student_module in student_module_info:
                                 block_id = student_module.module_state_key
                                 block = store.get_item(block_id)
-                                submission_id = block.student_submission_id(
+                                submission_id = StudentItem.objects.get(
                                     anonymous_id_for_user(request.user, course_key_string)
                                 )
 
