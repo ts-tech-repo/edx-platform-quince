@@ -977,8 +977,9 @@ def get_assessments_for_courses(request):
                     
                         components = block_data.get_children(unit)
                         for component in components:
+                            if category not in ["edx_sga", "openassessment", "problem"]:
+                                continue
                             category = block_data.get_xblock_field(component, 'category')
-                            log.info(category)
                             block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if category in ["edx_sga", "openassessment"]:
