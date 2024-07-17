@@ -990,15 +990,13 @@ def get_assessments_for_courses(request):
                             category = block_data.get_xblock_field(component, 'category')
                             block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
-                            for student_module in student_module_info:
-                                block_id = student_module.module_state_key
-                                block = store.get_item(block_id)
-                                student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : component, "item_type" : category}
-                                try:
-                                    submission_id = StudentItem.objects.get(**student_item)
-                                    log.info(submission_id)
-                                except Exception as err:
-                                    log.info("Error")
+                            student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : component, "item_type" : category}
+                            log.info(student_item)
+                            try:
+                                submission_id = StudentItem.objects.get(**student_item)
+                                log.info(submission_id)
+                            except Exception as err:
+                                log.info("Error")
 
                             if not temp.get("submission_status", None):
                                 if not student_module_info:
