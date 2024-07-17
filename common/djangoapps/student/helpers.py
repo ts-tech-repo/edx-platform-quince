@@ -993,9 +993,8 @@ def get_assessments_for_courses(request):
                             for student_module in student_module_info:
                                 block_id = student_module.module_state_key
                                 block = store.get_item(block_id)
-                                submission_id = StudentItem.objects.get(
-                                    anonymous_id_for_user(request.user, course_key_string)
-                                )
+                                student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : component, "item_type" : category}
+                                submission_id = StudentItem.objects.get(**student_item)
 
                             if not temp.get("submission_status", None):
                                 if not student_module_info:
