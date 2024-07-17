@@ -990,8 +990,7 @@ def get_assessments_for_courses(request):
                         for component in components:
                             category = block_data.get_xblock_field(component, 'category')
                             block_id = get_first_component_of_block(component, block_data)
-                            if category == "edx-sga":
-                                log.info(get_block_by_usage_id(request, course_key_string, block_id))
+                            log.info(get_block_by_usage_id(request, course_key_string, block_id))
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if not temp.get("submission_status", None):
                                 if not student_module_info:
