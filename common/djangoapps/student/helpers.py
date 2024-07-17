@@ -989,7 +989,7 @@ def get_assessments_for_courses(request):
                         for component in components:
                             category = block_data.get_xblock_field(component, 'category')
                             block_id = get_first_component_of_block(component, block_data)
-                            if category == "edx_sga":
+                            # if category == "edx_sga":
                                 # submission_id = store.get_item(component).student_submission_id(anonymous_id_for_user(request.user, course_key_string))
 
                                 # log.info(submission_id)
