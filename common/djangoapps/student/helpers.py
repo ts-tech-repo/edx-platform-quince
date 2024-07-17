@@ -54,7 +54,7 @@ from lms.djangoapps.grades.models import PersistentSubsectionGrade
 from lms.djangoapps.grades.models_api import get_subsection_grade
 from lms.djangoapps.grades.subsection_grade import ReadSubsectionGrade
 from lms.djangoapps.instructor import access
-from lms.djangoapps.ora_staff_grader.ora_api import get_submissions
+from lms.djangoapps.ora_staff_grader.ora_api import get_submission_info, get_submissions
 from lms.djangoapps.ora_staff_grader.views import SubmissionFetchView
 from lms.djangoapps.verify_student.models import VerificationDeadline
 from lms.djangoapps.verify_student.services import IDVerificationService
@@ -987,6 +987,7 @@ def get_assessments_for_courses(request):
                     
                         components = block_data.get_children(unit)
                         for component in components:
+                            log.info(get_submission_info(request, unit, "e2a4229d63cb48f8ab41001360fba96f"))
                             block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if not temp.get("submission_status", None):
