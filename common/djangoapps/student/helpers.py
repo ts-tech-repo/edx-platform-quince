@@ -961,7 +961,7 @@ def get_assessments_for_courses(request):
         is_staff = bool(has_access(request.user, 'staff', course_key))
         course = get_course_or_403(request.user, 'load', course_key, check_if_enrolled=False)
 
-        _, request.user = setup_masquerade(request, course_key, staff_access=is_staff, reset_masquerade_data=True)
+        # _, request.user = setup_masquerade(request, course_key, staff_access=is_staff, reset_masquerade_data=True)
 
         
         store = modulestore()
