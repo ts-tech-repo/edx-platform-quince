@@ -950,8 +950,10 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
                     # the actual aside instance needs to be retrieved in order to invoke its
                     # handler method.
                     handler_instance = get_aside_from_xblock(instance, usage_key.aside_type)
+                    log.info("In If")
                 else:
                     handler_instance = instance
+                    log.info("In Else")
                 resp = handler_instance.handle(handler, req, suffix)
                 if suffix == 'problem_check' \
                         and course \
