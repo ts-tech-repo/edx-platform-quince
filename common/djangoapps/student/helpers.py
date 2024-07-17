@@ -994,7 +994,7 @@ def get_assessments_for_courses(request):
                             log.info(student_item)
                             try:
                                 submission_id = StudentItem.objects.get(**student_item)
-                                sga_submissions = Submission.objects.filter(student_item=submission_id)
+                                sga_submissions = Submission.objects.filter(student_item=submission_id).first()
                                 log.info(sga_submissions.answer)
                             except Exception as err:
                                 log.info("Error")
