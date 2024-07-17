@@ -1376,6 +1376,8 @@ def extras_start_mettl_test(request):
    #PRIVATEKEY = "beedfbbe-b1a8-47c7-aaa8-f11843d29393"
    PUBLICKEY = configuration_helpers.get_value("METTL_PUBLIC_KEY", "3c57d2f3-dd6c-4c10-9407-2f56a0b7ec1f")
    PRIVATEKEY = configuration_helpers.get_value("METTL_PRIVATE_KEY", "bc9dac7c-04e5-4602-af62-ccc4894dc864")
+   log.info(PUBLICKEY)
+   log.info(PRIVATEKEY)
    registration_details = json.dumps({"registrationDetails":[{"Email Address" : request.user.email, "First Name" : request.user.username}]})
    timestamp = str(int(time.time()))
    message = HTTPVerb + URL + '\n' + PUBLICKEY + '\n' + registration_details + '\n' + timestamp
