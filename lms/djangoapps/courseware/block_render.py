@@ -753,6 +753,9 @@ def handle_xblock_callback(request, course_id, usage_id, handler, suffix=None):
         HttpResponseForbidden: If the request method is not `GET` and user is not authenticated.
         Http404: If the course is not found in the modulestore.
     """
+    log.info(course_id)
+    log.info(usage_id)
+    log.info(handler)
     # In this case, we are using Session based authentication, so we need to check CSRF token.
     if request.user.is_authenticated:
         error = CsrfViewMiddleware(get_response=lambda request: None).process_view(request, None, (), {})
