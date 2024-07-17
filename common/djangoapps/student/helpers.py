@@ -48,7 +48,7 @@ from lms.djangoapps.certificates.api import (
 )
 from lms.djangoapps.certificates.data import CertificateStatuses
 from lms.djangoapps.course_blocks.api import get_course_blocks
-from lms.djangoapps.courseware.block_render import get_block_for_descriptor, handle_xblock_callback
+from lms.djangoapps.courseware.block_render import get_block_by_usage_id, get_block_for_descriptor, handle_xblock_callback
 from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.api import CourseGradeFactory
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
@@ -990,11 +990,7 @@ def get_assessments_for_courses(request):
                             category = block_data.get_xblock_field(component, 'category')
                             block_id = get_first_component_of_block(component, block_data)
                             if category == "edx_sga":
-                                course = store.get_course(course_key)
-                                course_block = get_block_for_descriptor(
-                                    user, request, course, None, course.id, course=course
-                                )
-                                log.info(course_block.handle("get_staff_grading_data", django_to_webob_request(request), None))
+                                log.info(get_block_by_usage_id(request, course_key_string, block_id))
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if not temp.get("submission_status", None):
                                 if not student_module_info:
