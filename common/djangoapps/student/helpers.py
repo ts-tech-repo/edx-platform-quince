@@ -979,6 +979,7 @@ def get_assessments_for_courses(request):
                         for component in components:
                             category = block_data.get_xblock_field(component, 'category')
                             if category not in ["edx_sga", "openassessment", "problem"]:
+                                temp = {}
                                 continue
                             
                             block_id = get_first_component_of_block(component, block_data)
