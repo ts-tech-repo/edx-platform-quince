@@ -79,6 +79,7 @@ from lms.djangoapps.courseware.courses import get_course_date_blocks
 from lms.djangoapps.courseware.masquerade import setup_masquerade
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
+from opaque_keys.edx.keys import UsageKey
 
 
 # Enumeration of per-course verification statuses
@@ -964,7 +965,6 @@ def get_assessments_for_courses(request):
         store = modulestore()
         course_usage_key = store.make_course_usage_key(course_key)
         block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
-        log.info(anonymous_id_for_user(user, course_key))
         for section_key in block_data.get_children(course_usage_key):  
             for subsection_key in block_data.get_children(section_key):
                     start = block_data.get_xblock_field(subsection_key, 'start')
@@ -985,6 +985,7 @@ def get_assessments_for_courses(request):
                     
                         components = block_data.get_children(unit)
                         for component in components:
+                            log.info(UsageKey.from_string(component))
                             block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if not temp.get("submission_status", None):
