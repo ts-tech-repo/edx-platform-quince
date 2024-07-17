@@ -990,21 +990,27 @@ def get_assessments_for_courses(request):
                             category = block_data.get_xblock_field(component, 'category')
                             block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
-                            student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga"}
-                            log.info(student_item)
-                            try:
-                                submission_id = StudentItem.objects.get(**student_item)
-                                sga_submissions = Submission.objects.filter(student_item=submission_id).first()
-                                log.info(sga_submissions.answer)
-                            except Exception as err:
-                                log.info("Error")
-
-                            if not temp.get("submission_status", None):
-                                if not student_module_info:
+                            if category in ["edx_sga", "openassessment"]:
+                                student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
+                                log.info(student_item)
+                                try:
+                                    submission_id = StudentItem.objects.get(**student_item)
+                                    sga_submissions = Submission.objects.filter(student_item=submission_id).first()
+                                    if sga_submissions.answer.finalized:
+                                        temp["submission_status"] = "Submitted"
+                                    elif not sga_submissions.answer.finalized:
+                                        temp["submission_status"] = "In Progress"
+                                except Exception as err:
                                     temp["submission_status"] = "Not Submitted"
                             
-                            if student_module_info:
-                                temp["submission_status"] = "Submitted"
+                            else:
+
+                                if not temp.get("submission_status", None):
+                                    if not student_module_info:
+                                        temp["submission_status"] = "Not Submitted"
+                                
+                                if student_module_info:
+                                    temp["submission_status"] = "Submitted"
                     all_blocks_data.append(temp)
         
                         
