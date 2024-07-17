@@ -990,7 +990,7 @@ def get_assessments_for_courses(request):
                             category = block_data.get_xblock_field(component, 'category')
                             block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
-                            student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : component, "item_type" : category}
+                            student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : category}
                             log.info(student_item)
                             try:
                                 submission_id = StudentItem.objects.get(**student_item)
