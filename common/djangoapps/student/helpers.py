@@ -48,6 +48,7 @@ from lms.djangoapps.certificates.api import (
 )
 from lms.djangoapps.certificates.data import CertificateStatuses
 from lms.djangoapps.course_blocks.api import get_course_blocks
+from lms.djangoapps.courseware.block_render import handle_xblock_callback
 from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.api import CourseGradeFactory
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
@@ -987,6 +988,7 @@ def get_assessments_for_courses(request):
                     
                         components = block_data.get_children(unit)
                         for component in components:
+                            log.info(handle_xblock_callback(course_key_string, component, "get_staff_grading_data"))
                             block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if not temp.get("submission_status", None):
