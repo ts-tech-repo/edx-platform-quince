@@ -978,8 +978,8 @@ def get_assessments_for_courses(request):
                         components = block_data.get_children(unit)
                         for component in components:
                             category = block_data.get_xblock_field(component, 'category')
-                            log.info(category)
                             if category not in ["edx_sga", "openassessment", "problem"]:
+                                temp = {}
                                 continue
                             
                             block_id = get_first_component_of_block(component, block_data)
@@ -1004,7 +1004,8 @@ def get_assessments_for_courses(request):
                                 
                                 if student_module_info:
                                     temp["submission_status"] = "Submitted"
-                    all_blocks_data.append(temp)
+                    if temp:
+                        all_blocks_data.append(temp)
         
                         
                         
