@@ -991,9 +991,9 @@ def get_assessments_for_courses(request):
                             category = block_data.get_xblock_field(component, 'category')
                             block_id = get_first_component_of_block(component, block_data)
                             if category == "edx_sga":
-                                course = store.get_course(course_key_string)
+                                course = store.get_course(course_key.id)
                                 course_block = get_block_for_descriptor(
-                                    user, request, user_course, None, user_course.id, course=user_course
+                                    user, request, course, None, course.id, course=course
                                 )
                                 log.info(course_block)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
