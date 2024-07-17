@@ -994,6 +994,7 @@ def get_assessments_for_courses(request):
 
                                 log.info(submission_id)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
+                            log.info(json.loads(student_module_info.state).get("uploaded_sha1"))
                             if not temp.get("submission_status", None):
                                 if not student_module_info:
                                     temp["submission_status"] = "Not Submitted"
