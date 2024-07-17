@@ -972,6 +972,8 @@ def get_assessments_for_courses(request):
                         temp["is_graded"] = "Not Graded"
                   
                     units = block_data.get_children(subsection_key)
+                    if not units:
+                        continue
                     while units:
                         unit = units.pop()
                     
