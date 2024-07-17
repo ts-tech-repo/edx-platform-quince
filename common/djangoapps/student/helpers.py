@@ -994,7 +994,7 @@ def get_assessments_for_courses(request):
                                 course_block = get_block_for_descriptor(
                                     user, request, course, None, course.id, course=course
                                 )
-                                log.info(course_block.handle("enter_grade", django_to_webob_request(request), None))
+                                log.info(course_block.handle("get_staff_grading_data", django_to_webob_request(request), None))
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if not temp.get("submission_status", None):
                                 if not student_module_info:
