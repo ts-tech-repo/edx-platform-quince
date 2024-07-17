@@ -940,16 +940,6 @@ def get_course_dates_for_email(user, course_id, request):
     course_date_list = list(map(_remove_date_key_from_course_dates, course_date_list))
     return course_date_list
 
-def find_block_parents(version, block_id):
-
-    for block in version["blocks"]:
-        children = [i[-1] for i in block["fields"]["children"]]
-        if block["block_type"] == "vertical" and block_id in children:
-            unit_name = block["fields"]["display_name"]
-            unit_id = block["block_id"]
-            break
-    return unit_name, unit_id, children
-
 
 def get_assessments_for_courses(request):
     user = User.objects.get(email = request.user.email)
@@ -988,6 +978,7 @@ def get_assessments_for_courses(request):
                         components = block_data.get_children(unit)
                         for component in components:
                             category = block_data.get_xblock_field(component, 'category')
+                            log.info(category)
                             block_id = get_first_component_of_block(component, block_data)
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if category in ["edx_sga", "openassessment"]:
@@ -996,7 +987,6 @@ def get_assessments_for_courses(request):
                                 try:
                                     submission_id = StudentItem.objects.get(**student_item)
                                     sga_submissions = Submission.objects.filter(student_item=submission_id).first()
-                                    log.info(sga_submissions.answer.get("finalized"))
                                     if sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "Submitted"
                                     elif not sga_submissions.answer.get("finalized"):
