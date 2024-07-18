@@ -1017,10 +1017,10 @@ def get_assessments_for_courses(request):
         
                         
                         
-    filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x.get('start_date', None), sortNone = None)
+    # filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x.get('start_date', None))
     user_local_timezone = user_timezone_locale_prefs(request)
 
     return {
-        'date_blocks': filtered_sorted_date_blocks,
+        'date_blocks': all_blocks_data,
         "user_timezone" : user_local_timezone if user_local_timezone["user_timezone"] is not None else {"user_timezone" : ""}
     }
