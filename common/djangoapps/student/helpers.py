@@ -961,6 +961,7 @@ def get_assessments_for_courses(request):
             for subsection_key in block_data.get_children(section_key):
                     start = block_data.get_xblock_field(subsection_key, 'start')
                     due = block_data.get_xblock_field(subsection_key, 'due')
+                    log.info(start)
                     ignoreUnit = False
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
