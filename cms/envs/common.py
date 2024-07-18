@@ -1911,7 +1911,7 @@ MAX_FAILED_LOGIN_ATTEMPTS_LOCKOUT_PERIOD_SECS = 30 * 60
 # that this app should be inserted *before*. A None here means it should be appended to the list.
 OPTIONAL_APPS = (
     ('problem_builder', 'openedx.core.djangoapps.content.course_overviews.apps.CourseOverviewsConfig'),
-    ('edx_sga', 'freetextresponse' None),
+    ('edx_sga', 'freetextresponse', None),
 
     # edx-ora2
     ('submissions', 'openedx.core.djangoapps.content.course_overviews.apps.CourseOverviewsConfig'),
