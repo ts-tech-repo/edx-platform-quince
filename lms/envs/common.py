@@ -3304,7 +3304,8 @@ INSTALLED_APPS = [
     'lms.djangoapps.mfe_config_api',
 
     # Notifications
-    'openedx.core.djangoapps.notifications'
+    'openedx.core.djangoapps.notifications',
+    'freetextresponse'
 
 ]
 
