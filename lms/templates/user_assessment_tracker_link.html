@@ -7,6 +7,7 @@
 <link href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.jqueryui.min.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.jqueryui.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="https://static.talentsprint.com/favicon.ico" type="image/x-icon" >
 <style>
 table.dataTable>thead>tr>th{background-color:#0075bb;color: white;}
 h1{text-align: center;margin-top: 20px;font-size: 30px;font-weight: 700;margin-bottom: 50px;}
@@ -94,8 +95,9 @@ h1{font-size: 20px;margin-bottom: 20px;}
                     <a href="{{ item.link }}" target = "_blank">{{ item.title }}</a>
                     {% endif %}
                 </td>
-		<td>{{item.start_date}}</td>
-                <td>{{ item.date }}</td>
+
+		<td>{{item.start_date|date:'Y-m-d H:i'}}</td>
+                <td>{{ item.date|date:'Y-m-d H:i' }}</td>
                 <td>{{item.submission_status}}</td>
                 <td>{{ item.is_graded }}</td>
             </tr>
@@ -154,10 +156,6 @@ var table = new DataTable('#example', {
         search: "",
         searchPlaceholder: "Search..."
     },
-    columnDefs: [{
-        targets: 3,
-        type: 'moment-date',
-    }],
     order: [[3, 'desc']]
 });
 // Search functionality on keyup
@@ -184,22 +182,27 @@ user_set_zone = get_user_timezone["user_timezone"]
 $('table td:nth-child(3)').each(function () {
             var text = $(this).text();
 	//console.log(moment.utc(text, 'MMM. D, YYYY [at] h:mm A z').local().format('YYYY-MM-DD HH:mm:ss'))
-		utcCutoff  = moment.utc(text, 'MMM. D, YYYY [at] h:mm A z');
+		utcCutoff  = moment.utc(text, 'YYYY-MM-DD HH:mm');
+		console.log(utcCutoff.format("YYYY-MM-DD HH:mm"))
 		if (user_set_zone != "") {
 			$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm"))
 		}else {
+			console.log(moment.utc(text, 'MMM. D, YYYY [at] h:mm A z').local().toDate())
 			$(this).text(moment.utc(text, 'MMM. D, YYYY [at] h:mm A z').local().format('YYYY-MM-DD HH:mm'))
 		}
 });
 $('table td:nth-child(4)').each(function () {
             var text = $(this).text();
-		if(text != "None") {
-			utcCutoff  = moment.utc(text, 'MMM. D, YYYY [at] h:mm A z');
+		if(text != "") {
+			utcCutoff  = moment.utc(text, 'YYYY-MM-DD HH:mm');
 			if (user_set_zone != "") {
 				$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm"))
 			}else {
 				$(this).text(moment.utc(text, 'MMM. D, YYYY [at] h:mm A z').local().format('YYYY-MM-DD HH:mm'))
 			}
+		}
+		else {
+			$(this).text("None");
 		}
 });
 
