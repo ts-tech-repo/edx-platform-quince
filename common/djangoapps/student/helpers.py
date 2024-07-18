@@ -959,10 +959,8 @@ def get_assessments_for_courses(request):
         block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
         for section_key in block_data.get_children(course_usage_key):  
             for subsection_key in block_data.get_children(section_key):
-                    log.info(subsection_key)
                     start = block_data.get_xblock_field(subsection_key, 'start')
                     due = block_data.get_xblock_field(subsection_key, 'due')
-                    log.info(start)
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
                         grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
@@ -991,7 +989,6 @@ def get_assessments_for_courses(request):
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
                             if category in ["edx_sga", "openassessment"]:
                                 student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
-                                log.info(student_item)
                                 try:
                                     submission_id = StudentItem.objects.get(**student_item)
                                     sga_submissions = Submission.objects.filter(student_item=submission_id).first()
@@ -1015,8 +1012,8 @@ def get_assessments_for_courses(request):
                         all_blocks_data.append(temp)
         
                         
-                        
-    filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
+    log.info(all_blocks_data)                 
+    # filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
     user_local_timezone = user_timezone_locale_prefs(request)
 
     return {
