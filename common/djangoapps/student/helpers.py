@@ -961,6 +961,7 @@ def get_assessments_for_courses(request):
             for subsection_key in block_data.get_children(section_key):
                     start = block_data.get_xblock_field(subsection_key, 'start')
                     due = block_data.get_xblock_field(subsection_key, 'due')
+                    ignoreUnit = False
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
                         grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
@@ -973,7 +974,7 @@ def get_assessments_for_courses(request):
                   
                     units = block_data.get_children(subsection_key)
                     if not units:
-                        temp = {}
+                        ignoreUnit = True
                         continue
                     while units:
                         unit = units.pop()
@@ -982,7 +983,7 @@ def get_assessments_for_courses(request):
                         for component in components:
                             category = block_data.get_xblock_field(component, 'category')
                             if category not in ["edx_sga", "openassessment", "problem"]:
-                                temp = {}
+                                ignoreUnit = True
                                 continue
                             
                             block_id = get_first_component_of_block(component, block_data)
@@ -1008,7 +1009,7 @@ def get_assessments_for_courses(request):
                                 
                                 if student_module_info:
                                     temp["submission_status"] = "Submitted"
-                    if temp:
+                    if not ignoreUnit:
                         all_blocks_data.append(temp)
         
                         
