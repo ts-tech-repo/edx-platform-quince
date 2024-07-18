@@ -53,6 +53,7 @@
             'video/08_video_speed_control.js',
             'video/08_video_auto_advance_control.js',
             'video/09_video_caption.js',
+            'video/custom_app.js',
             'video/09_play_placeholder.js',
             'video/09_play_pause_control.js',
             'video/09_play_skip_control.js',
