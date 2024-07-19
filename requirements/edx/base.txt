@@ -801,6 +801,7 @@ optimizely-sdk==4.1.1
     # via -r requirements/edx/bundled.in
 #ora2==5.5.5
 git+https://github.com/ts-tech-repo/edx-ora2.git@quince
+git+https://github.com/ts-tech-repo/edx-sga@quince.master
     # via -r requirements/edx/bundled.in
 oscrypto==1.3.0
     # via snowflake-connector-python
