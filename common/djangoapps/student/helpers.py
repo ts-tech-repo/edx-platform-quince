@@ -961,6 +961,7 @@ def get_assessments_for_courses(request):
             for subsection_key in block_data.get_children(section_key):
                     start = block_data.get_xblock_field(subsection_key, 'start')
                     due = block_data.get_xblock_field(subsection_key, 'due')
+                    showNotSubmitted = True if due is not None and datetime.now() > due.replace(tzinfo=None) else  False
                     ignoreUnit = False
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
@@ -997,11 +998,11 @@ def get_assessments_for_courses(request):
                                     elif not sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "In Progress"
                                 except Exception as err:
-                                    temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(tzinfo=None) else "-"
+                                    temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                                     temp["is_graded"] = "-"
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                             if not student_module_info:
-                                temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(tzinfo=None) else "-"
+                                temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
                                 temp["is_graded"] = "-"
                             if student_module_info and category in ["openassessment"]:
 
@@ -1009,6 +1010,9 @@ def get_assessments_for_courses(request):
                                     temp["submission_status"] = "Submitted"
                                 elif student_module_info.state and "has_saved" in student_module_info.state:
                                     temp["submission_status"] = "In Progress"
+                                else:
+                                    temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
+                                    temp["is_graded"] = "-"
 
                             elif category in ["problem"]:
                                 if not temp.get("submission_status", None):
