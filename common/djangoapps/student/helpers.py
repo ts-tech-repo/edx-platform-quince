@@ -999,7 +999,7 @@ def get_assessments_for_courses(request):
                                 except Exception as err:
                                     temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(tzinfo=None) else "-"
                                     temp["is_graded"] = "-"
-                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
+                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                             if not student_module_info:
                                 temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(tzinfo=None) else "-"
                                 temp["is_graded"] = "-"
