@@ -187,8 +187,8 @@ $('table td:nth-child(3)').each(function () {
 		if (user_set_zone != "") {
 			$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm"))
 		}else {
-			console.log(moment.utc(text, 'MMM. D, YYYY [at] h:mm A z').local().toDate())
-			$(this).text(moment.utc(text, 'MMM. D, YYYY [at] h:mm A z').local().format('YYYY-MM-DD HH:mm'))
+			console.log(moment.utc(text, 'YYYY-MM-DD HH:mm').local().toDate())
+			$(this).text(moment.utc(text, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD HH:mm'))
 		}
 });
 $('table td:nth-child(4)').each(function () {
@@ -198,7 +198,7 @@ $('table td:nth-child(4)').each(function () {
 			if (user_set_zone != "") {
 				$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm"))
 			}else {
-				$(this).text(moment.utc(text, 'MMM. D, YYYY [at] h:mm A z').local().format('YYYY-MM-DD HH:mm'))
+				$(this).text(moment.utc(text, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD HH:mm'))
 			}
 		}
 		else {
