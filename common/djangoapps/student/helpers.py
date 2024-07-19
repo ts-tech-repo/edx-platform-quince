@@ -1001,9 +1001,13 @@ def get_assessments_for_courses(request):
                                     temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                                     temp["is_graded"] = "-"
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
-                            if student_module_info and category in ["openassessment"]:
+                            if  category in ["openassessment"]:
 
-                                if "submission_uuid" in student_module_info.state:
+                                if not student_module_info:
+                                    temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
+                                    temp["is_graded"] = "-"
+
+                                elif "submission_uuid" in student_module_info.state:
                                     temp["submission_status"] = "Submitted"
                                 elif student_module_info.state and "has_saved" in student_module_info.state:
                                     temp["submission_status"] = "In Progress"
