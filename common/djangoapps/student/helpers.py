@@ -1003,16 +1003,16 @@ def get_assessments_for_courses(request):
                             if not student_module_info:
                                 temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(tzinfo=None) else "-"
                                 temp["is_graded"] = "-"
-                            if category in ["openassessment"]:
+                            if student_module_info and category in ["openassessment"]:
 
-                                if student_module_info and "submission_uuid" in student_module_info.state:
+                                if "submission_uuid" in student_module_info.state:
                                     temp["submission_status"] = "Submitted"
-                                else:
+                                elif student_module_info.state.has_saved:
                                     temp["submission_status"] = "In Progress"
 
-                            else:
+                            elif category in ["problem"]:
                                 if not temp.get("submission_status", None):
-                                    if student_module_info:
+                                    if student_module_info and student_module_info.state.score:
                                         temp["submission_status"] = "Submitted" 
                     if not ignoreUnit:
                         all_blocks_data.append(temp)
