@@ -962,7 +962,6 @@ def get_assessments_for_courses(request):
                     start = block_data.get_xblock_field(subsection_key, 'start')
                     due = block_data.get_xblock_field(subsection_key, 'due')
                     log.info(type(due))
-                    log.info(due.replace(tzinfo=None))
                     ignoreUnit = False
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
@@ -1000,13 +999,13 @@ def get_assessments_for_courses(request):
                                     elif not sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "In Progress"
                                 except Exception as err:
-                                    temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due else "-"
+                                    temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(pytz=None) else "-"
                                     temp["is_graded"] = "-"
                             
                             else:
                                 if not temp.get("submission_status", None):
                                     if not student_module_info:
-                                        temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due else "-"
+                                        temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(pytz=None) else "-"
                                         temp["is_graded"] = "-"
                                 
                                 if student_module_info:
