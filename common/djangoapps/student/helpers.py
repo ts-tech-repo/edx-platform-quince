@@ -1005,7 +1005,7 @@ def get_assessments_for_courses(request):
                                 temp["is_graded"] = "-"
                             if category in ["openassessment"]:
 
-                                if "submission_uuid" in student_module_info.state:
+                                if student_module_info and "submission_uuid" in student_module_info.state:
                                     temp["submission_status"] = "Submitted"
                                 else:
                                     temp["submission_status"] = "In Progress"
