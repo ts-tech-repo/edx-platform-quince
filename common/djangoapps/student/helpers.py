@@ -1012,7 +1012,8 @@ def get_assessments_for_courses(request):
 
                             elif category in ["problem"]:
                                 if not temp.get("submission_status", None):
-                                    if student_module_info and student_module_info.state.score:
+                                    log.info(student_module_info.state)
+                                    if student_module_info and student_module_info.state:
                                         temp["submission_status"] = "Submitted" 
                     if not ignoreUnit:
                         all_blocks_data.append(temp)
