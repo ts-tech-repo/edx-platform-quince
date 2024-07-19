@@ -1007,7 +1007,7 @@ def get_assessments_for_courses(request):
 
                                 if "submission_uuid" in student_module_info.state:
                                     temp["submission_status"] = "Submitted"
-                                elif student_module_info.state.has_saved:
+                                elif student_module_info.state and "has_saved" in student_module_info.state and student_module_info.state.has_saved:
                                     temp["submission_status"] = "In Progress"
 
                             elif category in ["problem"]:
