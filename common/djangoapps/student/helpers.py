@@ -987,8 +987,7 @@ def get_assessments_for_courses(request):
                                 continue
                             
                             block_id = get_first_component_of_block(component, block_data)
-                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
-                            if category in ["edx_sga", "openassessment"]:
+                            if category in ["edx_sga"]:
                                 student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
                                 try:
                                     submission_id = StudentItem.objects.get(**student_item)
@@ -1000,15 +999,21 @@ def get_assessments_for_courses(request):
                                 except Exception as err:
                                     temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(tzinfo=None) else "-"
                                     temp["is_graded"] = "-"
-                            
+                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id)
+                            if not student_module_info:
+                                temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(tzinfo=None) else "-"
+                                temp["is_graded"] = "-"
+                            if category in ["openassessment"]:
+
+                                if "submission_uuid" in student_module_info.state:
+                                    temp["submission_status"] = "Submitted"
+                                else:
+                                    temp["submission_status"] = "In Progress"
+
                             else:
                                 if not temp.get("submission_status", None):
-                                    if not student_module_info:
-                                        temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(tzinfo=None) else "-"
-                                        temp["is_graded"] = "-"
-                                
-                                if student_module_info:
-                                    temp["submission_status"] = "Submitted" 
+                                    if student_module_info:
+                                        temp["submission_status"] = "Submitted" 
                     if not ignoreUnit:
                         all_blocks_data.append(temp)
         
