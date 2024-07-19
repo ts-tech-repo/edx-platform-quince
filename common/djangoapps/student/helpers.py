@@ -999,13 +999,13 @@ def get_assessments_for_courses(request):
                                     elif not sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "In Progress"
                                 except Exception as err:
-                                    temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(pytz=None) else "-"
+                                    temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(tzinfo=None) else "-"
                                     temp["is_graded"] = "-"
                             
                             else:
                                 if not temp.get("submission_status", None):
                                     if not student_module_info:
-                                        temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(pytz=None) else "-"
+                                        temp["submission_status"] = "Not Submitted" if due is not None and datetime.now() > due.replace(tzinfo=None) else "-"
                                         temp["is_graded"] = "-"
                                 
                                 if student_module_info:
