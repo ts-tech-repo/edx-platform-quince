@@ -515,7 +515,6 @@ def prepare_runtime_for_user(
         see arguments for get_block()
         request_token (str): A token unique to the request use by xblock initialization
     """
-    log.info("Here 4")
     def inner_get_block(block: XBlock) -> XBlock | None:
         """
         Delegate to get_block_for_descriptor() with all values except `block` set.
@@ -574,7 +573,7 @@ def prepare_runtime_for_user(
     block_wrappers.append(partial(display_access_messages, user))
     block_wrappers.append(partial(course_expiration_wrapper, user))
     block_wrappers.append(partial(offer_banner_wrapper, user))
-
+    log.info(block_wrappers)
     user_is_staff = bool(has_access(user, 'staff', course_id))
 
     if settings.FEATURES.get('DISPLAY_DEBUG_INFO_TO_STAFF'):
