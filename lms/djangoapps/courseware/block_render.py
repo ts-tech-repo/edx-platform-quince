@@ -802,7 +802,7 @@ def handle_xblock_callback(request, course_id, usage_id, handler, suffix=None):
             course = modulestore().get_course(course_key)
         except ItemNotFoundError:
             raise Http404(f'{course_id} does not exist in the modulestore')  # lint-amnesty, pylint: disable=raise-missing-from
-
+        log.info("Here 1")
         return _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course=course)
 
 
@@ -897,7 +897,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
         handler (str): The name of the handler to invoke
         suffix (str): The suffix to pass to the handler when invoked
     """
-
+    log.info("Suffix check {0}".format(suffix))
     # Check submitted files
     files = request.FILES or {}
     error_msg = _check_files_limits(files)
