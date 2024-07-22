@@ -636,7 +636,6 @@ def prepare_runtime_for_user(
         'call_to_action': CallToActionService(),
         'publish': EventPublishingService(user, course_id, track_function),
     }
-    log.info(services)
     runtime.get_block_for_descriptor = inner_get_block
 
     runtime.wrappers = block_wrappers
@@ -644,6 +643,7 @@ def prepare_runtime_for_user(
     runtime.request_token = request_token
     runtime.wrap_asides_override = lms_wrappers_aside
     runtime.applicable_aside_types_override = lms_applicable_aside_types
+    log.info(runtime)
 
 
 def load_single_xblock(request, user_id, course_id, usage_key_string, course=None, will_recheck_access=False):
