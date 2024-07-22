@@ -478,6 +478,7 @@ def get_block_for_descriptor(
         if access or caller_will_handle_access_error:
             block.has_access_error = bool(caller_will_handle_access_error)
             block.user_id = user
+            log.info(block)
             return block
         return None
     return block
