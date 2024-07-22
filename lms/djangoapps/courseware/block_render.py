@@ -452,7 +452,6 @@ def get_block_for_descriptor(
             position = None
 
     block.runtime.set('position', position)
-    log.info("Here 4")
     block.bind_for_student(
         user.id,
         [
@@ -481,6 +480,7 @@ def get_block_for_descriptor(
             block.has_access_error = bool(caller_will_handle_access_error)
             return block
         return None
+    log.info(block)
     return block
 
 
