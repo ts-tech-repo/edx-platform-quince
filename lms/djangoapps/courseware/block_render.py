@@ -897,7 +897,6 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
         handler (str): The name of the handler to invoke
         suffix (str): The suffix to pass to the handler when invoked
     """
-    log.info("Suffix check {0}".format(suffix))
     # Check submitted files
     files = request.FILES or {}
     error_msg = _check_files_limits(files)
@@ -933,7 +932,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
         instance, tracking_context = get_block_by_usage_id(
             request, course_id, str(block_usage_key), course=course, will_recheck_access=will_recheck_access,
         )
-
+        log.info("Here 2")
         # Name the transaction so that we can view XBlock handlers separately in
         # New Relic. The suffix is necessary for XBlock handlers because the
         # "handler" in those cases is always just "xmodule_handler".
