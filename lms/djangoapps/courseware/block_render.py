@@ -478,7 +478,6 @@ def get_block_for_descriptor(
         if access or caller_will_handle_access_error:
             block.has_access_error = bool(caller_will_handle_access_error)
             block.user_id = user
-            log.info(block)
             return block
         return None
     return block
@@ -800,7 +799,6 @@ def handle_xblock_callback(request, course_id, usage_id, handler, suffix=None):
             course = modulestore().get_course(course_key)
         except ItemNotFoundError:
             raise Http404(f'{course_id} does not exist in the modulestore')  # lint-amnesty, pylint: disable=raise-missing-from
-        log.info("Here 1")
         return _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course=course)
 
 
@@ -857,8 +855,6 @@ def get_block_by_usage_id(request, course_id, usage_id, disable_staff_debug_info
     course_key = CourseKey.from_string(course_id)
     usage_key = _get_usage_key_for_course(course_key, usage_id)
     block, tracking_context = _get_block_by_usage_key(usage_key)
-    block.user_id = request.user
-    log.info(block)
 
     _, user = setup_masquerade(request, course_key, has_access(request.user, 'staff', block, course_key))
     field_data_cache = FieldDataCache.cache_for_block_descendents(
