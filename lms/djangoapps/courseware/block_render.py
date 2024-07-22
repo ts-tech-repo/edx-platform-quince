@@ -932,7 +932,6 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
         instance, tracking_context = get_block_by_usage_id(
             request, course_id, str(block_usage_key), course=course, will_recheck_access=will_recheck_access,
         )
-        log.info("Here 2")
         # Name the transaction so that we can view XBlock handlers separately in
         # New Relic. The suffix is necessary for XBlock handlers because the
         # "handler" in those cases is always just "xmodule_handler".
@@ -949,6 +948,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
                     # the actual aside instance needs to be retrieved in order to invoke its
                     # handler method.
                     handler_instance = get_aside_from_xblock(instance, usage_key.aside_type)
+                    log.info("Here 3")
                 else:
                     handler_instance = instance
                 resp = handler_instance.handle(handler, req, suffix)
