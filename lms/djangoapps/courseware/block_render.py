@@ -857,6 +857,7 @@ def get_block_by_usage_id(request, course_id, usage_id, disable_staff_debug_info
     course_key = CourseKey.from_string(course_id)
     usage_key = _get_usage_key_for_course(course_key, usage_id)
     block, tracking_context = _get_block_by_usage_key(usage_key)
+    log.info(block)
 
     _, user = setup_masquerade(request, course_key, has_access(request.user, 'staff', block, course_key))
     field_data_cache = FieldDataCache.cache_for_block_descendents(
