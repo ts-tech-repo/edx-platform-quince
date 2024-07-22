@@ -515,7 +515,7 @@ def prepare_runtime_for_user(
         see arguments for get_block()
         request_token (str): A token unique to the request use by xblock initialization
     """
-
+    log.info("Here 4")
     def inner_get_block(block: XBlock) -> XBlock | None:
         """
         Delegate to get_block_for_descriptor() with all values except `block` set.
@@ -951,7 +951,6 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
                 else:
                     handler_instance = instance
                 resp = handler_instance.handle(handler, req, suffix)
-                log.info(handler_instance)
                 if suffix == 'problem_check' \
                         and course \
                         and getattr(course, 'entrance_exam_enabled', False) \
