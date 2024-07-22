@@ -573,7 +573,7 @@ def prepare_runtime_for_user(
     block_wrappers.append(partial(display_access_messages, user))
     block_wrappers.append(partial(course_expiration_wrapper, user))
     block_wrappers.append(partial(offer_banner_wrapper, user))
-    log.info(block_wrappers)
+    
     user_is_staff = bool(has_access(user, 'staff', course_id))
 
     if settings.FEATURES.get('DISPLAY_DEBUG_INFO_TO_STAFF'):
@@ -636,7 +636,7 @@ def prepare_runtime_for_user(
         'call_to_action': CallToActionService(),
         'publish': EventPublishingService(user, course_id, track_function),
     }
-
+    log.info(services)
     runtime.get_block_for_descriptor = inner_get_block
 
     runtime.wrappers = block_wrappers
