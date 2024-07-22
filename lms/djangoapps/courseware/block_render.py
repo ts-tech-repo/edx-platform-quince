@@ -951,7 +951,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
                 else:
                     handler_instance = instance
                 resp = handler_instance.handle(handler, req, suffix)
-                log.info("Here 2")
+                log.info(handler_instance)
                 if suffix == 'problem_check' \
                         and course \
                         and getattr(course, 'entrance_exam_enabled', False) \
