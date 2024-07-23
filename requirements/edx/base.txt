@@ -531,7 +531,7 @@ edx-search==3.6.0
     # via -r requirements/edx/kernel.in
 #edx-sga==0.23.0
 git+https://github.com/ts-tech-repo/edx-sga.git@quince.master
-git+https://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@github.com/ts-tech-repo/text-response.git@main
+git+https://Chandana3008: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@github.com/ts-tech-repo/text-response.git@main
     # via -r requirements/edx/bundled.in
 xblock-free-text-response
     # via -r requirements/edx/bundled.in
