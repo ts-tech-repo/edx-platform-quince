@@ -3305,8 +3305,7 @@ INSTALLED_APPS = [
 
     # Notifications
     'openedx.core.djangoapps.notifications',
-    'freetextresponse',
-    'custom_textresponse'
+    'freetextresponse'
 
 ]
 
