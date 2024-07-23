@@ -1025,7 +1025,8 @@ def get_assessments_for_courses(request):
                             elif category in ["problem"]:
                                 if student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state:
                                     temp["submission_status"] = "Submitted"
-                                    temp["is_graded"] = "Graded" if json.loads(student_module_info.state)["score"]["raw_earned"] else "Not Graded"
+                                    submission_state = json.loads(student_module_info.state)
+                                    temp["is_graded"] = "Graded" if submission_state["score"]["raw_earned"] and "student_answers" in submission_state else "Not Graded"
                                 elif ("submission_status" in temp and temp["submission_status"] in ["Not Submitted"]) or not temp.get("submission_status", None):
                                     temp["submission_status"] =  "Not Submitted"  if showNotSubmitted else "-"
                                     temp["is_graded"] = "-"
