@@ -966,7 +966,6 @@ def get_assessments_for_courses(request):
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
                         grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
-                        log.info(grades)
                         if grades.first_attempted is not None:
                             temp["is_graded"] = "Graded"
                         else:
@@ -1024,7 +1023,6 @@ def get_assessments_for_courses(request):
                                     temp["submission_status"] =  "Not Submitted"  if showNotSubmitted else "-"
                                     temp["is_graded"] = "-"
 
-                    log.info("{0} {1}".format(subsection_key, temp))
 
                     if not ignoreUnit:
                         all_blocks_data.append(temp)
@@ -1032,7 +1030,7 @@ def get_assessments_for_courses(request):
                         
     filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
     user_local_timezone = user_timezone_locale_prefs(request)
-
+    log.info(filtered_sorted_date_blocks)
     return {
         'date_blocks': filtered_sorted_date_blocks,
         "user_timezone" : user_local_timezone if user_local_timezone["user_timezone"] is not None else {"user_timezone" : ""}
