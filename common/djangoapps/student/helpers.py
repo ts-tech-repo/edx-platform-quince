@@ -972,6 +972,7 @@ def get_assessments_for_courses(request):
                         else:
                             temp["is_graded"] = "Not Graded"
                     except Exception as DoesNotExistError:
+                        log.info("Here")
                         temp["is_graded"] = "Not Graded"
                   
                     units = block_data.get_children(subsection_key)
