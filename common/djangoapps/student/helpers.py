@@ -966,7 +966,6 @@ def get_assessments_for_courses(request):
                     temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                     try:
                         grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
-                        log.info(grades)
                         if grades.first_attempted is not None:
                             temp["is_graded"] = "Graded"
                         else:
@@ -991,17 +990,22 @@ def get_assessments_for_courses(request):
                             block_id = get_first_component_of_block(component, block_data)
                             if category in ["edx_sga"]:
                                 student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
+                                student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                                 try:
                                     submission_id = StudentItem.objects.get(**student_item)
                                     sga_submissions = Submission.objects.filter(student_item=submission_id).first()
                                     if sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "Submitted"
+                                        if student_module_info.state.staff_score:
+                                            temp["is_graded"] = "Graded"
+                                        else:
+                                            temp["is_graded"] = "Not Graded"
                                     elif not sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "In Progress"
                                 except Exception as err:
                                     temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                                     temp["is_graded"] = "-"
-                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
+                            
                             if  category in ["openassessment"]:
 
                                 if not student_module_info:
