@@ -1004,6 +1004,7 @@ def get_assessments_for_courses(request):
                                     elif not sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "In Progress"
                                 except Exception as err:
+                                    log.info(err)
                                     temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                                     temp["is_graded"] = "-"
                             
