@@ -972,8 +972,6 @@ def get_assessments_for_courses(request):
                         else:
                             temp["is_graded"] = "Not Graded"
                     except Exception as DoesNotExistError:
-                        log.info(subsection_key)
-                        log.info("Here")
                         temp["is_graded"] = "Not Graded"
                   
                     units = block_data.get_children(subsection_key)
@@ -1025,7 +1023,9 @@ def get_assessments_for_courses(request):
                                 elif ("submission_status" in temp and temp["submission_status"] in ["Not Submitted"]) or not temp.get("submission_status", None):
                                     temp["submission_status"] =  "Not Submitted"  if showNotSubmitted else "-"
                                     temp["is_graded"] = "-"
-                                    
+
+                    log.info("{0} {1}".format(subsection_key, temp))
+
                     if not ignoreUnit:
                         all_blocks_data.append(temp)
         
