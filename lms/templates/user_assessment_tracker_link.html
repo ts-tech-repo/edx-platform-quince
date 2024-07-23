@@ -96,7 +96,7 @@ h1{font-size: 20px;margin-bottom: 20px;}
                     {% endif %}
                 </td>
 
-		<td>{{item.start_date|date:'Y-m-d H:i'}}</td>
+		<td style="text-wrap: nowrap;">{{item.start_date|date:'Y-m-d H:i'}}</td>
                 <td>{{ item.date|date:'Y-m-d H:i' }}</td>
                 <td>{{item.submission_status}}</td>
                 <td>{{ item.is_graded }}</td>
