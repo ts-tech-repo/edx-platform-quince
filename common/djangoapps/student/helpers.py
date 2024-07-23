@@ -988,9 +988,10 @@ def get_assessments_for_courses(request):
                                 continue
                             
                             block_id = get_first_component_of_block(component, block_data)
+                            student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                             if category in ["edx_sga"]:
                                 student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
-                                student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
+                                
                                 try:
                                     submission_id = StudentItem.objects.get(**student_item)
                                     sga_submissions = Submission.objects.filter(student_item=submission_id).first()
