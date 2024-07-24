@@ -634,6 +634,7 @@ def prepare_runtime_for_user(
         'call_to_action': CallToActionService(),
         'publish': EventPublishingService(user, course_id, track_function),
     }
+    log.info(services)
     runtime.get_block_for_descriptor = inner_get_block
 
     runtime.wrappers = block_wrappers
