@@ -460,7 +460,6 @@ def get_block_for_descriptor(
             partial(LmsFieldData, student_data=student_data),
         ],
     )
-    log.info(partial(OverrideFieldData.wrap, user, course))
     # Do not check access when it's a noauth request.
     # Not that the access check needs to happen after the block is bound
     # for the student, since there may be field override data for the student
@@ -478,7 +477,6 @@ def get_block_for_descriptor(
         )
         if access or caller_will_handle_access_error:
             block.has_access_error = bool(caller_will_handle_access_error)
-            block.user_id = user
             return block
         return None
     return block
