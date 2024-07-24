@@ -641,7 +641,6 @@ def prepare_runtime_for_user(
     runtime.request_token = request_token
     runtime.wrap_asides_override = lms_wrappers_aside
     runtime.applicable_aside_types_override = lms_applicable_aside_types
-    log.info(runtime)
 
 
 def load_single_xblock(request, user_id, course_id, usage_key_string, course=None, will_recheck_access=False):
