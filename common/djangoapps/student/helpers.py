@@ -1000,6 +1000,7 @@ def get_assessments_for_courses(request):
                                         if json.loads(student_module_info.state).get("staff_score", None):
                                             temp["is_graded"] = "Graded"
                                         else:
+                                            log.info(student_module_info.state)
                                             temp["is_graded"] = "Not Graded"
                                     elif not sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "In Progress"
