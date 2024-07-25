@@ -120,7 +120,7 @@ import json
                         data: JSON.stringify({
                             filename: inputValue,
                             file_ext: "m3u8",
-                            course_id: "course-v1:EMIITK+EE951-Q1+2025"
+                            course_id: window.course_location_analytics
                         }),
                         success: function(data) {
                             var $container = $('.wrapper-videolist-url.videolist-settings-item .filepaths-container');
