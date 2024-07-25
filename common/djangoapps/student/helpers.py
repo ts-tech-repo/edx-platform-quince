@@ -1000,7 +1000,7 @@ def get_assessments_for_courses(request):
                                         temp["is_graded"] = "-"
                                     else:
                                         temp["submission_status"] = "Submitted"
-                                        temp["is_graded"] = "Graded" if submission_state.get("staff_score", None) else "Not Graded"
+                                        temp["is_graded"] = "Graded" if submission_state.get("staff_score", None) or submission_state.get("comment", None) else "Not Graded"
 
 
 
