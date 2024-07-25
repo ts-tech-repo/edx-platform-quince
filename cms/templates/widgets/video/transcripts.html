@@ -69,3 +69,106 @@ import json
         }
     );
 </script>
+<style>
+    .filepaths-container {
+        height: 280px;
+        overflow: auto;
+        position: absolute;
+        background: #fff;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        padding: 7px;
+        border-radius: 10px;
+    }
+    .filepaths-container ul{
+        display: flex;
+        flex-direction: column;
+    }
+    .filepaths-container ul li{
+        cursor:pointer;
+        padding: 4px 8px !important;
+    }
+    .filepaths-container ul li:hover{
+        background: #ccc;
+    }
+    .filepaths-container::-webkit-scrollbar {
+        width: 7px;
+    }
+    .filepaths-container::-webkit-scrollbar-track{
+        box-shadow: inset 0 0 2px #ccc;
+        border-radius: 10px;
+    }
+    .filepaths-container::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+    }
+    </style>
+    <script>
+    $(document).ready(function() {
+        var debounceTimer;
+        $(document).on('keyup', '.wrapper-videolist-url .input.videolist-url', function() {
+            clearTimeout(debounceTimer);
+    
+            var inputValue = $(this).val();
+    
+            if (inputValue.length >= 2) {
+                debounceTimer = setTimeout(function() {
+                    $.ajax({
+                        type: "POST",
+                        url: "https://cdn.exec.talentsprint.com/app/findFilePaths",
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        data: JSON.stringify({
+                            filename: inputValue,
+                            file_ext: "m3u8",
+                            course_id: "course-v1:EMIITK+EE951-Q1+2025"
+                        }),
+                        success: function(data) {
+                            var $container = $('.wrapper-videolist-url.videolist-settings-item .filepaths-container');
+                            if ($container.length === 0) {
+                                $container = $('<div class="filepaths-container"></div>');
+                                $('.wrapper-videolist-url.videolist-settings-item').append($container);
+                            }
+    
+                            $container.empty().show();
+    
+                            var list = $('<ul></ul>');
+                            $.each(data.filepaths, function(index, filepath) {
+                                var listItem = $('<li></li>').text(filepath).data('filepath', filepath);
+                                list.append(listItem);
+                            });
+    
+                            $container.append(list);
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            console.error('API call failed:', textStatus, errorThrown);
+                        }
+                    });
+                }, 200);
+            } else {
+                var $container = $('.wrapper-videolist-url.videolist-settings-item .filepaths-container');
+                if ($container.length > 0) {
+                    $container.empty().hide();
+                }
+            }
+        });
+    
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('.filepaths-container, .input.videolist-url').length) {
+                var $container = $('.wrapper-videolist-url.videolist-settings-item .filepaths-container');
+                if ($container.length > 0) {
+                    $container.empty().hide();
+                }
+            }
+        });
+    
+        $(document).on('click', '.filepaths-container li', function() {
+            var filepath = $(this).data('filepath');
+            $('.wrapper-videolist-url .input.videolist-url').val(filepath);
+            var $container = $('.wrapper-videolist-url.videolist-settings-item .filepaths-container');
+            if ($container.length > 0) {
+                $container.empty().hide();
+            }
+        });
+    });
+    
+    </script>
