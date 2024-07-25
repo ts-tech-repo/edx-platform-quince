@@ -936,11 +936,10 @@ def progress(request, course_id, student_id=None):
 
     if course_home_mfe_progress_tab_is_active(course_key) and not request.user.is_staff:
         end_of_redirect_url = 'progress' if not student_id else f'progress/{student_id}'
-        log.info(end_of_redirect_url)
         raise Redirect(get_learning_mfe_home_url(
             course_key=course_key, url_fragment=end_of_redirect_url, params=request.GET,
         ))
-
+    log.info("Here")
     with modulestore().bulk_operations(course_key):
         return _progress(request, course_key, student_id)
 
@@ -1659,7 +1658,6 @@ def render_xblock(request, usage_key_string, check_if_enrolled=True, disable_sta
 
             **optimization_flags,
         }
-        log.info(context)
         return render_to_response('courseware/courseware-chromeless.html', context)
 
 
