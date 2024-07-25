@@ -71,13 +71,14 @@ import json
 </script>
 <style>
     .filepaths-container {
-        height: 280px;
+        max-height: 280px;
         overflow: auto;
         position: absolute;
         background: #fff;
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
         padding: 7px;
         border-radius: 10px;
+        width:75%;
     }
     .filepaths-container ul{
         display: flex;
@@ -101,15 +102,45 @@ import json
         background: #ccc;
         border-radius: 10px;
     }
+    .clear_video_url {
+        position: absolute;
+        top: 10px;
+        border-radius: 50%;
+        padding: 0px 5px;
+        height: 19px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        border: 1px solid #ccc;
+        font-size: 13px;
+        left: 69%;
+        line-height: 16px;
+        color: gray;
+    }
     </style>
     <script>
     $(document).ready(function() {
         var debounceTimer;
+        // Show/hide the clear button based on the input field
+        function updateClearButtonVisibility() {
+            var inputValue = $('.wrapper-videolist-url .input.videolist-url').val();
+            var $clearButton = $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .clear_video_url');
+            if (inputValue.trim() !== '') {
+                if ($clearButton.length === 0) {
+                    // Add the clear button if it doesn't exist
+                    $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item').prepend('<div class="clear_video_url">x</div>');
+                }
+                $clearButton.show();
+            } else {
+                $clearButton.hide();
+            }
+        }
+        // Handle keyup events for autocomplete
         $(document).on('keyup', '.wrapper-videolist-url .input.videolist-url', function() {
             clearTimeout(debounceTimer);
-    
             var inputValue = $(this).val();
-    
+            // Update the visibility of the clear button
+            updateClearButtonVisibility();
             if (inputValue.length >= 2) {
                 debounceTimer = setTimeout(function() {
                     $.ajax({
@@ -123,21 +154,26 @@ import json
                             course_id: window.course_location_analytics
                         }),
                         success: function(data) {
-                            var $container = $('.wrapper-videolist-url.videolist-settings-item .filepaths-container');
+                            // Select the container or create it if it doesn't exist
+                            var $container = $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .filepaths-container');
                             if ($container.length === 0) {
                                 $container = $('<div class="filepaths-container"></div>');
-                                $('.wrapper-videolist-url.videolist-settings-item').append($container);
+                                $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item').append($container);
                             }
-    
+                            // Clear previous content
                             $container.empty().show();
-    
-                            var list = $('<ul></ul>');
-                            $.each(data.filepaths, function(index, filepath) {
-                                var listItem = $('<li></li>').text(filepath).data('filepath', filepath);
-                                list.append(listItem);
-                            });
-    
-                            $container.append(list);
+                            // Check if data or filepaths are empty
+                            if (data && data.filepaths && data.filepaths.length > 0) {
+                                // Create a list and append items
+                                var list = $('<ul></ul>');
+                                $.each(data.filepaths, function(index, filepath) {
+                                    var listItem = $('<li></li>').text(filepath).data('filepath', filepath);
+                                    list.append(listItem);
+                                });
+                                $container.append(list);
+                            } else {
+                                $container.append('<p>No result found</p>');
+                            }
                         },
                         error: function(jqXHR, textStatus, errorThrown) {
                             console.error('API call failed:', textStatus, errorThrown);
@@ -145,29 +181,41 @@ import json
                     });
                 }, 200);
             } else {
-                var $container = $('.wrapper-videolist-url.videolist-settings-item .filepaths-container');
+                // Hide and clear the list if input is less than minimum length
+                var $container = $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .filepaths-container');
                 if ($container.length > 0) {
                     $container.empty().hide();
                 }
+                // Update the visibility of the clear button
+                updateClearButtonVisibility();
             }
         });
-    
+        // Hide .filepaths-container and clear it when clicking outside
         $(document).on('click', function(event) {
             if (!$(event.target).closest('.filepaths-container, .input.videolist-url').length) {
-                var $container = $('.wrapper-videolist-url.videolist-settings-item .filepaths-container');
+                var $container = $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .filepaths-container');
                 if ($container.length > 0) {
                     $container.empty().hide();
                 }
             }
         });
-    
+        // Handle click on list items to update the input field
         $(document).on('click', '.filepaths-container li', function() {
             var filepath = $(this).data('filepath');
             $('.wrapper-videolist-url .input.videolist-url').val(filepath);
-            var $container = $('.wrapper-videolist-url.videolist-settings-item .filepaths-container');
+            var $container = $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .filepaths-container');
             if ($container.length > 0) {
                 $container.empty().hide();
             }
+            // Update the visibility of the clear button
+            updateClearButtonVisibility();
+        });
+    
+        // Handle click on the clear button to clear the input field
+        $(document).on('click', '.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .clear_video_url', function() {
+            $('.wrapper-videolist-url .input.videolist-url').val('');
+            $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .filepaths-container').empty().hide();  // Hide and clear the container
+            $(this).hide();
         });
     });
     
