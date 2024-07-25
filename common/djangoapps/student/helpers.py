@@ -983,7 +983,7 @@ def get_assessments_for_courses(request):
                         components = block_data.get_children(unit)
                         for component in components:
                             category = block_data.get_xblock_field(component, 'category')
-                            if category not in ["edx_sga", "openassessment", "problem"]:
+                            if category not in ["edx_sga", "openassessment", "problem", "freetextresponse"]:
                                 ignoreUnit = True
                                 continue
                             
