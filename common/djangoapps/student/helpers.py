@@ -997,7 +997,7 @@ def get_assessments_for_courses(request):
                                     sga_submissions = Submission.objects.filter(student_item=submission_id).first()
                                     if sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "Submitted"
-                                        if json.loads(student_module_info.state).get("staff_score", None):
+                                        if json.loads(student_module_info.state).get("staff_score", None) or json.loads(student_module_info.state).get("comment", None):
                                             temp["is_graded"] = "Graded"
                                         else:
                                             log.info(student_module_info.state)
