@@ -500,7 +500,6 @@ class PersistentSubsectionGrade(TimeStampedModel):
         grades = [PersistentSubsectionGrade(**params) for params in grade_params_iter]
         grades = cls.objects.bulk_create(grades)
         for grade in grades:
-            log.info(grade)
             cls._emit_grade_calculated_event(grade)
         return grades
 
@@ -649,6 +648,7 @@ class PersistentCourseGrade(TimeStampedModel):
             course_id=course_id,
             defaults=kwargs
         )
+        log.info(grade)
         if passed and not grade.passed_timestamp:
             COURSE_GRADE_PASSED_FIRST_TIME.send(
                 sender=None,
