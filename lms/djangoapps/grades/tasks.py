@@ -211,6 +211,7 @@ def _recalculate_subsection_grade(self, **kwargs):
             the changed score. Used in conjunction with expected_modified_time.
     """
     try:
+        log.info("Here _recalculate_subsection_grade")
         course_key = CourseLocator.from_string(kwargs['course_id'])
         if are_grades_frozen(course_key):
             log.info("Attempted _recalculate_subsection_grade for course '%s', but grades are frozen.", course_key)
