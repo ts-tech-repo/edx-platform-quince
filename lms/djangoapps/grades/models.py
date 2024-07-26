@@ -477,7 +477,7 @@ class PersistentSubsectionGrade(TimeStampedModel):
         if first_attempted is not None and grade.first_attempted is None:
             grade.first_attempted = first_attempted
             grade.save()
-
+        log.info(grade)
         cls._emit_grade_calculated_event(grade)
         return grade
 
@@ -648,7 +648,6 @@ class PersistentCourseGrade(TimeStampedModel):
             course_id=course_id,
             defaults=kwargs
         )
-        log.info(grade)
         if passed and not grade.passed_timestamp:
             COURSE_GRADE_PASSED_FIRST_TIME.send(
                 sender=None,
