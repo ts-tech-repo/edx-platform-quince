@@ -44,7 +44,7 @@ def grade_updated(**kwargs):
     an outer event type (such as problem.rescored or score_overridden).
     """
     root_type = get_event_transaction_type()
-    log.info("Here grade_updayed")
+    log.info(root_type)
 
     if not root_type:
         root_id = get_event_transaction_id()
