@@ -143,6 +143,7 @@ class _ContentSerializer(serializers.Serializer):
     id = serializers.CharField(read_only=True)  # pylint: disable=invalid-name
     author = serializers.SerializerMethodField()
     author_label = serializers.SerializerMethodField()
+    author_first_name = serializers.SerializerMethodField()
     created_at = serializers.CharField(read_only=True)
     updated_at = serializers.CharField(read_only=True)
     raw_body = serializers.CharField(source="body", validators=[validate_not_blank])
@@ -213,6 +214,18 @@ class _ContentSerializer(serializers.Serializer):
             None
         )
 
+    def get_author_first_name(self, obj):
+        """
+        Returns the author's first name, or None if the content is anonymous.
+        """
+        if self._is_anonymous(obj):
+            return None
+        try:
+            user = User.objects.get(username=obj["username"])
+            return user.first_name
+        except ObjectDoesNotExist:
+            return None
+        
     def _get_user_label_from_username(self, username):
         """
         Returns role label of user from username
