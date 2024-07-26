@@ -116,6 +116,7 @@ import json
         left: 69%;
         line-height: 16px;
         color: gray;
+        background: #fff;
     }
     </style>
     <script>
@@ -166,8 +167,10 @@ import json
                             if (data && data.filepaths && data.filepaths.length > 0) {
                                 // Create a list and append items
                                 var list = $('<ul></ul>');
+                                var domain = data.domain;
                                 $.each(data.filepaths, function(index, filepath) {
-                                    var listItem = $('<li></li>').text(filepath).data('filepath', filepath);
+                                  var video_url = "https://" + domain + "/e_content/" + filepath;
+                                  var listItem = $('<li></li>').text(video_url).data('filepath', video_url);
                                     list.append(listItem);
                                 });
                                 $container.append(list);
