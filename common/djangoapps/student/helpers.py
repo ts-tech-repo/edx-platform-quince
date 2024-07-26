@@ -83,6 +83,7 @@ from lms.djangoapps.courseware.masquerade import setup_masquerade
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 from submissions.models import StudentItem, Submission
+from submissions import api as submissions_api
 
 # Enumeration of per-course verification statuses
 # we display on the student dashboard.
@@ -988,6 +989,7 @@ def get_assessments_for_courses(request):
                                 continue
                             
                             block_id = get_first_component_of_block(component, block_data)
+                            log.info(submissions_api.get_scores(course_key, anonymous_id_for_user(request.user, course_key_string)))
                             student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                             if category in ["freetextresponse"]:
                                 if not student_module_info:
@@ -1019,7 +1021,6 @@ def get_assessments_for_courses(request):
                                     elif not sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "In Progress"
                                 except Exception as err:
-                                    log.info(block_id)
                                     log.info(err)
                                     temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                                     temp["is_graded"] = "-"
