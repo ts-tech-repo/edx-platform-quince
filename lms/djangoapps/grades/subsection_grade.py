@@ -306,7 +306,6 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
         """
         Saves or updates the subsection grade in a persisted model.
         """
-        log.info("Here")
         if self._should_persist_per_attempted(score_deleted, force_update_subsections):
             # TODO: Remove as part of EDUCATOR-4602.
             if str(self.location.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
