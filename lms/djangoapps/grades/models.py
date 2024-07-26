@@ -500,6 +500,7 @@ class PersistentSubsectionGrade(TimeStampedModel):
         grades = [PersistentSubsectionGrade(**params) for params in grade_params_iter]
         grades = cls.objects.bulk_create(grades)
         for grade in grades:
+            log.info(grade)
             cls._emit_grade_calculated_event(grade)
         return grades
 
