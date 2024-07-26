@@ -1010,6 +1010,7 @@ def get_assessments_for_courses(request):
                                 try:
                                     submission_id = StudentItem.objects.get(**student_item)
                                     sga_submissions = Submission.objects.filter(student_item=submission_id).first()
+                                    log.info(sga_submissions)
                                     if sga_submissions.answer.get("finalized"):
                                         temp["submission_status"] = "Submitted"
                                         if json.loads(student_module_info.state).get("staff_score", None) or json.loads(student_module_info.state).get("comment", None):
