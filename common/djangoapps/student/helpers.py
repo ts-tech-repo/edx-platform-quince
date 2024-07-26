@@ -990,6 +990,7 @@ def get_assessments_for_courses(request):
                         
                         block_id = get_first_component_of_block(component, block_data)
                         scores = submissions_api.get_scores(course_key, anonymous_id_for_user(request.user, course_key_string))
+                        log.info(scores.get("points_earned", None))
                         student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                         if category in ["freetextresponse"]:
                             if not student_module_info:
@@ -1002,7 +1003,6 @@ def get_assessments_for_courses(request):
                                     temp["is_graded"] = "-"
                                 else:
                                     temp["submission_status"] = "Submitted"
-                                    log.info(scores.get("points_earned", None))
                                     temp["is_graded"] = "Graded" if scores.get("points_earned", None) else "Not Graded"
 
 
