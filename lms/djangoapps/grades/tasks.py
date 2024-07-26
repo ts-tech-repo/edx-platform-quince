@@ -184,6 +184,7 @@ def recalculate_subsection_grade_v3(self, **kwargs):
     Latest version of the recalculate_subsection_grade task.  See docstring
     for _recalculate_subsection_grade for further description.
     """
+    log.info("Here recalculate_subsection_grade_v3")
     _recalculate_subsection_grade(self, **kwargs)
 
 
