@@ -98,7 +98,7 @@ class ProgressTab(EnrolledTab):
     def is_enabled(cls, course, user=None):
         if not super().is_enabled(course, user=user):
             return False
-        return True
+        return not course.hide_progress_tab
 
 
 class TextbookTabsBase(CourseTab):
