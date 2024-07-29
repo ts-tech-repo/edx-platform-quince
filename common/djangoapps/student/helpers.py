@@ -1007,9 +1007,7 @@ def get_assessments_for_courses(request):
 
 
 
-                        elif category in ["edx_sga"]:
-                            log.info(score)
-                            
+                        elif category in ["edx_sga"]:                            
                             try:
                                 submission_id = StudentItem.objects.get(**student_item)
                                 sga_submissions = Submission.objects.filter(student_item=submission_id).first()
@@ -1032,6 +1030,7 @@ def get_assessments_for_courses(request):
 
                             elif "submission_uuid" in student_module_info.state:
                                 temp["submission_status"] = "Submitted"
+                                temp["is_graded"] = "Graded" if score and score.get("points_earned", None) else "Not Graded"
                             elif student_module_info.state and "has_saved" in student_module_info.state:
                                 temp["submission_status"] = "In Progress"
                             else:
