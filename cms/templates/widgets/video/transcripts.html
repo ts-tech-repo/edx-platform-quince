@@ -70,157 +70,75 @@ import json
     );
 </script>
 <style>
-    .filepaths-container {
-        max-height: 280px;
-        overflow: auto;
-        position: absolute;
-        background: #fff;
-        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-        padding: 7px;
-        border-radius: 10px;
-        width:75%;
+    ul.ui-autocomplete li:hover a{
+            color: #000 !important;
+            background: #ccc !important;
     }
-    .filepaths-container ul{
-        display: flex;
-        flex-direction: column;
+    ul.ui-autocomplete li a{
+            color: #000 !important;
+            background: #f2f2f2 !important;
     }
-    .filepaths-container ul li{
-        cursor:pointer;
-        padding: 4px 8px !important;
-        word-wrap: break-word;
-    }
-    .filepaths-container ul li:hover{
-        background: #ccc;
-    }
-    .filepaths-container::-webkit-scrollbar {
-        width: 7px;
-    }
-    .filepaths-container::-webkit-scrollbar-track{
-        box-shadow: inset 0 0 2px #ccc;
-        border-radius: 10px;
-    }
-    .filepaths-container::-webkit-scrollbar-thumb {
-        background: #ccc;
-        border-radius: 10px;
-    }
-    .clear_video_url {
-        position: absolute;
-        top: 10px;
-        border-radius: 50%;
-        padding: 0px 5px;
-        height: 19px;
-        font-weight: 600;
-        cursor: pointer;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        border: 1px solid #ccc;
-        font-size: 13px;
-        left: 69%;
-        line-height: 16px;
-        color: gray;
-        background: #fff;
+    ul.ui-autocomplete li:hover{
+            background: #ccc !important;
     }
     </style>
-    <script>
+<script>
+function cdnLinks_autoComplete_videolist() {
+        $(".wrapper-videolist-url.videolist-settings-item .input.videolist-url").each(function() {
+            if (!$(this).data('ui-autocomplete')) {
+                $(this).autocomplete({
+                    source: function(request, response) {
+                        console.log("Autocomplete request:", request.term);
+
+                        $.ajax({
+                            type: "POST",
+                            url: "https://cdn.exec.talentsprint.com/app/findFilePaths",
+                            dataType: "json",
+                            contentType: "application/json; charset=utf-8",
+                            data: JSON.stringify({
+                                filename: request.term,
+                                file_ext: "m3u8",
+                                course_id: window.course_location_analytics
+                            }),
+                            success: function(data) {
+                                console.log("AJAX success:", data);
+                                response($.map(data.filepaths, function(value) {
+                                    return {
+                                        domain: data.domain,
+                                        value: value
+                                    };
+                                }));
+                            },
+                            error: function(xhr, status, error) {
+                                console.error("AJAX error:", status, error);
+                            }
+                        });
+                    },
+                    minLength: 2,
+                    scroll: true,
+                    autoFocus: true,
+                    select: function(event, ui) {
+                        ui.item.value = "https://" + ui.item.domain + "/e_content/" + ui.item.value;
+                        $(this).val(ui.item.value);
+                        event.preventDefault();
+                        console.log("Selected value:", ui.item.value);
+                    }
+                });
+            }
+        });
+    }
+
     $(document).ready(function() {
-        var debounceTimer;
-        // Show/hide the clear button based on the input field
-        function updateClearButtonVisibility() {
-            var inputValue = $('.wrapper-videolist-url .input.videolist-url').val();
-            var $clearButton = $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .clear_video_url');
-            if (inputValue.trim() !== '') {
-                if ($clearButton.length === 0) {
-                    // Add the clear button if it doesn't exist
-                    $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item').prepend('<div class="clear_video_url">x</div>');
+        cdnLinks_autoComplete_videolist();
+
+        var observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.addedNodes.length) {
+                    cdnLinks_autoComplete_videolist();
                 }
-                $clearButton.show();
-            } else {
-                $clearButton.hide();
-            }
-        }
-        // Handle keyup events for autocomplete
-        $(document).on('keyup', '.wrapper-videolist-url .input.videolist-url', function() {
-            clearTimeout(debounceTimer);
-            var inputValue = $(this).val();
-            // Update the visibility of the clear button
-            updateClearButtonVisibility();
-            if (inputValue.length >= 2) {
-                debounceTimer = setTimeout(function() {
-                    $.ajax({
-                        type: "POST",
-                        url: "https://cdn.exec.talentsprint.com/app/findFilePaths",
-                        dataType: "json",
-                        contentType: "application/json; charset=utf-8",
-                        data: JSON.stringify({
-                            filename: inputValue,
-                            file_ext: "m3u8",
-                            course_id: window.course_location_analytics
-                        }),
-                        success: function(data) {
-                            // Select the container or create it if it doesn't exist
-                            var $container = $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .filepaths-container');
-                            if ($container.length === 0) {
-                                $container = $('<div class="filepaths-container"></div>');
-                                $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item').append($container);
-                            }
-                            // Clear previous content
-                            $container.empty().show();
-                            // Check if data or filepaths are empty
-                            if (data && data.filepaths && data.filepaths.length > 0) {
-                                // Create a list and append items
-                                var list = $('<ul></ul>');
-                                var domain = data.domain;
-                                $.each(data.filepaths, function(index, filepath) {
-                                  var video_url = "https://" + domain + "/e_content/" + filepath;
-                                  var listItem = $('<li></li>').text(video_url).data('filepath', video_url);
-                                    list.append(listItem);
-                                });
-                                $container.append(list);
-                            } else {
-                                $container.append('<p>No result found</p>');
-                            }
-                        },
-                        error: function(jqXHR, textStatus, errorThrown) {
-                            console.error('API call failed:', textStatus, errorThrown);
-                        }
-                    });
-                }, 200);
-            } else {
-                // Hide and clear the list if input is less than minimum length
-                var $container = $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .filepaths-container');
-                if ($container.length > 0) {
-                    $container.empty().hide();
-                }
-                // Update the visibility of the clear button
-                updateClearButtonVisibility();
-            }
+            });
         });
-        // Hide .filepaths-container and clear it when clicking outside
-        $(document).on('click', function(event) {
-            if (!$(event.target).closest('.filepaths-container, .input.videolist-url').length) {
-                var $container = $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .filepaths-container');
-                if ($container.length > 0) {
-                    $container.empty().hide();
-                }
-            }
-        });
-        // Handle click on list items to update the input field
-        $(document).on('click', '.filepaths-container li', function() {
-            var filepath = $(this).data('filepath');
-            $('.wrapper-videolist-url .input.videolist-url').val(filepath);
-            var $container = $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .filepaths-container');
-            if ($container.length > 0) {
-                $container.empty().hide();
-            }
-            // Update the visibility of the clear button
-            updateClearButtonVisibility();
-        });
-    
-        // Handle click on the clear button to clear the input field
-        $(document).on('click', '.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .clear_video_url', function() {
-            $('.wrapper-videolist-url .input.videolist-url').val('');
-            $('.wrapper-videolist-settings .wrapper-videolist-url.videolist-settings-item .filepaths-container').empty().hide();  // Hide and clear the container
-            $(this).hide();
-        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
     });
-    
-    </script>
+</script>
