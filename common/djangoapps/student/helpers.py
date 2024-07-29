@@ -1039,6 +1039,11 @@ def get_assessments_for_courses(request):
                             elif ("submission_status" in temp and temp["submission_status"] in ["Not Submitted"]) or not temp.get("submission_status", None):
                                 temp["submission_status"] =  "Not Submitted"  if showNotSubmitted else "-"
                                 temp["is_graded"] = "-"
+                            elif temp["submission_status"] in ["Submitted"]:
+                                temp["submission_status"] =  "Submitted"
+                                temp["is_graded"] = "Graded"
+
+
 
 
                 if not ignoreUnit:
