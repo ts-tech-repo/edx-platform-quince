@@ -992,18 +992,17 @@ def get_assessments_for_courses(request):
                         student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                         student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
                         score = submissions_api.get_score(student_item)
+                        temp["is_graded"] = "Graded" if score and score.get("points_earned", None) else "Not Graded"
+                        if not student_module_info:
+                            temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
+                            temp["is_graded"] = "-"
+                        submission_state = json.loads(student_module_info.state)
                         if category in ["freetextresponse"]:
-                            if not student_module_info:
-                                temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
+                            if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
+                                temp["submission_status"] = "In Progress"
                                 temp["is_graded"] = "-"
                             else:
-                                submission_state = json.loads(student_module_info.state)
-                                if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
-                                    temp["submission_status"] = "In Progress"
-                                    temp["is_graded"] = "-"
-                                else:
-                                    temp["submission_status"] = "Submitted"
-                                    temp["is_graded"] = "Graded" if score and score.get("points_earned", None) else "Not Graded"
+                                temp["submission_status"] = "Submitted"
 
 
 
@@ -1013,7 +1012,6 @@ def get_assessments_for_courses(request):
                                 sga_submissions = Submission.objects.filter(student_item=submission_id).first()
                                 if sga_submissions.answer.get("finalized"):
                                     temp["submission_status"] = "Submitted"
-                                    temp["is_graded"] = "Graded" if score and score.get("points_earned", None) else "Not Graded"
                                     
                                 elif not sga_submissions.answer.get("finalized"):
                                     temp["submission_status"] = "In Progress"
@@ -1024,24 +1022,19 @@ def get_assessments_for_courses(request):
                         
                         elif  category in ["openassessment"]:
 
-                            if not student_module_info:
-                                temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
-                                temp["is_graded"] = "-"
-
-                            elif "submission_uuid" in student_module_info.state:
+                            if "submission_uuid" in submission_state:
                                 temp["submission_status"] = "Submitted"
-                                temp["is_graded"] = "Graded" if score and score.get("points_earned", None) else "Not Graded"
-                            elif student_module_info.state and "has_saved" in student_module_info.state:
+
+                            elif submission_state and "has_saved" in submission_state:
                                 temp["submission_status"] = "In Progress"
                             else:
                                 temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
                                 temp["is_graded"] = "-"
 
                         elif category in ["problem"]:
-                            if student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state:
+                            if student_module_info and submission_state and "last_submission_time" in submission_state:
                                 temp["submission_status"] = "Submitted"
-                                submission_state = json.loads(student_module_info.state)
-                                temp["is_graded"] = "Graded" if score and score.get("points_earned", None) else "Not Graded"
+
                             elif ("submission_status" in temp and temp["submission_status"] in ["Not Submitted"]) or not temp.get("submission_status", None):
                                 temp["submission_status"] =  "Not Submitted"  if showNotSubmitted else "-"
                                 temp["is_graded"] = "-"
