@@ -992,7 +992,7 @@ def get_assessments_for_courses(request):
                         student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                         student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
                         score = submissions_api.get_score(student_item)
-                        temp["is_graded"] = "Graded" if score and score.get("points_earned", None) else "Not Graded"
+                        temp["is_graded"] = "Graded" if score and (score["points_earned"] or score["points_earned"] == 0) else "Not Graded"
                         if not student_module_info:
                             temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
