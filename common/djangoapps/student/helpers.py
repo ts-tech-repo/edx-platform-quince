@@ -1035,7 +1035,7 @@ def get_assessments_for_courses(request):
                             if student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state:
                                 temp["submission_status"] = "Submitted"
                                 submission_state = json.loads(student_module_info.state)
-                                temp["is_graded"] = "Graded" if score and score.get("points_earned", None) else "Not Graded"
+                                temp["is_graded"] = "Graded"
                             
                             elif student_module_info and submission_state and "last_submission_time" in submission_state:
                                 temp["submission_status"] = "Submitted"
