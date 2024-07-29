@@ -98,7 +98,7 @@ function cdnLinks_autoComplete_videolist() {
                             data: JSON.stringify({
                                 filename: request.term,
                                 file_ext: "m3u8",
-                                course_id: "course-v1:EMIITK+EE951-Q1+2025"
+                                course_id: window.course_location_analytics
                             }),
                             success: function(data) {
                                 console.log("AJAX success:", data);
