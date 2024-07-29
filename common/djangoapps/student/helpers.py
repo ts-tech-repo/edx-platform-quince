@@ -1001,7 +1001,7 @@ def get_assessments_for_courses(request):
                             if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
                                 temp["submission_status"] = "In Progress"
                                 temp["is_graded"] = "-"
-                            else:
+                            elif submission_state.get("student_answer", None) and submission_state.get("count_attempts", None):
                                 temp["submission_status"] = "Submitted"
 
 
