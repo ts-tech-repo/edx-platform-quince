@@ -1003,7 +1003,7 @@ def get_assessments_for_courses(request):
                                     temp["is_graded"] = "-"
                                 else:
                                     temp["submission_status"] = "Submitted"
-                                    temp["is_graded"] = "Graded" if score.get("points_earned", None) else "Not Graded"
+                                    temp["is_graded"] = "Graded" if score and score.get("points_earned", None) else "Not Graded"
 
 
 
@@ -1015,7 +1015,7 @@ def get_assessments_for_courses(request):
                                 sga_submissions = Submission.objects.filter(student_item=submission_id).first()
                                 if sga_submissions.answer.get("finalized"):
                                     temp["submission_status"] = "Submitted"
-                                    temp["is_graded"] = "Graded" if score.get("points_earned", None) else "Not Graded"
+                                    temp["is_graded"] = "Graded" if score and score.get("points_earned", None) else "Not Graded"
                                     
                                 elif not sga_submissions.answer.get("finalized"):
                                     temp["submission_status"] = "In Progress"
