@@ -88,7 +88,6 @@ function cdnLinks_autoComplete_videolist() {
             if (!$(this).data('ui-autocomplete')) {
                 $(this).autocomplete({
                     source: function(request, response) {
-                        console.log("Autocomplete request:", request.term);
 
                         $.ajax({
                             type: "POST",
@@ -101,7 +100,6 @@ function cdnLinks_autoComplete_videolist() {
                                 course_id: window.course_location_analytics
                             }),
                             success: function(data) {
-                                console.log("AJAX success:", data);
                                 response($.map(data.filepaths, function(value) {
                                     return {
                                         domain: data.domain,
