@@ -996,7 +996,6 @@ def get_assessments_for_courses(request):
                             submission_state = {}
                         else:
                             submission_state = json.loads(student_module_info.state)
-                            log.info(submission_state)
                             if "position" in submission_state:
                                 problemSubmissionStatus.append("In Progress")
 
@@ -1038,6 +1037,7 @@ def get_assessments_for_courses(request):
                             if (student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state):
                                 problemSubmissionStatus.append("Submitted")
                                 problemType = True
+                            log.info(submission_state)
 
                 if not ignoreUnit:
                     if problemType:
