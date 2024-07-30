@@ -477,7 +477,7 @@ class PersistentSubsectionGrade(TimeStampedModel):
         if first_attempted is not None and grade.first_attempted is None:
             grade.first_attempted = first_attempted
             grade.save()
-
+        log.info(grade)
         cls._emit_grade_calculated_event(grade)
         return grade
 

@@ -97,7 +97,11 @@ h1{font-size: 20px;margin-bottom: 20px;}
                 </td>
 
 		<td style="text-wrap: nowrap;">{{item.start_date|date:'Y-m-d H:i'}}</td>
-                <td>{{ item.date|date:'Y-m-d H:i' }}</td>
+                {% if item.date != "None" %}
+                    <td>{{ item.date|date:'Y-m-d H:i' }}</td>
+                {%else%}
+                    <td>-</td>
+                {%endif%}
                 <td>{{item.submission_status}}</td>
                 <td>{{ item.is_graded }}</td>
             </tr>
@@ -185,10 +189,10 @@ $('table td:nth-child(3)').each(function () {
 		utcCutoff  = moment.utc(text, 'YYYY-MM-DD HH:mm');
 		console.log(utcCutoff.format("YYYY-MM-DD HH:mm"))
 		if (user_set_zone != "") {
-			$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm"))
+			$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm A"))
 		}else {
 			console.log(moment.utc(text, 'YYYY-MM-DD HH:mm').local().toDate())
-			$(this).text(moment.utc(text, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD HH:mm'))
+			$(this).text(moment.utc(text, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD HH:mm A'))
 		}
 });
 $('table td:nth-child(4)').each(function () {
@@ -196,13 +200,13 @@ $('table td:nth-child(4)').each(function () {
 		if(text != "") {
 			utcCutoff  = moment.utc(text, 'YYYY-MM-DD HH:mm');
 			if (user_set_zone != "") {
-				$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm"))
+				$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm A"))
 			}else {
-				$(this).text(moment.utc(text, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD HH:mm'))
+				$(this).text(moment.utc(text, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD HH:mm A'))
 			}
 		}
 		else {
-			$(this).text("None");
+			$(this).text("-");
 		}
 });
 

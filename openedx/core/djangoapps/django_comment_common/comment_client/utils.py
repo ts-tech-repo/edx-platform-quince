@@ -70,7 +70,10 @@ def perform_request(method, url, data_or_params=None, raw=False,
         headers=headers,
         timeout=config.connection_timeout
     )
-
+    log.info(
+            f"Request: method={method}, url={url}, data={data}, params={params}, headers={headers}, timeout={config.connection_timeout} | "
+            f"Response: status_code={response.status_code}, headers={response.headers}, body={response.json()}"
+        )
     metric_tags.append(f'status_code:{response.status_code}')
     status_code = int(response.status_code)
     if status_code > 200:

@@ -131,6 +131,7 @@ def course_grade_calculated(course_grade):
     with data from the passed course_grade.
     """
     event_name = COURSE_GRADE_CALCULATED
+    log.info("Here course_grade_calculated")
     context = contexts.course_context_from_course_id(course_grade.course_id)
     # TODO (AN-6134): remove this context manager
     with tracker.get_tracker().context(event_name, context):
