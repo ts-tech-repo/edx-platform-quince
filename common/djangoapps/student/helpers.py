@@ -986,7 +986,6 @@ def get_assessments_for_courses(request):
                         
                         block_id = get_first_component_of_block(component, block_data)
                         student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
-                        log.info(student_module_info)
                         student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
                         score = submissions_api.get_score(student_item)
                         temp["is_graded"] = "Graded" if score and (score["points_earned"] or score["points_earned"] == 0) else "Not Graded"
@@ -997,6 +996,7 @@ def get_assessments_for_courses(request):
                             submission_state = {}
                         else:
                             submission_state = json.loads(student_module_info.state)
+                            log.info(submission_state)
                             if "position" in submission_state:
                                 problemSubmissionStatus.append("In Progress")
 
