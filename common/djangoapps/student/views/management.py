@@ -26,7 +26,7 @@ from django.contrib.sites.models import Site
 from django.core.validators import ValidationError, validate_email
 from django.core.cache import cache
 from openedx.core.djangoapps.enrollments.api import add_enrollment
-from common.djangoapps.student.helpers import DISABLE_UNENROLL_CERT_STATES, cert_info, do_create_account
+from common.djangoapps.student.helpers import DISABLE_UNENROLL_CERT_STATES, cert_info, do_create_account, get_assessments_for_courses
 from django.core.exceptions import ObjectDoesNotExist
 from openedx.core.djangoapps.user_authn.views.registration_form import AccountCreationForm
 from django.shortcuts import redirect, render
@@ -1464,3 +1464,9 @@ def extras_update_user_details(request):
                 old_user.last_name = lastName
         old_user.save()
         return HttpResponse("Saved")
+
+
+@login_required
+def user_assessments_tracker_link(request):
+    output_dict = get_assessments_for_courses(request)
+    return render(request, 'user_assessment_tracker_link.html', {'data': output_dict, 'program_image_url': configuration_helpers.get_value("MKTG_URLS", True)["HEADER_LOGO"]})
