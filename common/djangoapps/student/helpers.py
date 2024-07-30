@@ -996,8 +996,6 @@ def get_assessments_for_courses(request):
                             submission_state = {}
                         else:
                             submission_state = json.loads(student_module_info.state)
-                            if "position" in submission_state:
-                                problemSubmissionStatus.append("In Progress")
 
                         if category in ["freetextresponse"]:
                             if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
