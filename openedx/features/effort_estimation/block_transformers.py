@@ -47,6 +47,7 @@ class EffortEstimationTransformer(BlockStructureTransformer):
 
     CACHE_VIDEO_DURATIONS = 'video.durations'
     DEFAULT_WPM = 265  # words per minute
+    DEFAULT_VIDEO_DURATION = 600
 
     class MissingEstimationData(Exception):
         pass
@@ -93,7 +94,8 @@ class EffortEstimationTransformer(BlockStructureTransformer):
         try:
             text = lxml.html.fromstring(xblock.data).text_content() if xblock.data else ''
         except Exception as exc:  # pylint: disable=broad-except
-            raise cls.MissingEstimationData() from exc
+            #raise cls.MissingEstimationData() from exc
+            text = ''
 
         block_structure.set_transformer_block_field(block_key, cls, cls.HTML_WORD_COUNT, len(text.split()))
 
@@ -107,7 +109,7 @@ class EffortEstimationTransformer(BlockStructureTransformer):
 
         # Check if we have a duration. If not, raise an exception that will stop this transformer from affecting
         # this course.
-        duration = cache[cls.CACHE_VIDEO_DURATIONS].get(xblock.edx_video_id, 0)
+        duration = cache[cls.CACHE_VIDEO_DURATIONS].get(xblock.edx_video_id, cls.DEFAULT_VIDEO_DURATION)
         if duration <= 0:
             raise cls.MissingEstimationData()
 
@@ -127,17 +129,17 @@ class EffortEstimationTransformer(BlockStructureTransformer):
 
         # Skip any transformation if our collection phase said to
         cls = EffortEstimationTransformer
-        if block_structure.get_transformer_data(cls, cls.DISABLE_ESTIMATION, default=False):
-            return
+        #if block_structure.get_transformer_data(cls, cls.DISABLE_ESTIMATION, default=False):
+        #    return
 
         # These estimation methods should return a tuple of (a number in seconds, an activity count)
         estimations = {
             'chapter': self._estimate_children_effort,
             'course': self._estimate_children_effort,
-            'html': self._estimate_html_effort,
+            #'html': self._estimate_html_effort,
             'sequential': self._estimate_children_effort,
             'vertical': self._estimate_vertical_effort,
-            'video': self._estimate_video_effort,
+            #'video': self._estimate_video_effort,
         }
 
         # We're good to continue and make user-specific estimates based on collected data
