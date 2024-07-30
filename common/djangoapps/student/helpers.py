@@ -1037,10 +1037,10 @@ def get_assessments_for_courses(request):
                             if (student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state):
                                 problemSubmissionStatus.append("Submitted")
                                 problemType = True
-                log.info(problemSubmissionStatus)
 
                 if not ignoreUnit:
                     if problemType:
+                        log.info(problemSubmissionStatus)
                         if all([status == "Submitted" for status in problemSubmissionStatus ]):
                             temp["submission_status"] = "Submitted"
                             temp["is_graded"] = "Graded"
@@ -1048,7 +1048,6 @@ def get_assessments_for_courses(request):
                             temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
                         else:
-                            log.info(problemSubmissionStatus)
                             temp["submission_status"] = "Submitted"  if showNotSubmitted else "In Progress"
                             temp["is_graded"] = "Graded"  if showNotSubmitted else "Not Graded"
                         
