@@ -97,7 +97,11 @@ h1{font-size: 20px;margin-bottom: 20px;}
                 </td>
 
 		<td style="text-wrap: nowrap;">{{item.start_date|date:'Y-m-d H:i'}}</td>
-                <td>{{ item.date|date:'Y-m-d H:i' }}</td>
+                {% if item.date != "None" %}
+                    <td>{{ item.date|date:'Y-m-d H:i' }}</td>
+                {%else%}
+                    <td>-</td>
+                {%endif%}
                 <td>{{item.submission_status}}</td>
                 <td>{{ item.is_graded }}</td>
             </tr>
