@@ -983,6 +983,7 @@ def get_assessments_for_courses(request):
                             ignoreUnit = True
                             continue
                         
+                        problemSubmissionStatus = []
                         block_id = get_first_component_of_block(component, block_data)
                         student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                         student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
@@ -991,6 +992,7 @@ def get_assessments_for_courses(request):
                         if not student_module_info:
                             temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
+                            problemSubmissionStatus.append("Not Submitted")
                         submission_state = json.loads(student_module_info.state) if student_module_info else {}
                         if category in ["freetextresponse"]:
                             if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
@@ -1028,17 +1030,21 @@ def get_assessments_for_courses(request):
 
                         elif category in ["problem"]:
                             if (student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state):
-                                temp["submission_status"] = "Submitted"
-                                temp["is_graded"] = "Graded"
+                                problemSubmissionStatus.append("Submitted")
 
-                            elif ("submission_status" in temp and temp["submission_status"] in ["Not Submitted"]) or not temp.get("submission_status", None):
-                                temp["submission_status"] =  "Not Submitted"  if showNotSubmitted else "-"
-                                temp["is_graded"] = "-"
-                            elif temp["submission_status"] in ["Submitted"]:
-                                temp["submission_status"] =  "Submitted"
-                                temp["is_graded"] = "Graded"
 
                 if not ignoreUnit:
+                    if category in ["problem"]:
+                        if all([status == "Submitted" for status in problemSubmissionStatus ]):
+                            temp["submission_status"] = "Submitted"
+                            temp["is_graded"] = "Graded"
+                        elif all([status == "Not Submitted" for status in problemSubmissionStatus ]):
+                            temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
+                            temp["is_graded"] = "-"
+                        else:
+                            temp["submission_status"] = "Submitted"  if showNotSubmitted else "In Progress"
+                            temp["is_graded"] = "Graded"  if showNotSubmitted else "Not Graded"
+
                     all_blocks_data.append(temp)
         
                         
