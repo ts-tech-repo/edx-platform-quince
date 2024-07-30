@@ -977,13 +977,13 @@ def get_assessments_for_courses(request):
                     unit = units.pop()
                 
                     components = block_data.get_children(unit)
+                    problemSubmissionStatus, problemType = [], False
                     for component in components:
                         category = block_data.get_xblock_field(component, 'category')
                         if category not in ["edx_sga", "openassessment", "problem", "freetextresponse"]:
                             ignoreUnit = True
                             continue
                         
-                        problemSubmissionStatus, problemType = [], False
                         block_id = get_first_component_of_block(component, block_data)
                         student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                         student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
