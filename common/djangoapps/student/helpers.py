@@ -1043,6 +1043,7 @@ def get_assessments_for_courses(request):
                             temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
                         else:
+                            log.info(problemSubmissionStatus)
                             temp["submission_status"] = "Submitted"  if showNotSubmitted else "In Progress"
                             temp["is_graded"] = "Graded"  if showNotSubmitted else "Not Graded"
                         
