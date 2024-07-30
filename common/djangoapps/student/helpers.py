@@ -1032,6 +1032,7 @@ def get_assessments_for_courses(request):
                                 temp["is_graded"] = "-"
 
                         elif category in ["problem"]:
+                            log.info(submission_state)
                             if (student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state):
                                 problemSubmissionStatus.append("Submitted")
                             if ("raw_earned" in submission_state):
