@@ -993,7 +993,12 @@ def get_assessments_for_courses(request):
                             temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
                             problemSubmissionStatus.append("Not Submitted")
-                        submission_state = json.loads(student_module_info.state) if student_module_info else {}
+                            submission_state = {}
+                        else:
+                            submission_state = json.loads(student_module_info.state)
+                            if "position" in submission_state:
+                                problemSubmissionStatus.append("In Progress")
+
                         if category in ["freetextresponse"]:
                             if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
                                 temp["submission_status"] = "In Progress"
