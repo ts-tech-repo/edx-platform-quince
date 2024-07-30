@@ -970,7 +970,6 @@ def get_assessments_for_courses(request):
                     temp["is_graded"] = "Not Graded"
                 
                 units = block_data.get_children(subsection_key)
-                isTimedExam = block_data.get_xblock_field(subsection_key, 'is_timed_exam')
                 if not units:
                     ignoreUnit = True
                     continue
@@ -1048,8 +1047,8 @@ def get_assessments_for_courses(request):
                             temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
                         else:
-                            temp["submission_status"] = "Submitted"  if showNotSubmitted or isTimedExam else "In Progress"
-                            temp["is_graded"] = "Graded"  if showNotSubmitted or isTimedExam else "Not Graded"
+                            temp["submission_status"] = "Submitted"  if showNotSubmitted  else "In Progress"
+                            temp["is_graded"] = "Graded"  if showNotSubmitted  else "Not Graded"
                         
                     all_blocks_data.append(temp)
         
