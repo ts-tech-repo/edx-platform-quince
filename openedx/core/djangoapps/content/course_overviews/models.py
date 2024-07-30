@@ -843,6 +843,7 @@ class CourseOverview(TimeStampedModel):
         """
         Returns the course from the modulestore.
         """
+        log.info(modulestore().get_course(self.id))
         return modulestore().get_course(self.id)
 
     def bind_course_for_student(self, request):
