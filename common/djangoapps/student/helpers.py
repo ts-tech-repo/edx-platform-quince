@@ -980,6 +980,7 @@ def get_assessments_for_courses(request):
                     problemSubmissionStatus, problemType = [], False
                     for component in components:
                         category = block_data.get_xblock_field(component, 'category')
+                        log.info(store.get_items(course_key, qualifiers={'name': block_id}, settings={'is_time_limited': True}))
                         if category not in ["edx_sga", "openassessment", "problem", "freetextresponse"]:
                             ignoreUnit = True
                             continue
