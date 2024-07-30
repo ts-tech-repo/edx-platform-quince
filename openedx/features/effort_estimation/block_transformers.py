@@ -26,8 +26,7 @@ class EffortEstimationTransformer(BlockStructureTransformer):
     - effort_time: Our best guess at how long the block and lower will take, in seconds. We use an estimated reading
                    speed and video duration to calculate this. Just a rough guide.
 
-    If there is any missing data (like no video duration), we don't provide any estimates at all for the course.
-    We'd rather provide no estimate than a misleading estimate.
+    If there is any missing data (like no video duration), we use default estimates rather than provide no estimates.
 
     This transformer requires data gathered during the collection phase (from a course publish), so it won't work
     on a course until the next publish.
@@ -47,9 +46,7 @@ class EffortEstimationTransformer(BlockStructureTransformer):
 
     CACHE_VIDEO_DURATIONS = 'video.durations'
     DEFAULT_WPM = 265  # words per minute
-
-    class MissingEstimationData(Exception):
-        pass
+    DEFAULT_VIDEO_DURATION = 600  # default duration in seconds if missing
 
     @classmethod
     def name(cls):
@@ -74,18 +71,11 @@ class EffortEstimationTransformer(BlockStructureTransformer):
             'video': cls._collect_video_effort,
         }
 
-        try:
-            for block_key in block_structure.topological_traversal():
-                xblock = block_structure.get_xblock(block_key)
+        for block_key in block_structure.topological_traversal():
+            xblock = block_structure.get_xblock(block_key)
 
-                if xblock.category in collections:
-                    collections[xblock.category](block_structure, block_key, xblock, collection_cache)
-
-        except cls.MissingEstimationData:
-            # Some bit of required data is missing. Likely some duration info is missing from the video pipeline.
-            # Rather than attempt to work around it, just set a note for ourselves to not show durations for this
-            # course at all. Better no estimate than a misleading estimate.
-            block_structure.set_transformer_data(cls, cls.DISABLE_ESTIMATION, True)
+            if xblock.category in collections:
+                collections[xblock.category](block_structure, block_key, xblock, collection_cache)
 
     @classmethod
     def _collect_html_effort(cls, block_structure, block_key, xblock, _cache):
@@ -93,7 +83,7 @@ class EffortEstimationTransformer(BlockStructureTransformer):
         try:
             text = lxml.html.fromstring(xblock.data).text_content() if xblock.data else ''
         except Exception as exc:  # pylint: disable=broad-except
-            raise cls.MissingEstimationData() from exc
+            text = ''
 
         block_structure.set_transformer_block_field(block_key, cls, cls.HTML_WORD_COUNT, len(text.split()))
 
@@ -105,18 +95,15 @@ class EffortEstimationTransformer(BlockStructureTransformer):
             all_videos, _ = get_videos_for_course(str(block_structure.root_block_usage_key.course_key))
             cache[cls.CACHE_VIDEO_DURATIONS] = {v['edx_video_id']: v['duration'] for v in all_videos}
 
-        # Check if we have a duration. If not, raise an exception that will stop this transformer from affecting
-        # this course.
-        duration = cache[cls.CACHE_VIDEO_DURATIONS].get(xblock.edx_video_id, 0)
-        if duration <= 0:
-            raise cls.MissingEstimationData()
+        # Check if we have a duration. If not, use default duration.
+        duration = cache[cls.CACHE_VIDEO_DURATIONS].get(xblock.edx_video_id, cls.DEFAULT_VIDEO_DURATION)
 
         block_structure.set_transformer_block_field(block_key, cls, cls.VIDEO_DURATION, duration)
 
         # Some videos will suggest specific start & end times, rather than the whole video. Note that this is only
         # supported in some clients (other clients - like the mobile app - will play the whole video anyway). So we
         # record this duration separately, to use instead of the whole video duration if the client supports it.
-        clip_duration = (xblock.end_time - xblock.start_time).total_seconds()
+        clip_duration = (xblock.end_time - xblock.start_time).total_seconds() if xblock.end_time and xblock.start_time else 0
         if clip_duration > 0:
             block_structure.set_transformer_block_field(block_key, cls, cls.VIDEO_CLIP_DURATION, clip_duration)
 
@@ -125,19 +112,14 @@ class EffortEstimationTransformer(BlockStructureTransformer):
         if EFFORT_ESTIMATION_DISABLED_FLAG.is_enabled(block_structure.root_block_usage_key.course_key):
             return
 
-        # Skip any transformation if our collection phase said to
-        cls = EffortEstimationTransformer
-        if block_structure.get_transformer_data(cls, cls.DISABLE_ESTIMATION, default=False):
-            return
-
         # These estimation methods should return a tuple of (a number in seconds, an activity count)
         estimations = {
             'chapter': self._estimate_children_effort,
             'course': self._estimate_children_effort,
-            'html': self._estimate_html_effort,
+            #'html': self._estimate_html_effort,
             'sequential': self._estimate_children_effort,
             'vertical': self._estimate_vertical_effort,
-            'video': self._estimate_video_effort,
+            #'video': self._estimate_video_effort,
         }
 
         # We're good to continue and make user-specific estimates based on collected data
