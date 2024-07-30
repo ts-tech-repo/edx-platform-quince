@@ -1033,7 +1033,6 @@ def get_assessments_for_courses(request):
                                 temp["is_graded"] = "-"
 
                         elif category in ["problem"]:
-                            log.info(submission_state)
                             if (student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state):
                                 problemSubmissionStatus.append("Submitted")
                             if ("score" in submission_state and "raw_earned" in submission_state["score"] and submission_state["score"]["raw_earned"] == 0):
@@ -1042,7 +1041,6 @@ def get_assessments_for_courses(request):
 
                 if not ignoreUnit:
                     if problemType:
-                        log.info(problemSubmissionStatus)
                         if all([status == "Submitted" for status in problemSubmissionStatus ]):
                             temp["submission_status"] = "Submitted"
                             temp["is_graded"] = "Graded"
