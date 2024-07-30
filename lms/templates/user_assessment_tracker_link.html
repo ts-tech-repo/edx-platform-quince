@@ -189,10 +189,10 @@ $('table td:nth-child(3)').each(function () {
 		utcCutoff  = moment.utc(text, 'YYYY-MM-DD HH:mm');
 		console.log(utcCutoff.format("YYYY-MM-DD HH:mm"))
 		if (user_set_zone != "") {
-			$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm A"))
+			$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD hh:mm A"))
 		}else {
 			console.log(moment.utc(text, 'YYYY-MM-DD HH:mm').local().toDate())
-			$(this).text(moment.utc(text, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD HH:mm A'))
+			$(this).text(moment.utc(text, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD hh:mm A'))
 		}
 });
 $('table td:nth-child(4)').each(function () {
@@ -200,9 +200,9 @@ $('table td:nth-child(4)').each(function () {
 		if(text != "") {
 			utcCutoff  = moment.utc(text, 'YYYY-MM-DD HH:mm');
 			if (user_set_zone != "") {
-				$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD HH:mm A"))
+				$(this).text(utcCutoff.tz(user_set_zone).format("YYYY-MM-DD hh:mm A"))
 			}else {
-				$(this).text(moment.utc(text, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD HH:mm A'))
+				$(this).text(moment.utc(text, 'YYYY-MM-DD HH:mm').local().format('YYYY-MM-DD hh:mm A'))
 			}
 		}
 		else {

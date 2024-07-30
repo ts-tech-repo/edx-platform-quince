@@ -1035,7 +1035,7 @@ def get_assessments_for_courses(request):
                             log.info(submission_state)
                             if (student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state):
                                 problemSubmissionStatus.append("Submitted")
-                            if ("raw_earned" in submission_state):
+                            if ("score" in submission_state and "raw_earned" in submission_state["score"] and submission_state["score"]["raw_earned"]):
                                 problemSubmissionStatus.append("In Progress")
                             problemType = True
 
