@@ -536,7 +536,7 @@ git+https://github.com/ts-tech-repo/text-response.git@main
 #xblock-free-text-response
 git+https://github.com/ts-tech-repo/xblock-free-text-response.git@master
     # via -r requirements/edx/bundled.in
-edx-submissions==3.6.0
+git+https://github.com/ts-tech-repo/edx-submissions.git@master
     # via
     #   -r requirements/edx/kernel.in
     #   ora2
