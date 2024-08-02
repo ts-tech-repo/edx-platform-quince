@@ -118,6 +118,7 @@ function cdnLinks_autoComplete_videolist() {
                     select: function(event, ui) {
                         ui.item.value = "https://" + ui.item.domain + "/e_content/" + ui.item.value;
                         $(this).val(ui.item.value);
+                        $(this).trigger("input");
                         event.preventDefault();
                         console.log("Selected value:", ui.item.value);
                     }
