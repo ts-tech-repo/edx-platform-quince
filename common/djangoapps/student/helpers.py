@@ -1034,7 +1034,7 @@ def get_assessments_for_courses(request):
                         elif category in ["problem"]:
                             if (student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state):
                                 problemSubmissionStatus.append("Submitted")
-                            if ("score" in submission_state and "raw_earned" in submission_state["score"] and submission_state["score"]["raw_earned"] == 0):
+                            elif ("score" in submission_state and "raw_earned" in submission_state["score"] and submission_state["score"]["raw_earned"] == 0):
                                 problemSubmissionStatus.append("In Progress")
                             problemType = True
 
