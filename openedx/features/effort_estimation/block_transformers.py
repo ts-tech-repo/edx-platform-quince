@@ -47,7 +47,7 @@ class EffortEstimationTransformer(BlockStructureTransformer):
 
     CACHE_VIDEO_DURATIONS = 'video.durations'
     DEFAULT_WPM = 265  # words per minute
-    DEFAULT_VIDEO_DURATION = 600
+    DEFAULT_VIDEO_DURATION = 60
 
     class MissingEstimationData(Exception):
         pass
@@ -94,8 +94,7 @@ class EffortEstimationTransformer(BlockStructureTransformer):
         try:
             text = lxml.html.fromstring(xblock.data).text_content() if xblock.data else ''
         except Exception as exc:  # pylint: disable=broad-except
-            #raise cls.MissingEstimationData() from exc
-            text = ''
+            raise cls.MissingEstimationData() from exc
 
         block_structure.set_transformer_block_field(block_key, cls, cls.HTML_WORD_COUNT, len(text.split()))
 
@@ -129,8 +128,8 @@ class EffortEstimationTransformer(BlockStructureTransformer):
 
         # Skip any transformation if our collection phase said to
         cls = EffortEstimationTransformer
-        #if block_structure.get_transformer_data(cls, cls.DISABLE_ESTIMATION, default=False):
-        #    return
+        if block_structure.get_transformer_data(cls, cls.DISABLE_ESTIMATION, default=False):
+            return
 
         # These estimation methods should return a tuple of (a number in seconds, an activity count)
         estimations = {
