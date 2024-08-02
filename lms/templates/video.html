@@ -9,19 +9,6 @@ from openedx.core.djangolib.js_utils import (
 % if display_name is not UNDEFINED and display_name is not None and not is_embed:
     <h3 class="hd hd-2">${display_name}</h3>
 % endif
-<style>
-    ul.ui-autocomplete li:hover a{
-            color: #000 !important;
-            background: #ccc !important;
-    }
-    ul.ui-autocomplete li a{
-            color: #000 !important;
-            background: #f2f2f2 !important;
-    }
-    ul.ui-autocomplete li:hover{
-            background: #ccc !important;
-    }
-</style>
 <link href="https://static.talentsprint.com/edx_styles/staging_edx_player_quince.css"  type="text/css" rel="stylesheet">
 <div
     id="video_${id}"
