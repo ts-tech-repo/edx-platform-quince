@@ -67,6 +67,7 @@ from submissions.models import StudentItem, Submission
 from submissions import api as submissions_api
 from xmodule.modulestore.django import modulestore
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
+from openedx.core.djangoapps.enrollments.data import get_course_enrollments
 
 # Enumeration of per-course verification statuses
 # we display on the student dashboard.
@@ -960,6 +961,7 @@ def get_assessments_for_courses(request):
                     unit = units.pop()
                 
                     components = block_data.get_children(unit)
+                    problemSubmissionStatus, problemType = [], False
                     for component in components:
                         category = block_data.get_xblock_field(component, 'category')
                         if category not in ["edx_sga", "openassessment", "problem", "freetextresponse"]:
@@ -974,13 +976,19 @@ def get_assessments_for_courses(request):
                         if not student_module_info:
                             temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
-                        submission_state = json.loads(student_module_info.state) if student_module_info else {}
+                            problemSubmissionStatus.append("Not Submitted")
+                            submission_state = {}
+                        else:
+                            submission_state = json.loads(student_module_info.state)
+
                         if category in ["freetextresponse"]:
                             if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
                                 temp["submission_status"] = "In Progress"
                                 temp["is_graded"] = "-"
                             elif submission_state.get("student_answer", None) and submission_state.get("count_attempts", None):
                                 temp["submission_status"] = "Submitted"
+
+
 
                         elif category in ["edx_sga"]:                            
                             try:
@@ -1009,17 +1017,23 @@ def get_assessments_for_courses(request):
 
                         elif category in ["problem"]:
                             if (student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state):
-                                temp["submission_status"] = "Submitted"
-                                temp["is_graded"] = "Graded"
-
-                            elif ("submission_status" in temp and temp["submission_status"] in ["Not Submitted"]) or not temp.get("submission_status", None):
-                                temp["submission_status"] =  "Not Submitted"  if showNotSubmitted else "-"
-                                temp["is_graded"] = "-"
-                            elif temp["submission_status"] in ["Submitted"]:
-                                temp["submission_status"] =  "Submitted"
-                                temp["is_graded"] = "Graded"
+                                problemSubmissionStatus.append("Submitted")
+                            elif ("score" in submission_state and "raw_earned" in submission_state["score"] and submission_state["score"]["raw_earned"] == 0):
+                                problemSubmissionStatus.append("In Progress")
+                            problemType = True
 
                 if not ignoreUnit:
+                    if problemType:
+                        if all([status == "Submitted" for status in problemSubmissionStatus ]):
+                            temp["submission_status"] = "Submitted"
+                            temp["is_graded"] = "Graded"
+                        elif all([status == "Not Submitted" for status in problemSubmissionStatus ]):
+                            temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
+                            temp["is_graded"] = "-"
+                        else:
+                            temp["submission_status"] = "Submitted"  if showNotSubmitted  else "In Progress"
+                            temp["is_graded"] = "Graded"  if showNotSubmitted  else "Not Graded"
+                        
                     all_blocks_data.append(temp)
         
                         
