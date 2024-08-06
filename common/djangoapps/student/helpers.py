@@ -990,6 +990,7 @@ def get_assessments_for_courses(request):
                         temp["is_graded"] = "Graded" if score and (score["points_earned"] or score["points_earned"] == 0) else "Not Graded"
                         if not student_module_info:
                             temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
+                            temp["is_graded"] = "-"
                             problemSubmissionStatus.append("Not Submitted")
                             submission_state = {}
                         else:
