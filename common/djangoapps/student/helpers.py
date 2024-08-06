@@ -1032,7 +1032,7 @@ def get_assessments_for_courses(request):
                 
 
                 if not ignoreUnit:
-                    if temp["submission_status"] in ["Submitted"]:
+                    if temp.get("submission_status") in ["Submitted"]:
                         try:
                             grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
                             if grades.first_attempted is not None:
