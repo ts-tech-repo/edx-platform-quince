@@ -1029,17 +1029,18 @@ def get_assessments_for_courses(request):
                                 problemSubmissionStatus.append("In Progress")
                             problemType = True
                 
-                if temp["submission_status"] in ["Submitted"]:
-                    try:
-                        grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
-                        if grades.first_attempted is not None:
-                            temp["is_graded"] = "Graded"
-                        else:
-                            temp["is_graded"] = "Not Graded"
-                    except Exception as DoesNotExistError:
-                        temp["is_graded"] = "Not Graded"
+                
 
                 if not ignoreUnit:
+                    if temp["submission_status"] in ["Submitted"]:
+                        try:
+                            grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
+                            if grades.first_attempted is not None:
+                                temp["is_graded"] = "Graded"
+                            else:
+                                temp["is_graded"] = "Not Graded"
+                        except Exception as DoesNotExistError:
+                            temp["is_graded"] = "Not Graded"
                     if problemType:
                         if all([status == "Submitted" for status in problemSubmissionStatus ]):
                             temp["submission_status"] = "Submitted"
