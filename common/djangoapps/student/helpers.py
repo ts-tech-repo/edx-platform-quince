@@ -1054,6 +1054,10 @@ def get_assessments_for_courses(request):
                         elif all([status == "Not Submitted" for status in problemSubmissionStatus ]):
                             temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
+                        
+                        else:
+                            temp["submission_status"] = "Submitted"  if showNotSubmitted  else "In Progress"
+                            temp["is_graded"] = "Graded"  if showNotSubmitted  else "Not Graded"
 
                     
                         
