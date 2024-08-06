@@ -958,7 +958,7 @@ def get_assessments_for_courses(request):
                 due = block_data.get_xblock_field(subsection_key, 'due')
                 showNotSubmitted = True if due is not None and datetime.now() > due.replace(tzinfo=None) else  False
                 ignoreUnit = False
-                temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key]), "is_graded" : "-"}
+                temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
                 try:
                     grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
                     if grades.first_attempted is not None:
