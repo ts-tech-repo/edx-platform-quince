@@ -1032,6 +1032,7 @@ def get_assessments_for_courses(request):
                 
 
                 if not ignoreUnit:
+                    
                     if temp.get("submission_status") in ["Submitted"]:
                         try:
                             grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
@@ -1041,6 +1042,7 @@ def get_assessments_for_courses(request):
                                 temp["is_graded"] = "Not Graded"
                         except Exception as DoesNotExistError:
                             temp["is_graded"] = "Not Graded"
+
                     if problemType:
                         if all([status == "Submitted" for status in problemSubmissionStatus ]):
                             temp["submission_status"] = "Submitted"
@@ -1048,9 +1050,9 @@ def get_assessments_for_courses(request):
                         elif all([status == "Not Submitted" for status in problemSubmissionStatus ]):
                             temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
-                        else:
-                            temp["submission_status"] = "Submitted"  if showNotSubmitted  else "In Progress"
-                            temp["is_graded"] = "Graded"  if showNotSubmitted  else "Not Graded"
+
+                    temp["submission_status"] = "Submitted"  if showNotSubmitted  else "In Progress"
+                    temp["is_graded"] = "Graded"  if showNotSubmitted  else "Not Graded"
                         
                     all_blocks_data.append(temp)
         
