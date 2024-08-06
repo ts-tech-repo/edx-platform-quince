@@ -1036,13 +1036,13 @@ def get_assessments_for_courses(request):
                     if temp.get("submission_status") in ["Submitted"]:
                         try:
                             grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
-                            log.info(grades)
-                            log.info(temp["display_name"])
                             if grades.first_attempted is not None:
                                 temp["is_graded"] = "Graded"
                             else:
                                 temp["is_graded"] = "Not Graded"
                         except Exception as DoesNotExistError:
+                            log.info(grades)
+                            log.info(temp["display_name"])
                             temp["is_graded"] = "Not Graded"
                     
                     elif temp.get("submission_status") in ["In Progress"]:
