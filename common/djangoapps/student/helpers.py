@@ -996,8 +996,13 @@ def get_assessments_for_courses(request):
                             submission_state = json.loads(student_module_info.state)
 
                         if category in ["freetextresponse"]:
-                            if submission_state.get("student_answer", None):
-                                temp["submission_status"] = "In Progress" if not submission_state.get("count_attempts", None) else "Submitted"
+                            if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
+                                temp["submission_status"] = "In Progress"
+                                temp["is_graded"] = "-"
+                            elif submission_state.get("student_answer", None) and submission_state.get("count_attempts", None):
+                                temp["submission_status"] = "Submitted"
+
+
 
                         elif category in ["edx_sga"]:                            
                             try:
