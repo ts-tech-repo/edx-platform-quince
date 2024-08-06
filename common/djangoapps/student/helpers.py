@@ -958,7 +958,7 @@ def get_assessments_for_courses(request):
                 due = block_data.get_xblock_field(subsection_key, 'due')
                 showNotSubmitted = True if due is not None and datetime.now() > due.replace(tzinfo=None) else  False
                 ignoreUnit = False
-                temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
+                temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key]), "is_graded" : "-"}
                 try:
                     grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
                     if grades.first_attempted is not None:
@@ -990,20 +990,14 @@ def get_assessments_for_courses(request):
                         temp["is_graded"] = "Graded" if score and (score["points_earned"] or score["points_earned"] == 0) else "Not Graded"
                         if not student_module_info:
                             temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
-                            temp["is_graded"] = "-"
                             problemSubmissionStatus.append("Not Submitted")
                             submission_state = {}
                         else:
                             submission_state = json.loads(student_module_info.state)
 
                         if category in ["freetextresponse"]:
-                            if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
-                                temp["submission_status"] = "In Progress"
-                                temp["is_graded"] = "-"
-                            elif submission_state.get("student_answer", None) and submission_state.get("count_attempts", None):
-                                temp["submission_status"] = "Submitted"
-
-
+                            if submission_state.get("student_answer", None):
+                                temp["submission_status"] = "In Progress" if not submission_state.get("count_attempts", None) else "Submitted"
 
                         elif category in ["edx_sga"]:                            
                             try:
