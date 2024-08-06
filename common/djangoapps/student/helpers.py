@@ -959,14 +959,6 @@ def get_assessments_for_courses(request):
                 showNotSubmitted = True if due is not None and datetime.now() > due.replace(tzinfo=None) else  False
                 ignoreUnit = False
                 temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
-                try:
-                    grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
-                    if grades.first_attempted is not None:
-                        temp["is_graded"] = "Graded"
-                    else:
-                        temp["is_graded"] = "Not Graded"
-                except Exception as DoesNotExistError:
-                    temp["is_graded"] = "Not Graded"
                 
                 units = block_data.get_children(subsection_key)
                 if not units:
@@ -986,8 +978,8 @@ def get_assessments_for_courses(request):
                         block_id = get_first_component_of_block(component, block_data)
                         student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                         student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
-                        score = submissions_api.get_score(student_item)
-                        temp["is_graded"] = "Graded" if score and (score["points_earned"] or score["points_earned"] == 0) else "Not Graded"
+                        # score = submissions_api.get_score(student_item)
+                        # temp["is_graded"] = "Graded" if score and (score["points_earned"] or score["points_earned"] == 0) else "Not Graded"
                         if not student_module_info:
                             temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
@@ -1036,6 +1028,16 @@ def get_assessments_for_courses(request):
                             elif ("score" in submission_state and "raw_earned" in submission_state["score"] and submission_state["score"]["raw_earned"] == 0):
                                 problemSubmissionStatus.append("In Progress")
                             problemType = True
+                
+                if temp["submission_status"] in ["Submitted"]:
+                    try:
+                        grades = PersistentSubsectionGrade.read_grade(user.id, subsection_key)
+                        if grades.first_attempted is not None:
+                            temp["is_graded"] = "Graded"
+                        else:
+                            temp["is_graded"] = "Not Graded"
+                    except Exception as DoesNotExistError:
+                        temp["is_graded"] = "Not Graded"
 
                 if not ignoreUnit:
                     if problemType:
