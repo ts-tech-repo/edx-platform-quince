@@ -1041,8 +1041,6 @@ def get_assessments_for_courses(request):
                             else:
                                 temp["is_graded"] = "Not Graded"
                         except Exception as DoesNotExistError:
-                            log.info(grades)
-                            log.info(temp["display_name"])
                             temp["is_graded"] = "Not Graded"
                     
                     elif temp.get("submission_status") in ["In Progress"]:
