@@ -950,8 +950,7 @@ def get_assessments_for_courses(request):
         course_key_string = user_course["course_details"]["course_id"]
         course_key = CourseKey.from_string(course_key_string)
         
-        # course_usage_key = modulestore().make_course_usage_key(course_key)
-        course_usage_key = "{0}+type@course+block@course".format(course_key_string.replace("course-v1:", "block-v1:"))
+        course_usage_key = modulestore().make_course_usage_key(course_key)
         block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
         for section_key in block_data.get_children(course_usage_key):  
             for subsection_key in block_data.get_children(section_key):
