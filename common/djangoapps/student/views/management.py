@@ -1655,5 +1655,5 @@ def extras_get_assessment_grades(request):
     page = request.POST.get("page")
     limit = request.POST.get("limit")
     course_key = CourseKey.from_string(str(course_id))
-    log.info(enrolled_students_features(course_key, ["username","first_name","last_name","email"]))
+    log.info(enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"]))
     return JsonResponse({})
