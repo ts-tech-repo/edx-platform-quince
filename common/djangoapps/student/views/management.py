@@ -1653,4 +1653,4 @@ def extras_get_assessment_grades(request):
     course_id = request.POST.get("courseid")
     page = request.POST.get("page")
     limit = request.POST.get("limit")
-    return ""
+    return JsonResponse({})
