@@ -106,7 +106,7 @@ from common.djangoapps.util.db import outer_atomic
 from common.djangoapps.util.json_request import JsonResponse
 from common.djangoapps.student.signals import USER_EMAIL_CHANGED
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage
 
 log = logging.getLogger("edx.student")
 
@@ -1661,10 +1661,14 @@ def extras_get_assessment_grades(request):
     enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
     course_usage_key = modulestore().make_course_usage_key(course_key)
     context = {"usergrades" : []}
-    
+    page_size = limit - page
     for user in enrolled_users:
         user_grades = PersistentSubsectionGrade.objects.filter(user_id=user["id"],course_id=course_key)
-        log.info(Paginator(user_grades, 10))
+        pages = Paginator(user_grades, page_size)
+        try:
+            log.info(pages.page(page // page_size))
+        except EmptyPage:
+            log.info(pages.page(pages.num_pages))
         grades_list = []
         block_data = get_course_blocks(User.objects.get(id = user["id"]), course_usage_key, allow_start_dates_in_future=True, include_completion=True)
         temp = {"courseid" : course_id, "userid" : user["id"], "userfullname" : user["first_name"], "email" : user["email"], "username" : user["username"], "gradeitems" : []}
