@@ -1662,6 +1662,7 @@ def extras_get_assessment_grades(request):
     course_usage_key = modulestore().make_course_usage_key(course_key)
     context = {"usergrades" : []}
     page_size = (limit - page) + 1
+    log.info(page_size)
     for user in enrolled_users:
         user_grades = PersistentSubsectionGrade.objects.filter(user_id=user["id"],course_id=course_key)
         pages = Paginator(user_grades, page_size)
