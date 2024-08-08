@@ -1662,7 +1662,7 @@ def extras_get_assessment_grades(request):
         grades_list = []
         for grade in user_grades:
             temp = {"start_time" : "", "end_time" : "", "grademin" : "", "grademax" : "", "itemname" : ""}
-            log.info(grade.full_usage_key)
+            log.info(grade.possible_graded)
             grades_list.append(temp)
 
     return JsonResponse({})
