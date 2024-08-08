@@ -1666,9 +1666,9 @@ def extras_get_assessment_grades(request):
         user_grades = PersistentSubsectionGrade.objects.filter(user_id=user["id"],course_id=course_key)
         pages = Paginator(user_grades, page_size)
         try:
-            grades = pages.page(page // page_size) if page >= page_size else pages.page(1)
+            grades = pages.get_page(page // page_size) if page >= page_size else pages.get_page(1)
         except EmptyPage:
-            grades = pages.page(pages.num_pages)
+            grades = pages.get_page(pages.num_pages)
         
         log.info(grades)
         grades_list = []
