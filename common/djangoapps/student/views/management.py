@@ -1664,7 +1664,7 @@ def extras_get_assessment_grades(request):
     page_size = (limit - page) + 1
     pages = Paginator(enrolled_users, page_size)
     try:
-        page_enrolled_users = pages.get_page(page // page_size) if page >= page_size else pages.get_page(1)
+        page_enrolled_users = pages.get_page((page // page_size) + 1) if page >= page_size else pages.get_page(1)
     except EmptyPage:
         page_enrolled_users = pages.get_page(pages.num_pages)
     
