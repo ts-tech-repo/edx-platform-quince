@@ -1647,3 +1647,10 @@ def extras_transcript(request):
         return JsonResponse(json.loads(r.text))
     except Exception as err:
         return ""
+    
+@csrf_exempt
+def extras_get_assessment_grades(request):
+    course_id = request.args.post("courseid")
+    page = request.args.post("page")
+    page = request.args.post("limit")
+    return ""

@@ -34,6 +34,7 @@ urlpatterns = [
     re_path(r'^extras/get_last_login', views.extras_get_last_login, name = "extras_get_last_login"),
     re_path(r'^extras/get_payment_details', views.extras_get_payment_details, name = "extras_get_payment_details"),
 
+    re_path(r'^extras/get_assessment_grades', views.extras_get_assessment_grades, name = "extras_get_assessment_grades"),
     re_path(r'^email_confirm/(?P<key>[^/]*)$', views.confirm_email_change, name='confirm_email_change'),
 
     re_path(r'^activate/(?P<key>[^/]*)$', views.activate_account, name="activate"),
