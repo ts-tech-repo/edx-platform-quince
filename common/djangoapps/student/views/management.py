@@ -1670,7 +1670,7 @@ def extras_get_assessment_grades(request):
         except EmptyPage:
             grades = pages.get_page(pages.num_pages)
         
-        log.info(grades)
+        log.info([grade for grade in grades])
         grades_list = []
         block_data = get_course_blocks(User.objects.get(id = user["id"]), course_usage_key, allow_start_dates_in_future=True, include_completion=True)
         temp = {"courseid" : course_id, "userid" : user["id"], "userfullname" : user["first_name"], "email" : user["email"], "username" : user["username"], "gradeitems" : []}
