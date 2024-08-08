@@ -1650,7 +1650,7 @@ def extras_transcript(request):
     
 @csrf_exempt
 def extras_get_assessment_grades(request):
-    course_id = request.args.post("courseid")
-    page = request.args.post("page")
-    page = request.args.post("limit")
+    course_id = request.POST.get("courseid")
+    page = request.POST.get("page")
+    limit = request.POST.get("limit")
     return ""
