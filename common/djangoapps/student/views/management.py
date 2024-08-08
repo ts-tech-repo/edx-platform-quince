@@ -1659,7 +1659,10 @@ def extras_get_assessment_grades(request):
     enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
     for user in enrolled_users:
         user_grades = PersistentSubsectionGrade.bulk_read_grades(user["id"], course_key)
+        grades_list = []
         for grade in user_grades:
-            log.info(grade)
+            temp = {"start_time" : "", "end_time" : "", "grademin" : "", "grademax" : "", "itemname" : ""}
+            log.info(grade.full_usage_key)
+            grades_list.append(temp)
 
     return JsonResponse({})
