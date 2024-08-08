@@ -1661,8 +1661,8 @@ def extras_get_assessment_grades(request):
         user_grades = PersistentSubsectionGrade.bulk_read_grades(user["id"], course_key)
         grades_list = []
         for grade in user_grades:
-            temp = {"start_time" : "", "end_time" : "", "grademin" : "", "grademax" : "", "itemname" : ""}
-            log.info(grade.possible_graded)
+            temp = {"start_time" : "", "end_time" : "", "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : ""}
+            log.info(temp)
             grades_list.append(temp)
 
     return JsonResponse({})
