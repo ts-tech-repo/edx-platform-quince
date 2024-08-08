@@ -1674,5 +1674,5 @@ def extras_get_assessment_grades(request):
 
         temp["gradeitems"] = grades_list
 
-    context["usergrades"].append(temp)
+        context["usergrades"].append(temp)
     return JsonResponse(context)
