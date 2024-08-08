@@ -26,6 +26,7 @@ from django.core.validators import ValidationError, validate_email
 from django.core.cache import cache
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
 from lms.djangoapps.instructor_analytics.basic import enrolled_students_features
+from openedx.core.djangoapps.content.block_structure.block_structure import BlockStructureModulestoreData
 from openedx.core.djangoapps.enrollments.api import add_enrollment
 from common.djangoapps.student.helpers import DISABLE_UNENROLL_CERT_STATES, cert_info, do_create_account, get_assessments_for_courses
 from django.core.exceptions import ObjectDoesNotExist
@@ -1662,7 +1663,8 @@ def extras_get_assessment_grades(request):
         grades_list = []
         for grade in user_grades:
             temp = {"start_time" : "", "end_time" : "", "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : ""}
-            log.info(temp)
+            block_structure = BlockStructureModulestoreData(root_block_usage_key=grade.full_usage_key)
+            log.info(block_structure)
             grades_list.append(temp)
 
     return JsonResponse({})
