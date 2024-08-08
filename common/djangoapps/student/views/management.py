@@ -1659,16 +1659,19 @@ def extras_get_assessment_grades(request):
     course_key = CourseKey.from_string(str(course_id))
     enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
     course_usage_key = modulestore().make_course_usage_key(course_key)
+    context = {"usergrades" : []}
     
     for user in enrolled_users:
         user_grades = PersistentSubsectionGrade.bulk_read_grades(user["id"], course_key)
         grades_list = []
         block_data = get_course_blocks(User.objects.get(id = user["id"]), course_usage_key, allow_start_dates_in_future=True, include_completion=True)
+        temp = {"courseid" : course_id, "userid" : user["id"], "userfullname" : user["first_name"], "email" : user["email"], "username" : user["username"], "gradeitems" : []}
         for grade in user_grades:
             
-            temp = {"start_time" : block_data.get_xblock_field(grade.full_usage_key, "start"), "end_time" : block_data.get_xblock_field(grade.full_usage_key, "due"), "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : block_data.get_xblock_field(grade.full_usage_key, "display_name")}
-            grades_list.append(temp)
+            due = block_data.get_xblock_field(grade.full_usage_key, "due")
+            grades_list.append({"start_time" : datetime.datetime.strftime(block_data.get_xblock_field(grade.full_usage_key, "start"), "%m/%d/%Y, %H:%M:%S"), "end_time" : datetime.datetime.strftime(due, "%m/%d/%Y, %H:%M:%S") if due is not None else "-", "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : block_data.get_xblock_field(grade.full_usage_key, "display_name")})
 
-        log.info(grades_list)
+        temp["gradeitems"] = grades_list
 
-    return JsonResponse({})
+    context["usergrades"].append(temp)
+    return JsonResponse(context)
