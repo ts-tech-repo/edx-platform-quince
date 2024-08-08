@@ -1669,7 +1669,8 @@ def extras_get_assessment_grades(request):
         for grade in user_grades:
             
             due = block_data.get_xblock_field(grade.full_usage_key, "due")
-            grades_list.append({"start_time" : datetime.datetime.strftime(block_data.get_xblock_field(grade.full_usage_key, "start"), "%m/%d/%Y, %H:%M:%S"), "end_time" : datetime.datetime.strftime(due, "%m/%d/%Y, %H:%M:%S") if due is not None else "-", "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : block_data.get_xblock_field(grade.full_usage_key, "display_name")})
+            start = block_data.get_xblock_field(grade.full_usage_key, "start")
+            grades_list.append({"start_time" : start if start is not None else "-", "end_time" : datetime.datetime.strftime(due, "%m/%d/%Y, %H:%M:%S") if due is not None else "-", "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : block_data.get_xblock_field(grade.full_usage_key, "display_name")})
 
         temp["gradeitems"] = grades_list
 
