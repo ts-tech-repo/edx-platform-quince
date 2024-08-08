@@ -1666,9 +1666,11 @@ def extras_get_assessment_grades(request):
         user_grades = PersistentSubsectionGrade.objects.filter(user_id=user["id"],course_id=course_key)
         pages = Paginator(user_grades, page_size)
         try:
-            log.info(pages.page(page // page_size))
+            grades = pages.page(page // page_size)
         except EmptyPage:
-            log.info(pages.page(pages.num_pages))
+            grades = pages.page(pages.num_pages)
+        
+        log.info(grades)
         grades_list = []
         block_data = get_course_blocks(User.objects.get(id = user["id"]), course_usage_key, allow_start_dates_in_future=True, include_completion=True)
         temp = {"courseid" : course_id, "userid" : user["id"], "userfullname" : user["first_name"], "email" : user["email"], "username" : user["username"], "gradeitems" : []}
