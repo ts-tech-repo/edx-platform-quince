@@ -161,7 +161,7 @@ def process_course_logs(version, course_logs):
     return course_logs
 
 def find_block_parents(version, block_id):
-    section_id = ""
+    section_id, section_name = "", ""
     for block in version["blocks"]:
         if block["block_type"] == "vertical" and block_id in [i[-1] for i in block["fields"]["children"]]:
             unit_name = block["fields"]["display_name"]
