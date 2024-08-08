@@ -1669,4 +1669,6 @@ def extras_get_assessment_grades(request):
             temp = {"start_time" : block_data.get_xblock_field(grade.full_usage_key, "start"), "end_time" : block_data.get_xblock_field(grade.full_usage_key, "due"), "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : block_data.get_xblock_field(grade.full_usage_key, "display_name")}
             grades_list.append(temp)
 
+        log.info(grades_list)
+
     return JsonResponse({})
