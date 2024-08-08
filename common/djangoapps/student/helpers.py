@@ -986,8 +986,8 @@ def get_assessments_for_courses(request):
                         block_id = get_first_component_of_block(component, block_data)
                         student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
                         student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
-                        score = submissions_api.get_score(student_item)
-                        temp["is_graded"] = "Graded" if score and (score["points_earned"] or score["points_earned"] == 0) else "Not Graded"
+                        # # score = submissions_api.get_score(student_item)
+                        # temp["is_graded"] = "Graded" if score and (score["points_earned"] or score["points_earned"] == 0) else "Not Graded"
                         if not student_module_info:
                             temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
                             temp["is_graded"] = "-"
@@ -999,7 +999,7 @@ def get_assessments_for_courses(request):
                         if category in ["freetextresponse"]:
                             if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
                                 temp["submission_status"] = "In Progress"
-                                temp["is_graded"] = "-"
+                                temp["is_graded"] = "Not Graded" if showNotSubmitted else "-"
                             elif submission_state.get("student_answer", None) and submission_state.get("count_attempts", None):
                                 temp["submission_status"] = "Submitted"
 
@@ -1014,6 +1014,7 @@ def get_assessments_for_courses(request):
                                     
                                 elif not sga_submissions.answer.get("finalized"):
                                     temp["submission_status"] = "In Progress"
+                                    temp["is_graded"] = "Not Graded" if showNotSubmitted else "-"
                             except Exception as err:
                                 log.info(err)
                                 temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
@@ -1026,6 +1027,7 @@ def get_assessments_for_courses(request):
 
                             elif submission_state and "has_saved" in submission_state:
                                 temp["submission_status"] = "In Progress"
+                                temp["is_graded"] = "Not Graded" if showNotSubmitted else "-"
                             else:
                                 temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
                                 temp["is_graded"] = "-"
@@ -1047,7 +1049,7 @@ def get_assessments_for_courses(request):
                             temp["is_graded"] = "-"
                         else:
                             temp["submission_status"] = "Submitted"  if showNotSubmitted  else "In Progress"
-                            temp["is_graded"] = "Graded"  if showNotSubmitted  else "Not Graded"
+                            temp["is_graded"] = "Graded"  if showNotSubmitted  else "-"
                         
                     all_blocks_data.append(temp)
         
