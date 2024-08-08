@@ -2071,13 +2071,13 @@ class ProblemBlock(
                 # pylint: enable=line-too-long
             }
 
-        if not self.is_submitted():
+        '''if not self.is_submitted():
             event_info['failure'] = 'not_done'
             self.publish_unmasked('reset_problem_fail', event_info)
             return {
                 'success': False,
                 'msg': _("You must submit an answer before you can select Reset."),
-            }
+            }'''
 
         if self.is_submitted() and self.rerandomize in [RANDOMIZATION.ALWAYS, RANDOMIZATION.ONRESET]:
             # Reset random number generator seed.
