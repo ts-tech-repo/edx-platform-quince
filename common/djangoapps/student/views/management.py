@@ -1654,8 +1654,8 @@ def extras_transcript(request):
 @csrf_exempt
 def extras_get_assessment_grades(request):
     course_id = request.POST.get("courseid")
-    page = request.POST.get("page")
-    limit = request.POST.get("limit")
+    page = int(request.POST.get("page"))
+    limit = int(request.POST.get("limit"))
     course_key = CourseKey.from_string(str(course_id))
     enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])[page:limit]
     course_usage_key = modulestore().make_course_usage_key(course_key)
