@@ -24,9 +24,9 @@ from django.contrib.auth.models import AnonymousUser, User  # lint-amnesty, pyli
 from django.contrib.sites.models import Site
 from django.core.validators import ValidationError, validate_email
 from django.core.cache import cache
+from lms.djangoapps.course_blocks.api import get_course_blocks
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
 from lms.djangoapps.instructor_analytics.basic import enrolled_students_features
-from openedx.core.djangoapps.content.block_structure.block_structure import BlockStructureModulestoreData
 from openedx.core.djangoapps.enrollments.api import add_enrollment
 from common.djangoapps.student.helpers import DISABLE_UNENROLL_CERT_STATES, cert_info, do_create_account, get_assessments_for_courses
 from django.core.exceptions import ObjectDoesNotExist
@@ -1658,13 +1658,15 @@ def extras_get_assessment_grades(request):
     limit = request.POST.get("limit")
     course_key = CourseKey.from_string(str(course_id))
     enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
+    course_usage_key = modulestore().make_course_usage_key(course_key)
+    block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
     for user in enrolled_users:
         user_grades = PersistentSubsectionGrade.bulk_read_grades(user["id"], course_key)
         grades_list = []
+        user = User.objects.get(id = grade.user_id)
         for grade in user_grades:
-            temp = {"start_time" : "", "end_time" : "", "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : ""}
-            block_structure = BlockStructureModulestoreData(root_block_usage_key=grade.full_usage_key)
-            log.info(block_structure)
+            
+            temp = {"start_time" : block_data.get_xblock_field(grade.full_usage_key, "start"), "end_time" : block_data.get_xblock_field(grade.full_usage_key, "due"), "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : block_data.get_xblock_field(grade.full_usage_key, "display_name")}
             grades_list.append(temp)
 
     return JsonResponse({})
