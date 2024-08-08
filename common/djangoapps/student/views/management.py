@@ -24,6 +24,7 @@ from django.contrib.auth.models import AnonymousUser, User  # lint-amnesty, pyli
 from django.contrib.sites.models import Site
 from django.core.validators import ValidationError, validate_email
 from django.core.cache import cache
+from lms.djangoapps.instructor_analytics.basic import enrolled_students_features
 from openedx.core.djangoapps.enrollments.api import add_enrollment
 from common.djangoapps.student.helpers import DISABLE_UNENROLL_CERT_STATES, cert_info, do_create_account, get_assessments_for_courses
 from django.core.exceptions import ObjectDoesNotExist
@@ -1653,4 +1654,6 @@ def extras_get_assessment_grades(request):
     course_id = request.POST.get("courseid")
     page = request.POST.get("page")
     limit = request.POST.get("limit")
+    course_key = CourseKey.from_string(str(course_id))
+    log.info(enrolled_students_features(course_key, []))
     return JsonResponse({})
