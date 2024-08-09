@@ -1695,7 +1695,6 @@ def extras_get_assessment_details(request):
     course_key = CourseKey.from_string(str(course_id))
     user = User.objects.get(is_superuser=True, email = "ga-admin@talentsprint.com")
     course_details = modulestore().get_course(course_key)
-    log.info()
     context = {"id" : course_id, "display_name" : course_details.display_name, "timecreated" : course_details.start, "timemodified" : course_details.subtree_edited_on.replace(tzinfo=datetime.timezone.utc),  "activities" : []}
     for assignment in get_course_assignments(course_key, user):
         context["activities"].append({
