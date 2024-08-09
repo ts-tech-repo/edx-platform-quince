@@ -67,7 +67,7 @@ from rest_framework.permissions import IsAuthenticated
 from common.djangoapps.track import views as track_views
 from lms.djangoapps.bulk_email.models import Optout
 from common.djangoapps.course_modes.models import CourseMode
-from lms.djangoapps.courseware.courses import get_courses, sort_by_announcement, sort_by_start_date
+from lms.djangoapps.courseware.courses import get_course_assignments, get_courses, sort_by_announcement, sort_by_start_date
 from common.djangoapps.edxmako.shortcuts import marketing_link, render_to_response, render_to_string  # lint-amnesty, pylint: disable=unused-import
 from common.djangoapps.entitlements.models import CourseEntitlement
 from common.djangoapps.student.helpers import get_next_url_for_login_page, get_redirect_url_with_host
@@ -1307,17 +1307,17 @@ def attendance_report(request):
 
 @csrf_exempt
 def extras_reset_password_link(request):
-	email = request.POST.get("email")
-	domain = request.POST.get("domain")
-	try:
+    email = request.POST.get("email")
+    domain = request.POST.get("domain")
+    try:
             user = User.objects.get(email__iexact=email.strip())
-	except Exception as err:
+    except Exception as err:
             log.error("Reset Password Error: "+ str(err) + " Email:" + email)
             return HttpResponse("")
-	uid = int_to_base36(user.id)
-	token = PasswordResetTokenGenerator().make_token(user)
-	url = "https://{0}/password_reset_confirm/{1}-{2}".format(domain, uid, token)
-	return HttpResponse(url)
+    uid = int_to_base36(user.id)
+    token = PasswordResetTokenGenerator().make_token(user)
+    url = "https://{0}/password_reset_confirm/{1}-{2}".format(domain, uid, token)
+    return HttpResponse(url)
 
 
 @login_required
@@ -1692,7 +1692,8 @@ def extras_get_assessment_details(request):
     # page = int(request.POST.get("page"))
     # limit = int(request.POST.get("limit"))
     course_key = CourseKey.from_string(str(course_id))
-    log.info(get_subsections_by_assignment_type(course_key))
+    user = User.objects.filter(is_superuser=True, email = "ga-admin@talentsprint.com")
+    log.info(get_course_assignments(course_key, user))
     # enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
     # course_usage_key = modulestore().make_course_usage_key(course_key)
     # context = {"usergrades" : []}
