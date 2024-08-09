@@ -980,10 +980,10 @@ class ProblemBlock(
             return True
         else:
             # Do NOT show the button if the problem is correct
-            if self.is_correct():
-                return False
-            else:
-                return self.show_reset_button
+            # if self.is_correct():
+            #     return False
+            # else:
+            return self.show_reset_button
 
     def should_show_save_button(self):
         """
