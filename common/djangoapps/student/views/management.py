@@ -1703,7 +1703,7 @@ def extras_get_assessment_details(request):
             "activity_name" : assignment.title,
             "start_time" : assignment.start,
             "end_time" : assignment.date,
-            "timemodified" : assignment.get_xblock_field(assignment.block_key, 'subtree_edited_on')
+            "timemodified" : assignment.block_data.get_xblock_field(assignment.block_key, 'subtree_edited_on')
 
         })
     return JsonResponse(context)
