@@ -70,7 +70,7 @@ log = logging.getLogger(__name__)
 # Used by get_course_assignments below. You shouldn't need to use this type directly.
 _Assignment = namedtuple(
     'Assignment', ['block_key', 'title', 'url', 'date', 'contains_gated_content', 'complete', 'past_due',
-                   'assignment_type', 'extra_info', 'first_component_block_id', 'start']
+                   'assignment_type', 'extra_info', 'first_component_block_id', 'start', 'block_data']
 )
 
 
@@ -627,7 +627,7 @@ def get_course_assignments(course_key, user, include_access=False):  # lint-amne
                 past_due = not complete and due < now
                 assignments.append(_Assignment(
                     subsection_key, title, url, due, contains_gated_content,
-                    complete, past_due, assignment_type, None, first_component_block_id, start
+                    complete, past_due, assignment_type, None, first_component_block_id, start, block_data
                 ))
             assignments.extend(get_ora_blocks_as_assignments(block_data, subsection_key, course_key))
     return assignments
@@ -762,6 +762,7 @@ def _ora_assessment_to_assignment(
         extra_info,
         first_component_block_id,
         assessment_start,
+        block_data,
     )
 
 
