@@ -70,12 +70,6 @@ from openedx.core.lib.courses import get_course_by_id
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.util.misc import get_default_short_labeler  # lint-amnesty, pylint: disable=wrong-import-order
 
-###sabid | gradebookSync imports
-from lms.djangoapps.courseware.models import StudentModule
-import json
-from common.djangoapps.student.models import anonymous_id_for_user
-from submissions import api as submissions_api
-
 log = logging.getLogger(__name__)
 
 
@@ -881,54 +875,6 @@ class GradebookBulkUpdateView(GradeViewMixin, PaginatedAPIView):
                     continue
 
             if subsection_grade_model:
-
-                ###sabid | gradebookSync changes start here
-                store = modulestore()
-                unit_item = store.get_item(usage_key)
-                if unit_item:                    
-                    for component in unit_item.children:
-                        component_item = store.get_item(component)
-                        if component_item:
-                            if hasattr(component_item, 'children') and component_item.children:
-                                if len(component_item.children) == 1:
-                                    child_item = store.get_item(component_item.children[0])
-                                    if child_item:
-                                        try:
-                                            ## save student module score
-                                            if subsection_grade_model.usage_key:
-                                                user_grade_details = user_data['grade']
-                                                module = StudentModule.objects.get(module_state_key=child_item.location, student_id=subsection_grade_model.user_id)
-                                                if module:
-                                                    state = json.loads(module.state)
-                                                    if user_grade_details.get('comment', None):
-                                                        state["comment"] = user_grade_details['comment']
-                                                    if "earned_graded_override" in user_grade_details:
-                                                        state["score"] = state["staff_score"] = user_grade_details['earned_graded_override']
-                                                    
-                                                    module.state = json.dumps(state)
-                                                    module.save()
-
-                                                    ## save student module submissions score
-                                                    submissions = submissions_api.get_submissions({ "student_id": anonymous_id_for_user(user, course_key), "course_id": course_key, "item_id": child_item.location, "item_type": child_item.category, })
-                                                    if submissions:
-                                                        max_score = child_item.weight
-                                                        log.info(f"uuid: {submissions[0]['uuid']}, score: {user_grade_details['earned_graded_override']}, max_score: {max_score}")
-                                                        submissions_api.set_score(submissions[0]['uuid'], user_grade_details['earned_graded_override'], max_score)
-                                                else:
-                                                    log.error("#gradebookSyncLog: unable to find student module for {}".format(user_grade_details))
-                                            else:
-                                                log.error("#gradebookSyncLog: subsection grade usage key not found for {}".format(subsection_grade_model))
-                                        except StudentModule.DoesNotExist:
-                                            log.error("#gradebookSyncLog: unable to find student module for {}".format(user_grade_details))
-                                        except Exception as e:
-                                            log.error("#gradebookSyncLog: unable to save student module for {}: {}".format(user_grade_details, e))
-                                    else:
-                                        log.info(f"  #gradebookSyncLog: Child XBlock Component Submissions: None")
-                                else:
-                                    log.error("#gradebookSyncLog: Child XBlock Component Count is not 1: {}".format(len(component_item.children)))
-
-                ###sabid | gradebookSync changes start here
-
                 override = self._create_override(request.user, subsection_grade_model, **user_data['grade'])
 
                 self._log_update_result(
