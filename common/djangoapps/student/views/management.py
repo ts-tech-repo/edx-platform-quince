@@ -1693,10 +1693,10 @@ def extras_get_assessment_details(request):
     # limit = int(request.POST.get("limit"))
     course_key = CourseKey.from_string(str(course_id))
     user = User.objects.get(is_superuser=True, email = "ga-admin@talentsprint.com")
-    activities = []
-    log.info(modulestore().get_course(course_key))
+    course_details = modulestore().get_course(course_key)
+    context = {"id" : course_id, "display_name" : course_details.display_name, "timecreated" : course_details.start, "activities" : []}
     for assignment in get_course_assignments(course_key, user):
-        activities.append({
+        context["activities"].append({
             "activity_id" : assignment.first_component_block_id,
             "activity_name" : assignment.title,
             # "activity_type" : assignment.first_component_block_id.block_type
@@ -1704,7 +1704,6 @@ def extras_get_assessment_details(request):
             "end_time" : assignment.date
 
         })
-    log.info(activities)
     # enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
     # course_usage_key = modulestore().make_course_usage_key(course_key)
     # context = {"usergrades" : []}
@@ -1731,4 +1730,4 @@ def extras_get_assessment_details(request):
     #     temp["gradeitems"] = grades_list
 
     #     context["usergrades"].append(temp)
-    return JsonResponse({})
+    return JsonResponse(context)
