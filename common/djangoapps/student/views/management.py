@@ -24,6 +24,7 @@ from django.contrib.auth.models import AnonymousUser, User  # lint-amnesty, pyli
 from django.contrib.sites.models import Site
 from django.core.validators import ValidationError, validate_email
 from django.core.cache import cache
+from cms.djangoapps.contentstore.utils import get_subsections_by_assignment_type
 from lms.djangoapps.course_blocks.api import get_course_blocks
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
 from lms.djangoapps.instructor_analytics.basic import enrolled_students_features
@@ -1676,7 +1677,6 @@ def extras_get_assessment_grades(request):
         temp = {"courseid" : course_id, "userid" : user["id"], "userfullname" : user["first_name"], "email" : user["email"], "username" : user["username"], "gradeitems" : []}
         for grade in user_grades:
             
-            log.info(grade)
             due = block_data.get_xblock_field(grade.full_usage_key, "due")
             start = block_data.get_xblock_field(grade.full_usage_key, "start")
             grades_list.append({"start_time" : start if start is not None else "-", "end_time" : datetime.datetime.strftime(due, "%m/%d/%Y, %H:%M:%S") if due is not None else "-", "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : block_data.get_xblock_field(grade.full_usage_key, "display_name")})
@@ -1691,7 +1691,8 @@ def extras_get_assessment_details(request):
     course_id = request.POST.get("courseid")
     # page = int(request.POST.get("page"))
     # limit = int(request.POST.get("limit"))
-    # course_key = CourseKey.from_string(str(course_id))
+    course_key = CourseKey.from_string(str(course_id))
+    log.info(get_subsections_by_assignment_type(course_key))
     # enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
     # course_usage_key = modulestore().make_course_usage_key(course_key)
     # context = {"usergrades" : []}
