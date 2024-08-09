@@ -10,8 +10,6 @@ import urllib.parse
 from collections import OrderedDict
 from datetime import datetime
 
-import pytz
-
 from common.djangoapps.student.models.user import anonymous_id_for_user
 from completion.exceptions import UnavailableCompletionData
 from completion.utilities import get_key_to_last_completed_block
@@ -48,20 +46,13 @@ from lms.djangoapps.certificates.api import (
 )
 from lms.djangoapps.certificates.data import CertificateStatuses
 from lms.djangoapps.course_blocks.api import get_course_blocks
-from lms.djangoapps.courseware.block_render import get_block_by_usage_id, get_block_for_descriptor, handle_xblock_callback
 from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.api import CourseGradeFactory
-from lms.djangoapps.grades.models import PersistentSubsectionGrade
-from lms.djangoapps.grades.models_api import get_subsection_grade
-from lms.djangoapps.grades.subsection_grade import ReadSubsectionGrade
 from lms.djangoapps.instructor import access
-from lms.djangoapps.ora_staff_grader.ora_api import get_submission_info, get_submissions
-from lms.djangoapps.ora_staff_grader.views import SubmissionFetchView
 from lms.djangoapps.verify_student.models import VerificationDeadline
 from lms.djangoapps.verify_student.services import IDVerificationService
 from lms.djangoapps.verify_student.utils import is_verification_expiring_soon, verification_for_datetime
-from lms.djangoapps.courseware.courses import get_course, get_course_assignments, get_course_date_blocks, get_course_with_access, get_first_component_of_block, get_problems_in_section
-from lms.djangoapps.courseware.user_state_client import DjangoXBlockUserStateClient
+from lms.djangoapps.courseware.courses import get_course_date_blocks, get_course_with_access, get_first_component_of_block
 
 from lms.djangoapps.courseware.date_summary import TodaysDate
 from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
@@ -75,12 +66,7 @@ from xmodule.data import CertificatesDisplayBehaviors  # lint-amnesty, pylint: d
 
 from openedx.core.djangoapps.enrollments.data import get_course_enrollments
 from opaque_keys.edx.keys import CourseKey
-from lms.djangoapps.course_home_api.assessments.serializers import AssessmentsSerializer
-from lms.djangoapps.course_home_api.utils import get_course_or_403
-from lms.djangoapps.courseware.access import has_access
 from lms.djangoapps.courseware.courses import get_course_date_blocks
-from lms.djangoapps.courseware.masquerade import setup_masquerade
-from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 from submissions.models import StudentItem, Submission
 from submissions import api as submissions_api
