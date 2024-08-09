@@ -1685,3 +1685,37 @@ def extras_get_assessment_grades(request):
 
         context["usergrades"].append(temp)
     return JsonResponse(context)
+
+@csrf_exempt
+def extras_get_assessment_details(request):
+    course_id = request.POST.get("courseid")
+    # page = int(request.POST.get("page"))
+    # limit = int(request.POST.get("limit"))
+    # course_key = CourseKey.from_string(str(course_id))
+    # enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
+    # course_usage_key = modulestore().make_course_usage_key(course_key)
+    # context = {"usergrades" : []}
+    # page_size = (limit - page) + 1
+    # pages = Paginator(enrolled_users, page_size)
+    # try:
+    #     page_enrolled_users = pages.get_page((page // page_size) + 1) if page >= page_size else pages.get_page(1)
+    # except EmptyPage:
+    #     page_enrolled_users = pages.get_page(pages.num_pages)
+    
+    # for user in page_enrolled_users:
+    #     user_grades = PersistentSubsectionGrade.objects.filter(user_id=user["id"],course_id=course_key)
+        
+    #     grades_list = []
+    #     block_data = get_course_blocks(User.objects.get(id = user["id"]), course_usage_key, allow_start_dates_in_future=True, include_completion=True)
+    #     temp = {"courseid" : course_id, "userid" : user["id"], "userfullname" : user["first_name"], "email" : user["email"], "username" : user["username"], "gradeitems" : []}
+    #     for grade in user_grades:
+            
+    #         log.info(grade)
+    #         due = block_data.get_xblock_field(grade.full_usage_key, "due")
+    #         start = block_data.get_xblock_field(grade.full_usage_key, "start")
+    #         grades_list.append({"start_time" : start if start is not None else "-", "end_time" : datetime.datetime.strftime(due, "%m/%d/%Y, %H:%M:%S") if due is not None else "-", "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : block_data.get_xblock_field(grade.full_usage_key, "display_name")})
+
+    #     temp["gradeitems"] = grades_list
+
+    #     context["usergrades"].append(temp)
+    return JsonResponse({})
