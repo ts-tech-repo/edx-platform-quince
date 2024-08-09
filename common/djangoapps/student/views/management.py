@@ -1698,7 +1698,9 @@ def extras_get_assessment_details(request):
         activities.append({
             "activity_id" : assignment.first_component_block_id,
             "activity_name" : assignment.title,
-            "activity_type" : assignment.first_component_block_id.block_type
+            # "activity_type" : assignment.first_component_block_id.block_type
+            "start_time" : assignment.start,
+            "end_time" : assignment.due
 
         })
     log.info(activities)
