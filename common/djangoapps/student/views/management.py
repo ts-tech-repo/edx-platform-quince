@@ -1697,7 +1697,8 @@ def extras_get_assessment_details(request):
     for assignment in get_course_assignments(course_key, user):
         activities.append({
             "activity_id" : assignment.first_component_block_id,
-            "activity_name" : assignment.title
+            "activity_name" : assignment.title,
+            "activity_type" : assignment.first_component_block_id.block_type
 
         })
     log.info(activities)
