@@ -1693,8 +1693,8 @@ def extras_get_assessment_details(request):
     # limit = int(request.POST.get("limit"))
     course_key = CourseKey.from_string(str(course_id))
     user = User.objects.get(is_superuser=True, email = "ga-admin@talentsprint.com")
-    log.info(user)
-    log.info(get_course_assignments(course_key, user))
+    for assignment in get_course_assignments(course_key, user):
+        log.info(assignment)
     # enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
     # course_usage_key = modulestore().make_course_usage_key(course_key)
     # context = {"usergrades" : []}
