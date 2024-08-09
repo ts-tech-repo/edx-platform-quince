@@ -1694,6 +1694,7 @@ def extras_get_assessment_details(request):
     course_key = CourseKey.from_string(str(course_id))
     user = User.objects.get(is_superuser=True, email = "ga-admin@talentsprint.com")
     activities = []
+    log.info(modulestore().get_course(course_key))
     for assignment in get_course_assignments(course_key, user):
         activities.append({
             "activity_id" : assignment.first_component_block_id,
