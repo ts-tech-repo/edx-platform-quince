@@ -66,7 +66,6 @@ from common.djangoapps.student.models.user import anonymous_id_for_user
 from submissions.models import StudentItem, Submission
 from submissions import api as submissions_api
 from xmodule.modulestore.django import modulestore
-from lms.djangoapps.grades.models import PersistentSubsectionGrade
 from openedx.core.djangoapps.enrollments.data import get_course_enrollments
 
 # Enumeration of per-course verification statuses
