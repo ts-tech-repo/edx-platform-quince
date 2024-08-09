@@ -1692,11 +1692,10 @@ def extras_get_assessment_grades(request):
 @csrf_exempt
 def extras_get_assessment_details(request):
     course_id = request.POST.get("courseid")
-    # page = int(request.POST.get("page"))
-    # limit = int(request.POST.get("limit"))
     course_key = CourseKey.from_string(str(course_id))
     user = User.objects.get(is_superuser=True, email = "ga-admin@talentsprint.com")
     course_details = modulestore().get_course(course_key)
+    log.info(course_details)
     context = {"id" : course_id, "display_name" : course_details.display_name, "timecreated" : course_details.start, "activities" : []}
     for assignment in get_course_assignments(course_key, user):
         context["activities"].append({
