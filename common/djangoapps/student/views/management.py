@@ -60,7 +60,7 @@ from eventtracking import tracker
 # Note that this lives in LMS, so this dependency should be refactored.
 from opaque_keys import InvalidKeyError
 from opaque_keys.edx.keys import CourseKey
-from pytz import UTC
+from pytz import UTC, timezone
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
@@ -1695,7 +1695,7 @@ def extras_get_assessment_details(request):
     course_key = CourseKey.from_string(str(course_id))
     user = User.objects.get(is_superuser=True, email = "ga-admin@talentsprint.com")
     course_details = modulestore().get_course(course_key)
-    log.info(course_details)
+    log.info(course_details.subtree_edited_on.replace(tzinfo=timezone.utc))
     context = {"id" : course_id, "display_name" : course_details.display_name, "timecreated" : course_details.start, "activities" : []}
     for assignment in get_course_assignments(course_key, user):
         context["activities"].append({
