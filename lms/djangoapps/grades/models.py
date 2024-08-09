@@ -474,9 +474,9 @@ class PersistentSubsectionGrade(TimeStampedModel):
                      .format(grade, user_id, usage_key.course_key, usage_key, params))
 
         grade.override = PersistentSubsectionGradeOverride.get_override(user_id, usage_key)
-        if first_attempted is not None and grade.first_attempted is None:
+        if first_attempted is not None:
             grade.first_attempted = first_attempted
-            grade.save()
+        grade.save()
         log.info(grade)
         cls._emit_grade_calculated_event(grade)
         return grade
