@@ -11,7 +11,11 @@ from openedx.core.djangoapps.signals.signals import (
 )
 from .course_data import CourseData
 from .course_grade import CourseGrade, ZeroCourseGrade
-from .models import PersistentCourseGrade
+from .models import (
+    PersistentCourseGrade,
+    PersistentSubsectionGradeOverride
+)
+from lms.djangoapps.grades.api import constants as grades_constants
 from .models_api import prefetch_grade_overrides_and_visible_blocks
 
 log = getLogger(__name__)
@@ -156,6 +160,7 @@ class CourseGradeFactory:
         COURSE_GRADE_NOW_PASSED if learner has passed course or
         COURSE_GRADE_NOW_FAILED if learner is now failing course
         """
+        log.info('#sabidDebug Grades: Update, %s, User: %s, force_update_subsections=%s', str(course_data), user.id, force_update_subsections)
         if force_update_subsections:
             prefetch_grade_overrides_and_visible_blocks(user, course_data.course_key)
 
@@ -169,7 +174,8 @@ class CourseGradeFactory:
         should_persist = course_grade.attempted
         if should_persist:
             course_grade._subsection_grade_factory.bulk_create_unsaved()  # lint-amnesty, pylint: disable=protected-access
-            PersistentCourseGrade.update_or_create(
+            log.info('#sabidDebug Grades: Persist, %s, User: %s', str(course_data), user.id)
+            subsection_grade_model = PersistentCourseGrade.update_or_create(
                 user_id=user.id,
                 course_id=course_data.course_key,
                 course_version=course_data.version,
@@ -179,6 +185,21 @@ class CourseGradeFactory:
                 letter_grade=course_grade.letter_grade or "",
                 passed=course_grade.passed,
             )
+
+            try:
+                override_data = {
+                    "system": grades_constants.GradeOverrideFeatureEnum.gradebook,
+                    "comment": "to test the flow"
+                }
+                override = PersistentSubsectionGradeOverride.update_or_create_override(
+                    requesting_user=user,
+                    subsection_grade_model=subsection_grade_model,
+                    **override_data
+                )
+            except PersistentSubsectionGradeOverride.DoesNotExist:
+                log.exception("PersistentSubsectionGradeOverride.DoesNotExist")
+            except Exception as e:
+                log.exception(e)
 
         COURSE_GRADE_CHANGED.send_robust(
             sender=None,
