@@ -312,6 +312,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
                 log.info('Updating PersistentSubsectionGrade for student ***{}*** in'
                          ' subsection ***{}*** with params ***{}***.'
                          .format(student.id, self.location, self._persisted_model_params(student)))
+            log.debug('#sabidDebug Updating PersistentSubsectionGrade for student %s in subsection %s', student.id, self.location)
             model = PersistentSubsectionGrade.update_or_create_grade(**self._persisted_model_params(student))
 
             if hasattr(model, 'override'):
@@ -335,6 +336,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
             if subsection_grade
             if subsection_grade._should_persist_per_attempted()  # pylint: disable=protected-access
         ]
+        log.debug('#sabidDebug Bulk creating PersistentSubsectionGrade for student %s in course %s', student.id, course_key)
         return PersistentSubsectionGrade.bulk_create_grades(params, student.id, course_key)
 
     def _should_persist_per_attempted(self, score_deleted=False, force_update_subsections=False):

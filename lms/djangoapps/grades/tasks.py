@@ -312,6 +312,7 @@ def _update_subsection_grades(
     for each subsection containing the given block, and to signal
     that those subsection grades were updated.
     """
+    log.info("#sabidDebug Recalculating subsection grade for %s", scored_block_usage_key)
     student = User.objects.get(id=user_id)
     store = modulestore()
     with store.bulk_operations(course_key):

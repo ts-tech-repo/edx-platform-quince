@@ -1145,6 +1145,7 @@ class SubsectionGradeView(GradeViewMixin, APIView):
 
         try:
             original_grade = PersistentSubsectionGrade.read_grade(user_id, usage_key)
+            log.info("#sabidDebug original_grade: {}".format(original_grade))
             if original_grade is not None and hasattr(original_grade, 'override'):
                 override = original_grade.override
                 # pylint: disable=no-member

@@ -61,6 +61,7 @@ def submissions_score_set_handler(sender, **kwargs):  # pylint: disable=unused-a
       - 'course_id': unicode,
       - 'item_id': unicode
     """
+    log.debug('#sabidDebug submissions_score_set_handler: %s', kwargs)
     points_possible = kwargs['points_possible']
     points_earned = kwargs['points_earned']
     course_id = kwargs['course_id']
@@ -150,6 +151,7 @@ def score_published_handler(sender, block, user, raw_earned, raw_possible, only_
     Handles whenever a block's score is published.
     Returns whether the score was actually updated.
     """
+    log.debug("#sabidDebug Grades: Rescore: %s, %s, %s, %s, %s", block, user, raw_earned, raw_possible, only_if_higher)
     update_score = True
     if only_if_higher:
         previous_score = get_score(user.id, block.location)
@@ -198,6 +200,7 @@ def problem_raw_score_changed_handler(sender, **kwargs):  # pylint: disable=unus
     Handles the raw score changed signal, converting the score to a
     weighted score and firing the PROBLEM_WEIGHTED_SCORE_CHANGED signal.
     """
+    log.info("#sabidDebug Grades: RecalculateCourseGradeOnly, User: %s, Course: %s", kwargs['user_id'], kwargs['course_id'])
     if kwargs['raw_possible'] is not None:
         weighted_earned, weighted_possible = weighted_score(
             kwargs['raw_earned'],
@@ -229,6 +232,7 @@ def enqueue_subsection_update(sender, **kwargs):  # pylint: disable=unused-argum
     Handles the PROBLEM_WEIGHTED_SCORE_CHANGED or SUBSECTION_OVERRIDE_CHANGED signals by
     enqueueing a subsection update operation to occur asynchronously.
     """
+    log.info("#sabidDebug Enqueuing subsection update for user: %s, course: %s", kwargs['user_id'], kwargs['course_id'])
     events.grade_updated(**kwargs)
     context_key = LearningContextKey.from_string(kwargs['course_id'])
     if not context_key.is_course:
@@ -257,6 +261,7 @@ def recalculate_course_grade_only(sender, course, course_structure, user, **kwar
     Updates a saved course grade, but does not update the subsection
     grades the user has in this course.
     """
+    log.info('#sabidDebug Grades: RecalculateCourseGradeOnly, User: %s, Course: %s', user.id, course.id)
     CourseGradeFactory().update(user, course=course, course_structure=course_structure)
 
 
