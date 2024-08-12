@@ -27,7 +27,6 @@ from django.core.cache import cache
 from cms.djangoapps.contentstore.utils import get_subsections_by_assignment_type
 from lms.djangoapps.course_blocks.api import get_course_blocks
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
-from lms.djangoapps.instructor_analytics.basic import enrolled_students_features
 from openedx.core.djangoapps.enrollments.api import add_enrollment
 from common.djangoapps.student.helpers import DISABLE_UNENROLL_CERT_STATES, cert_info, do_create_account, get_assessments_for_courses
 from django.core.exceptions import ObjectDoesNotExist
