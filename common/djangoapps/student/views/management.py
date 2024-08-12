@@ -1669,11 +1669,11 @@ def extras_get_assessment_grades(request):
         page_enrolled_users = pages.get_page(pages.num_pages)
     
     for user in page_enrolled_users:
-        user_grades = PersistentSubsectionGrade.objects.filter(user_id=user["id"],course_id=course_key)
+        user_grades = PersistentSubsectionGrade.objects.filter(user_id=getattr(user, "id"),course_id=course_key)
         
         grades_list = []
-        block_data = get_course_blocks(User.objects.get(id = user["id"]), course_usage_key, allow_start_dates_in_future=True, include_completion=True)
-        temp = {"courseid" : course_id, "userid" : user["id"], "userfullname" : user["first_name"], "email" : user["email"], "username" : user["username"], "gradeitems" : []}
+        block_data = get_course_blocks(User.objects.get(id = getattr(user, "id")), course_usage_key, allow_start_dates_in_future=True, include_completion=True)
+        temp = {"courseid" : course_id, "userid" : getattr(user, "id"), "userfullname" : getattr(user, "first_name"), "email" : getattr(user, "email"), "username" : getattr(user, "username"), "gradeitems" : []}
         for grade in user_grades:
             
             due = block_data.get_xblock_field(grade.full_usage_key, "due")
