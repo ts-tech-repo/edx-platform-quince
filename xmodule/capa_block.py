@@ -980,10 +980,10 @@ class ProblemBlock(
             return True
         else:
             # Do NOT show the button if the problem is correct
-            if self.is_correct():
-                return False
-            else:
-                return self.show_reset_button
+            # if self.is_correct():
+            #     return False
+            # else:
+            return self.show_reset_button
 
     def should_show_save_button(self):
         """
@@ -2071,13 +2071,13 @@ class ProblemBlock(
                 # pylint: enable=line-too-long
             }
 
-        if not self.is_submitted():
+        '''if not self.is_submitted():
             event_info['failure'] = 'not_done'
             self.publish_unmasked('reset_problem_fail', event_info)
             return {
                 'success': False,
                 'msg': _("You must submit an answer before you can select Reset."),
-            }
+            }'''
 
         if self.is_submitted() and self.rerandomize in [RANDOMIZATION.ALWAYS, RANDOMIZATION.ONRESET]:
             # Reset random number generator seed.
