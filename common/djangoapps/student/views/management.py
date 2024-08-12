@@ -27,7 +27,7 @@ from django.core.cache import cache
 from cms.djangoapps.contentstore.utils import get_subsections_by_assignment_type
 from lms.djangoapps.course_blocks.api import get_course_blocks
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
-from lms.djangoapps.instructor_analytics.basic import enrolled_students_features
+# from lms.djangoapps.instructor_analytics.basic import enrolled_students_features
 from openedx.core.djangoapps.enrollments.api import add_enrollment
 from common.djangoapps.student.helpers import DISABLE_UNENROLL_CERT_STATES, cert_info, do_create_account, get_assessments_for_courses
 from django.core.exceptions import ObjectDoesNotExist
@@ -1653,56 +1653,56 @@ def extras_transcript(request):
     except Exception as err:
         return ""
     
-@csrf_exempt
-def extras_get_assessment_grades(request):
-    course_id = request.POST.get("courseid")
-    page = int(request.POST.get("page"))
-    limit = int(request.POST.get("limit"))
-    course_key = CourseKey.from_string(str(course_id))
-    enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
-    course_usage_key = modulestore().make_course_usage_key(course_key)
-    context = {"usergrades" : []}
-    page_size = (limit - page) + 1
-    pages = Paginator(enrolled_users, page_size)
-    try:
-        page_enrolled_users = pages.get_page((page // page_size) + 1) if page >= page_size else pages.get_page(1)
-    except EmptyPage:
-        page_enrolled_users = pages.get_page(pages.num_pages)
+# @csrf_exempt
+# def extras_get_assessment_grades(request):
+#     course_id = request.POST.get("courseid")
+#     page = int(request.POST.get("page"))
+#     limit = int(request.POST.get("limit"))
+#     course_key = CourseKey.from_string(str(course_id))
+#     enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
+#     course_usage_key = modulestore().make_course_usage_key(course_key)
+#     context = {"usergrades" : []}
+#     page_size = (limit - page) + 1
+#     pages = Paginator(enrolled_users, page_size)
+#     try:
+#         page_enrolled_users = pages.get_page((page // page_size) + 1) if page >= page_size else pages.get_page(1)
+#     except EmptyPage:
+#         page_enrolled_users = pages.get_page(pages.num_pages)
     
-    for user in page_enrolled_users:
-        user_grades = PersistentSubsectionGrade.objects.filter(user_id=user["id"],course_id=course_key)
+#     for user in page_enrolled_users:
+#         user_grades = PersistentSubsectionGrade.objects.filter(user_id=user["id"],course_id=course_key)
         
-        grades_list = []
-        block_data = get_course_blocks(User.objects.get(id = user["id"]), course_usage_key, allow_start_dates_in_future=True, include_completion=True)
-        temp = {"courseid" : course_id, "userid" : user["id"], "userfullname" : user["first_name"], "email" : user["email"], "username" : user["username"], "gradeitems" : []}
-        for grade in user_grades:
+#         grades_list = []
+#         block_data = get_course_blocks(User.objects.get(id = user["id"]), course_usage_key, allow_start_dates_in_future=True, include_completion=True)
+#         temp = {"courseid" : course_id, "userid" : user["id"], "userfullname" : user["first_name"], "email" : user["email"], "username" : user["username"], "gradeitems" : []}
+#         for grade in user_grades:
             
-            due = block_data.get_xblock_field(grade.full_usage_key, "due")
-            start = block_data.get_xblock_field(grade.full_usage_key, "start")
-            graded = block_data.get_xblock_field(grade.full_usage_key, 'graded', False)
-            if not graded:
-                continue
-            grades_list.append({"start_time" : start if start is not None else "-", "end_time" : datetime.datetime.strftime(due, "%m/%d/%Y, %H:%M:%S") if due is not None else "-", "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : block_data.get_xblock_field(grade.full_usage_key, "display_name"), "iteminstance" : get_first_component_of_block(grade.full_usage_key, block_data)})
+#             due = block_data.get_xblock_field(grade.full_usage_key, "due")
+#             start = block_data.get_xblock_field(grade.full_usage_key, "start")
+#             graded = block_data.get_xblock_field(grade.full_usage_key, 'graded', False)
+#             if not graded:
+#                 continue
+#             grades_list.append({"start_time" : start if start is not None else "-", "end_time" : datetime.datetime.strftime(due, "%m/%d/%Y, %H:%M:%S") if due is not None else "-", "grademin" : grade.earned_graded, "grademax" : grade.possible_graded, "itemname" : block_data.get_xblock_field(grade.full_usage_key, "display_name"), "iteminstance" : get_first_component_of_block(grade.full_usage_key, block_data)})
 
-        temp["gradeitems"] = grades_list
+#         temp["gradeitems"] = grades_list
 
-        context["usergrades"].append(temp)
-    return JsonResponse(context)
+#         context["usergrades"].append(temp)
+#     return JsonResponse(context)
 
-@csrf_exempt
-def extras_get_assessment_details(request):
-    course_id = request.POST.get("courseid")
-    course_key = CourseKey.from_string(str(course_id))
-    user = User.objects.get(is_superuser=True, email = "ga-admin@talentsprint.com")
-    course_details = modulestore().get_course(course_key)
-    context = {"id" : course_id, "display_name" : course_details.display_name, "timecreated" : course_details.start, "timemodified" : str(course_details.subtree_edited_on.replace(tzinfo=None)).replace("T", " "),  "activities" : []}
-    for assignment in get_course_assignments(course_key, user):
-        context["activities"].append({
-            "activity_id" : assignment.first_component_block_id,
-            "activity_name" : assignment.title,
-            "start_time" : assignment.start,
-            "end_time" : assignment.date,
-            "timemodified" : str(assignment.block_data.get_xblock_field(assignment.block_key, 'subtree_edited_on').replace(tzinfo=None)).replace("T", " ")
+# @csrf_exempt
+# def extras_get_assessment_details(request):
+#     course_id = request.POST.get("courseid")
+#     course_key = CourseKey.from_string(str(course_id))
+#     user = User.objects.get(is_superuser=True, email = "ga-admin@talentsprint.com")
+#     course_details = modulestore().get_course(course_key)
+#     context = {"id" : course_id, "display_name" : course_details.display_name, "timecreated" : course_details.start, "timemodified" : str(course_details.subtree_edited_on.replace(tzinfo=None)).replace("T", " "),  "activities" : []}
+#     for assignment in get_course_assignments(course_key, user):
+#         context["activities"].append({
+#             "activity_id" : assignment.first_component_block_id,
+#             "activity_name" : assignment.title,
+#             "start_time" : assignment.start,
+#             "end_time" : assignment.date,
+#             "timemodified" : str(assignment.block_data.get_xblock_field(assignment.block_key, 'subtree_edited_on').replace(tzinfo=None)).replace("T", " ")
 
-        })
-    return JsonResponse(context)
+#         })
+#     return JsonResponse(context)
