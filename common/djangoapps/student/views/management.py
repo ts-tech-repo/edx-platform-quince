@@ -1659,7 +1659,7 @@ def extras_get_assessment_grades(request):
     page = int(request.POST.get("page"))
     limit = int(request.POST.get("limit"))
     course_key = CourseKey.from_string(str(course_id))
-    enrolled_users = enrolled_students_features(course_key, ["id", "username","first_name","last_name","email"])
+    enrolled_users = get_enrolled_students(course_key)
     course_usage_key = modulestore().make_course_usage_key(course_key)
     context = {"usergrades" : []}
     page_size = (limit - page) + 1
@@ -1688,6 +1688,14 @@ def extras_get_assessment_grades(request):
 
         context["usergrades"].append(temp)
     return JsonResponse(context)
+
+
+def get_enrolled_students(course_key):
+    students = User.objects.filter(
+        courseenrollment__course_id=course_key,
+        courseenrollment__is_active=1,
+    ).order_by('username').select_related('profile')
+    return students
 
 @csrf_exempt
 def extras_get_assessment_details(request):
