@@ -1939,6 +1939,7 @@ OPTIONAL_APPS = (
     ('integrated_channels.blackboard', None),
     ('integrated_channels.canvas', None),
     ('integrated_channels.moodle', None),
+    ('program_enrollments', None),
 )
 
 
