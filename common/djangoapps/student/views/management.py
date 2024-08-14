@@ -1710,7 +1710,7 @@ def extras_get_assessment_details(request):
                 "activity_id" : assignment.first_component_block_id,
                 "activity_name" : assignment.title,
                 "start_time" : datetime.datetime.strftime(assignment.start, "%m/%d/%Y, %H:%M:%S"),
-                "end_time" : datetime.datetime.strftime(assignment.date, "%m/%d/%Y, %H:%M:%S"),
+                "end_time" : datetime.datetime.strftime(assignment.date, "%m/%d/%Y, %H:%M:%S") if not assignment.date else "-",
                 "timemodified" : datetime.datetime.strftime(assignment.block_data.get_xblock_field(assignment.block_key, 'subtree_edited_on'), "%m/%d/%Y, %H:%M:%S")
             })
             visited_activity_ids.append(assignment.first_component_block_id)
