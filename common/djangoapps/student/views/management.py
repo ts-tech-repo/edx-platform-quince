@@ -1676,8 +1676,8 @@ def extras_get_assessment_grades(request):
         temp = {"courseid" : course_id, "userid" : getattr(user, "id"), "userfullname" : getattr(user, "first_name"), "email" : getattr(user, "email"), "username" : getattr(user, "username"), "gradeitems" : []}
         for grade in user_grades:
             
-            due = str(block_data.get_xblock_field(grade.full_usage_key, "due").replace(tzinfo=None)).replace("T", " ")
-            start = str(block_data.get_xblock_field(grade.full_usage_key, "start").replace(tzinfo=None)).replace("T", " ")
+            due = block_data.get_xblock_field(grade.full_usage_key, "due")
+            start = block_data.get_xblock_field(grade.full_usage_key, "start")
             graded = block_data.get_xblock_field(grade.full_usage_key, 'graded', False)
             if not graded:
                 continue
