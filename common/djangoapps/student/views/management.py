@@ -1709,7 +1709,7 @@ def extras_get_assessment_details(request):
             "activity_name" : assignment.title,
             "start_time" : datetime.datetime.strftime(assignment.start, "%m/%d/%Y, %H:%M:%S"),
             "end_time" : datetime.datetime.strftime(assignment.date, "%m/%d/%Y, %H:%M:%S"),
-            "timemodified" : str(assignment.block_data.get_xblock_field(assignment.block_key, 'subtree_edited_on').replace(tzinfo=None)).replace("T", " ")
+            "timemodified" : datetime.datetime.strftime(assignment.block_data.get_xblock_field(assignment.block_key, 'subtree_edited_on'), "%m/%d/%Y, %H:%M:%S")
 
         })
     return JsonResponse(context)
