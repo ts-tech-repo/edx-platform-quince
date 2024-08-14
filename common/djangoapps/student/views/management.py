@@ -1707,8 +1707,8 @@ def extras_get_assessment_details(request):
         context["activities"].append({
             "activity_id" : assignment.first_component_block_id,
             "activity_name" : assignment.title,
-            "start_time" : assignment.start,
-            "end_time" : assignment.date,
+            "start_time" : datetime.datetime.strftime(assignment.start, "%m/%d/%Y, %H:%M:%S"),
+            "end_time" : datetime.datetime.strftime(assignment.date, "%m/%d/%Y, %H:%M:%S"),
             "timemodified" : str(assignment.block_data.get_xblock_field(assignment.block_key, 'subtree_edited_on').replace(tzinfo=None)).replace("T", " ")
 
         })
