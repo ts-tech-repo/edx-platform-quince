@@ -1702,14 +1702,16 @@ def extras_get_assessment_details(request):
     course_key = CourseKey.from_string(str(course_id))
     user = User.objects.get(is_superuser=True, email = "ga-admin@talentsprint.com")
     course_details = modulestore().get_course(course_key)
+    visited_activity_ids = []
     context = {"id" : course_id, "display_name" : course_details.display_name, "timecreated" : datetime.datetime.strftime(course_details.start, "%m/%d/%Y, %H:%M:%S"), "timemodified" : datetime.datetime.strftime(course_details.subtree_edited_on,"%m/%d/%Y, %H:%M:%S"),  "activities" : []}
     for assignment in get_course_assignments(course_key, user):
-        context["activities"].append({
-            "activity_id" : assignment.first_component_block_id,
-            "activity_name" : assignment.title,
-            "start_time" : datetime.datetime.strftime(assignment.start, "%m/%d/%Y, %H:%M:%S"),
-            "end_time" : datetime.datetime.strftime(assignment.date, "%m/%d/%Y, %H:%M:%S"),
-            "timemodified" : datetime.datetime.strftime(assignment.block_data.get_xblock_field(assignment.block_key, 'subtree_edited_on'), "%m/%d/%Y, %H:%M:%S")
-
-        })
+        if assignment.first_component_block_id not in visited_activity_ids:
+            context["activities"].append({
+                "activity_id" : assignment.first_component_block_id,
+                "activity_name" : assignment.title,
+                "start_time" : datetime.datetime.strftime(assignment.start, "%m/%d/%Y, %H:%M:%S"),
+                "end_time" : datetime.datetime.strftime(assignment.date, "%m/%d/%Y, %H:%M:%S"),
+                "timemodified" : datetime.datetime.strftime(assignment.block_data.get_xblock_field(assignment.block_key, 'subtree_edited_on'), "%m/%d/%Y, %H:%M:%S")
+            })
+            visited_activity_ids.append(assignment.first_component_block_id)
     return JsonResponse(context)
