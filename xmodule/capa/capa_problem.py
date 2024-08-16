@@ -619,7 +619,7 @@ class LoncapaProblem(object):
             xml_elem = xml_elems[0].getparent()
 
             # Get the element that probably contains the question text
-            questiontext_elem = xml_elem.getprevious()
+            questiontext_elem = xml_elem.getprevious() if xml_elem.getprevious() else xml_elem.find('div') or xml_elem.find('p')
 
             # Go backwards looking for a <p> or <label>, but skip <description> because it doesn't
             # contain the question text.
@@ -631,7 +631,7 @@ class LoncapaProblem(object):
             # If we start in the second optionresponse, we'll find another response in the way,
             # stop early, and instead of a question we'll report "Question 2".
             SKIP_ELEMS = ['description']
-            LABEL_ELEMS = ['p', 'label']
+            LABEL_ELEMS = ['p', 'label', 'div']
             while questiontext_elem is not None and questiontext_elem.tag in SKIP_ELEMS:
                 questiontext_elem = questiontext_elem.getprevious()
 
