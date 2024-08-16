@@ -548,7 +548,20 @@ class LoncapaProblem(object):
             return answer_id[0]
         if xml_element.tag == 'optioninput':
             return xml_element.xpath('@correct')[0]
-        return ', '.join(xml_element.xpath('*[@correct="true"]/text()'))
+
+        elif xml_element.tag == 'textline':
+            correct_answer = xml_element.xpath('../@answer')
+            additional_answers = xml_element.xpath('../additional_answer/@answer')
+            all_answers = correct_answer + additional_answers
+            return ', '.join(all_answers)
+
+        elif xml_element.tag == 'formulaequationinput':
+            correct_answer = xml_element.xpath('../@answer')
+            additional_answers = xml_element.xpath('../additional_answer/@answer')
+            all_answers = correct_answer + additional_answers
+            return ', '.join(all_answers)
+
+        return ', '.join(xml_element.xpath('.//choice[@correct="true"]/div/text()'))
 
     def find_question_label(self, answer_id):
         """
