@@ -4068,6 +4068,7 @@ OPTIONAL_APPS = [
 
     # Required by the Enterprise App
     ('django_object_actions', None),  # https://github.com/crccheck/django-object-actions
+    ('program_enrollments', None),
 ]
 
 for app_name, insert_before in OPTIONAL_APPS:
