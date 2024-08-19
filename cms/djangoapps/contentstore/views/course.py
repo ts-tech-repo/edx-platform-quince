@@ -863,6 +863,8 @@ def _create_or_rerun_course(request):
         else:
             try:
                 new_course = create_new_course(request.user, org, course, run, fields)
+                #KC create course in moodle
+                log.info(configuration_helpers.get_value("MOODLE_URL"))
                 return JsonResponse({
                     'url': reverse_course_url('course_handler', new_course.id),
                     'course_key': str(new_course.id),
