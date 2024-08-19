@@ -160,7 +160,6 @@ class CourseGradeFactory:
         COURSE_GRADE_NOW_PASSED if learner has passed course or
         COURSE_GRADE_NOW_FAILED if learner is now failing course
         """
-        log.info('#sabidDebug Grades: Update, %s, User: %s, force_update_subsections=%s', str(course_data), user.id, force_update_subsections)
         if force_update_subsections:
             prefetch_grade_overrides_and_visible_blocks(user, course_data.course_key)
 
@@ -174,7 +173,6 @@ class CourseGradeFactory:
         should_persist = course_grade.attempted
         if should_persist:
             course_grade._subsection_grade_factory.bulk_create_unsaved()  # lint-amnesty, pylint: disable=protected-access
-            log.info('#sabidDebug Grades: Persist, %s, User: %s', str(course_data), user.id)
             subsection_grade_model = PersistentCourseGrade.update_or_create(
                 user_id=user.id,
                 course_id=course_data.course_key,
