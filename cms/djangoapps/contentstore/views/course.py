@@ -1334,7 +1334,7 @@ def update_course_advanced_settings(course_block: CourseBlock, data: Dict, user:
 
         # now update mongo
         modulestore().update_item(course_block, user.id)
-        log.info(course_block)
+        #KC to update name
         return updated_data
 
     # Handle all errors that validation doesn't catch
