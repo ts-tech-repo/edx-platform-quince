@@ -638,7 +638,6 @@ class PersistentCourseGrade(TimeStampedModel):
         Creates a course grade in the database.
         Returns a PersistedCourseGrade object.
         """
-        log.info('#sabidDebug PersistentCourseGrade.update_or_create: %s, %s, %s', user_id, course_id, kwargs)
         passed = kwargs.pop('passed')
 
         if kwargs.get('course_version', None) is None:
