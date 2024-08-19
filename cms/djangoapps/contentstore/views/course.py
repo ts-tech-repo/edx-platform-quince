@@ -1339,6 +1339,9 @@ def update_course_advanced_settings(course_block: CourseBlock, data: Dict, user:
         # now update mongo
         modulestore().update_item(course_block, user.id)
         #KC to update name
+        api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_update_courses", "moodlewsrestformat" : "json",  "courses[0][id]" : 312, "courses[0][fullname]" : course_block.display_name}
+        response = requests.request("POST", configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php", headers = {  'content-type': "text/plain" }, params = api_data)
+        log.info(response.text)
         return updated_data
 
     # Handle all errors that validation doesn't catch
