@@ -1131,6 +1131,10 @@ def settings_handler(request, course_key_string):  # lint-amnesty, pylint: disab
             else:
                 try:
                     update_data = update_course_details(request, course_key, request.json, course_block)
+                    #KC to update start and end dates
+                    api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_update_courses", "moodlewsrestformat" : "json",  "courses[0][id]" : 312, "courses[0][startdate]" : course_block.start, "courses[0][enddate]" : course_block.due}
+                    response = requests.request("POST", configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php", headers = {  'content-type': "text/plain" }, params = api_data)
+                    log.info(response.text)
                 except DjangoValidationError as err:
                     return JsonResponseBadRequest({"error": err.message})
 
