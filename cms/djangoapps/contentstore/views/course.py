@@ -867,7 +867,7 @@ def _create_or_rerun_course(request):
             try:
                 new_course = create_new_course(request.user, org, course, run, fields)
                 #KC create course in moodle
-                api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_create_courses", "moodlewsrestformat" : "json", "courses[0][fullname]" : display_name, "courses[0][categoryid]" : 1, "courses[0][shortname]" : "{0}|{1}".format(course, run), "courses[0][summary]" : ""}
+                api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_create_courses", "moodlewsrestformat" : "json", "courses[0][fullname]" : display_name, "courses[0][categoryid]" : 1, "courses[0][shortname]" : "{0}|{1}".format(course, run), "courses[0][summary]" : "", "courses[0][customfields][0][shortname]" : "sites", "courses[0][customfields][0][value]" : 32, "courses[0][customfields][1][shortname]" : "instances", "courses[0][customfields][1][value]" : 5}
                 response = requests.request("POST", configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php", headers = {  'content-type': "text/plain" }, params = api_data)
                 log.info(response.text)
                 return JsonResponse({
