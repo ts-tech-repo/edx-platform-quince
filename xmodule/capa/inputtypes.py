@@ -542,7 +542,7 @@ class ChoiceGroup(InputTypeBase):
                 if not text_only:
                     text = stringify_children(choice)
                 else:
-                    text = choice.text
+                    text = choice.find('div').text if choice.find('div') is not None else ""
                 choices.append((choice.get("name"), text))
             else:
                 if choice.tag != 'compoundhint':
