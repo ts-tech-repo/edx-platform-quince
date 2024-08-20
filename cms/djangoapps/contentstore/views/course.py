@@ -867,7 +867,7 @@ def _create_or_rerun_course(request):
             try:
                 new_course = create_new_course(request.user, org, course, run, fields)
                 #KC create course in moodle
-                api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_create_courses", "moodlewsrestformat" : "json", "courses[0][fullname]" : display_name, "courses[0][categoryid]" : 1, "courses[0][shortname]" : "{0}|{1}".format(course, run), "courses[0][summary]" : "", "courses[0][customfields][0][shortname]" : "sites", "courses[0][customfields][0][value]" : 32, "courses[0][customfields][1][shortname]" : "instances", "courses[0][customfields][1][value]" : 5}
+                api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_create_courses", "moodlewsrestformat" : "json", "courses[0][fullname]" : display_name, "courses[0][categoryid]" : 1, "courses[0][shortname]" : "{0}|{1}".format(course, run), "courses[0][summary]" : "", "courses[0][customfields][0][shortname]" : "sites", "courses[0][customfields][0][value]" : org, "courses[0][customfields][1][shortname]" : "instances", "courses[0][customfields][1][value]" : settings.CMS_BASE}
                 response = _api_request_to_moodle(api_data)
                 log.info(response)
                 return JsonResponse({
