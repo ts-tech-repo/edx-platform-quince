@@ -1131,6 +1131,7 @@ def settings_handler(request, course_key_string):  # lint-amnesty, pylint: disab
             else:
                 try:
                     update_data = update_course_details(request, course_key, request.json, course_block)
+                    log.info(course_block.location)
                     #KC to update start and end dates
                     api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_update_courses", "moodlewsrestformat" : "json",  "courses[0][id]" : 312, "courses[0][startdate]" : course_block.start.strftime('%s'), "courses[0][enddate]" : course_block.end.strftime('%s')}
                     response = _api_request_to_moodle(api_data)
