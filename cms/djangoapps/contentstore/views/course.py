@@ -1341,7 +1341,7 @@ def update_course_advanced_settings(course_block: CourseBlock, data: Dict, user:
         # now update mongo
         modulestore().update_item(course_block, user.id)
         #KC to update name
-        api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_update_courses", "moodlewsrestformat" : "json",  "courses[0][id]" : 312, "courses[0][fullname]" : course_block.display_name}
+        api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_update_courses", "moodlewsrestformat" : "json", "courses[0][fullname]" : course_block.display_name, "courses[0][shortname]" : "{0}|{1}".format(course_block.location.course, course_block.location.run)}
         response = _api_request_to_moodle(api_data)
         log.info(response)
         return updated_data
