@@ -1135,7 +1135,7 @@ def settings_handler(request, course_key_string):  # lint-amnesty, pylint: disab
                     log.info(course_block.location.run)
                     log.info(course_block.location.course)
                     #KC to update start and end dates
-                    api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_update_courses", "moodlewsrestformat" : "json", "courses[0][startdate]" : course_block.start.strftime('%s'), "courses[0][enddate]" : course_block.end.strftime('%s'), "courses[0][shortname]" : "{0}|{1}".format(course_block.location.course, course_block.location.run)}
+                    api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_update_courses", "moodlewsrestformat" : "json", "courses[0][startdate]" : course_block.start.strftime('%s') if course_block.start is not None else 0, "courses[0][enddate]" : course_block.end.strftime('%s') if course_block.end is not None else 0, "courses[0][shortname]" : "{0}|{1}".format(course_block.location.course, course_block.location.run)}
                     response = _api_request_to_moodle(api_data)
                     log.info(response)
                 except DjangoValidationError as err:
