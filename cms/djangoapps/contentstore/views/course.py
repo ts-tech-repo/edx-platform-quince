@@ -31,6 +31,7 @@ from opaque_keys.edx.locator import BlockUsageLocator
 from organizations.api import add_organization_course, ensure_organization
 from organizations.exceptions import InvalidOrganizationException
 from rest_framework.exceptions import ValidationError
+import datetime
 
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
@@ -867,9 +868,11 @@ def _create_or_rerun_course(request):
             try:
                 new_course = create_new_course(request.user, org, course, run, fields)
                 #KC create course in moodle
+                log.info(datetime.datetime.now())
                 api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_create_courses", "moodlewsrestformat" : "json", "courses[0][fullname]" : display_name, "courses[0][categoryid]" : 1, "courses[0][shortname]" : "{0}|{1}".format(course, run), "courses[0][summary]" : "", "courses[0][customfields][0][shortname]" : "sites", "courses[0][customfields][0][value]" : org, "courses[0][customfields][1][shortname]" : "instances", "courses[0][customfields][1][value]" : settings.CMS_BASE}
                 response = _api_request_to_moodle(api_data)
                 log.info(response)
+                log.info(datetime.datetime.now())
                 return JsonResponse({
                     'url': reverse_course_url('course_handler', new_course.id),
                     'course_key': str(new_course.id),
