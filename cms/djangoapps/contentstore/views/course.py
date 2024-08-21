@@ -867,7 +867,7 @@ def _create_or_rerun_course(request):
         else:
             try:
                 new_course = create_new_course(request.user, org, course, run, fields)
-                log.info(new_course.start)
+                log.info(new_course.start.strftime("%s"))
                 #KC create course in moodle
                 api_data = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_course_create_courses", "moodlewsrestformat" : "json", "courses[0][fullname]" : display_name, "courses[0][categoryid]" : 1, "courses[0][shortname]" : "{0}|{1}".format(course, run), "courses[0][summary]" : "", "courses[0][customfields][0][shortname]" : "sites", "courses[0][customfields][0][value]" : org, "courses[0][customfields][1][shortname]" : "instances", "courses[0][customfields][1][value]" : settings.CMS_BASE, "courses[0][startdate]" : new_course.start.strftime("%s"), "courses[0][enddate]" : new_course.end.strftime("%s") if new_course.end is not None else 0}
                 response = _api_request_to_moodle(api_data)
