@@ -317,6 +317,7 @@ class CourseDetails:
 
         # Could just return jsondict w/o doing any db reads, but I put
         # the reads in as a means to confirm it persisted correctly
+        #KC to update start and end dates
         return CourseDetails.fetch(course_key)
 
     @staticmethod

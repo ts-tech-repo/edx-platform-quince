@@ -835,6 +835,7 @@ class UserStatsSerializer(serializers.Serializer):
     active_flags = serializers.IntegerField()
     inactive_flags = serializers.IntegerField()
     username = serializers.CharField()
+    user_first_name = serializers.CharField()
 
     def to_representation(self, instance):
         """Remove flag counts if user is not privileged."""
