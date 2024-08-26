@@ -329,6 +329,7 @@ class VideoStudentViewHandlers:
 
             try:
                 if is_bumper:
+                    log.info("Here 1")
                     content, filename, mimetype = get_transcript_from_contentstore(
                         self,
                         self.transcript_language,
@@ -336,6 +337,7 @@ class VideoStudentViewHandlers:
                         transcripts
                     )
                 else:
+                    log.info("Here 2")
                     content, filename, mimetype = get_transcript(
                         self,
                         lang=self.transcript_language,
