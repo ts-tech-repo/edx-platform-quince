@@ -1112,6 +1112,7 @@ def get_transcript(video, lang=None, output_format=Transcript.SRT, youtube_id=No
         edx_video_id = clean_video_id(video.edx_video_id)
         if not edx_video_id:
             raise NotFoundError
+        log.info("Here 3")
         return get_transcript_from_val(edx_video_id, lang, output_format)
     except NotFoundError:
         return get_transcript_from_contentstore(

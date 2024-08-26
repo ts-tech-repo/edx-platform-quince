@@ -389,7 +389,6 @@ class VideoStudentViewHandlers:
         else:  # unknown dispatch
             log.debug("Dispatch is not allowed")
             response = Response(status=404)
-        log.info(response)
         return response
 
     @XBlock.handler
