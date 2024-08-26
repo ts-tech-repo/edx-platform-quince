@@ -312,7 +312,7 @@ class VideoStudentViewHandlers:
                     For 'en' check if SJSON exists. For non-`en` check if SRT file exists.
         """
         log.info(Transcript.convert(
-                content=requests.get(self.transcript_url).decode('utf-8'),
+                content=requests.get(self.transcript_url).text.decode('utf-8'),
                 input_format=Transcript.SRT,
                 output_format=Transcript.SJSON
             ).encode())
