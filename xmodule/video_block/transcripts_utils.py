@@ -1080,6 +1080,7 @@ def get_transcript_from_blockstore(video_block, language, output_format, transcr
         input_format=Transcript.SRT,
         output_format=output_format,
     )
+    log.info(output_transcript)
     if not output_transcript.strip():
         raise NotFoundError('No transcript content')
     return output_transcript, output_filename, Transcript.mime_types[output_format]
