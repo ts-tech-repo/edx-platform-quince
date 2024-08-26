@@ -909,6 +909,7 @@ def get_transcript_from_val(edx_video_id, lang=None, output_format=Transcript.SR
         tuple containing content, filename, mimetype
     """
     transcript = get_video_transcript_content(edx_video_id, lang)
+    log.info(transcript)
     if not transcript:
         raise NotFoundError(f'Transcript not found for {edx_video_id}, lang: {lang}')
 
