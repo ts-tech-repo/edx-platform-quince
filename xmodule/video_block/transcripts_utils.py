@@ -860,7 +860,6 @@ class VideoTranscriptsMixin:
         return transcript_language
 
     def get_transcripts_info(self, is_bumper=False):
-        log.info("Here")
         """
         Returns a transcript dictionary for the video.
 
@@ -892,7 +891,7 @@ class VideoTranscriptsMixin:
                     sub = NON_EXISTENT_TRANSCRIPT
                 elif not transcripts.get(language_code):
                     transcripts[language_code] = NON_EXISTENT_TRANSCRIPT
-
+        log.info(transcripts)
         return {
             "sub": sub,
             "transcripts": transcripts,
