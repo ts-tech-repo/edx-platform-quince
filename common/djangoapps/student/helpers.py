@@ -50,7 +50,7 @@ from lms.djangoapps.instructor import access
 from lms.djangoapps.verify_student.models import VerificationDeadline
 from lms.djangoapps.verify_student.services import IDVerificationService
 from lms.djangoapps.verify_student.utils import is_verification_expiring_soon, verification_for_datetime
-from lms.djangoapps.courseware.courses import get_course_date_blocks, get_course_with_access
+from lms.djangoapps.courseware.courses import get_course_date_blocks, get_course_with_access, get_first_component_of_block
 from lms.djangoapps.courseware.date_summary import TodaysDate
 from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
 from lms.djangoapps.course_home_api.dates.serializers import DateSummarySerializer
@@ -60,6 +60,13 @@ from openedx.core.djangoapps.theming.helpers import get_themes
 from openedx.core.djangoapps.user_authn.utils import is_safe_login_or_logout_redirect
 from openedx.core.lib.time_zone_utils import get_time_zone_offset
 from xmodule.data import CertificatesDisplayBehaviors  # lint-amnesty, pylint: disable=wrong-import-order
+
+from lms.djangoapps.courseware.models import StudentModule
+from common.djangoapps.student.models.user import anonymous_id_for_user
+from submissions.models import StudentItem, Submission
+from submissions import api as submissions_api
+from xmodule.modulestore.django import modulestore
+from openedx.core.djangoapps.enrollments.data import get_course_enrollments
 
 # Enumeration of per-course verification statuses
 # we display on the student dashboard.
@@ -916,3 +923,114 @@ def get_course_dates_for_email(user, course_id, request):
 
     course_date_list = list(map(_remove_date_key_from_course_dates, course_date_list))
     return course_date_list
+
+
+def get_assessments_for_courses(request):
+    user = User.objects.get(email = request.user.email)
+    user_courses = list(get_course_enrollments(user.username))
+    all_blocks_data = []
+    for i, user_course in enumerate(user_courses):
+        course_key_string = user_course["course_details"]["course_id"]
+        course_key = CourseKey.from_string(course_key_string)
+        
+        course_usage_key = modulestore().make_course_usage_key(course_key)
+        block_data = get_course_blocks(user, course_usage_key, allow_start_dates_in_future=True, include_completion=True)
+        for section_key in block_data.get_children(course_usage_key):  
+            for subsection_key in block_data.get_children(section_key):
+                start = block_data.get_xblock_field(subsection_key, 'start')
+                due = block_data.get_xblock_field(subsection_key, 'due')
+                showNotSubmitted = True if due is not None and datetime.now() > due.replace(tzinfo=None) else  False
+                ignoreUnit = False
+                temp = {"course_name" : user_course["course_details"]["course_name"], "title" : block_data.get_xblock_field(subsection_key, 'display_name'), "start_date" : start, "date" : due, "link" : reverse('jump_to', args=[course_key, subsection_key])}
+                units = block_data.get_children(subsection_key)
+                if not units:
+                    ignoreUnit = True
+                    continue
+                while units:
+                    unit = units.pop()
+                
+                    components = block_data.get_children(unit)
+                    problemSubmissionStatus, problemType = [], False
+                    for component in components:
+                        category = block_data.get_xblock_field(component, 'category')
+                        if category not in ["edx_sga", "openassessment", "problem", "freetextresponse"]:
+                            ignoreUnit = True
+                            continue
+                        
+                        block_id = get_first_component_of_block(component, block_data)
+                        student_module_info = StudentModule.get_state_by_params(course_key_string, [block_id], user.id).first()
+                        student_item = {"student_id" : anonymous_id_for_user(request.user, course_key_string), "course_id" : course_key_string, "item_id" : block_id, "item_type" : "sga" if category == "edx_sga" else category}
+                        score = submissions_api.get_score(student_item)
+                        temp["is_graded"] = "Graded" if score and (score["points_earned"] or score["points_earned"] == 0) else "Not Graded"
+                        if not student_module_info:
+                            temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
+                            temp["is_graded"] = "-"
+                            problemSubmissionStatus.append("Not Submitted")
+                            submission_state = {}
+                        else:
+                            submission_state = json.loads(student_module_info.state)
+
+                        if category in ["freetextresponse"]:
+                            if submission_state.get("student_answer", None) and not submission_state.get("count_attempts", None):
+                                temp["submission_status"] = "In Progress"
+                                temp["is_graded"] = "Not Graded" if showNotSubmitted else "-"
+                            elif submission_state.get("student_answer", None) and submission_state.get("count_attempts", None):
+                                temp["submission_status"] = "Submitted"
+
+
+
+                        elif category in ["edx_sga"]:                            
+                            try:
+                                submission_id = StudentItem.objects.get(**student_item)
+                                sga_submissions = Submission.objects.filter(student_item=submission_id).first()
+                                if sga_submissions.answer.get("finalized"):
+                                    temp["submission_status"] = "Submitted"
+                                    
+                                elif not sga_submissions.answer.get("finalized"):
+                                    temp["submission_status"] = "In Progress"
+                                    temp["is_graded"] = "Not Graded" if showNotSubmitted else "-"
+                            except Exception as err:
+                                log.info(err)
+                                temp["submission_status"] = "Not Submitted" if showNotSubmitted else "-"
+                                temp["is_graded"] = "-"
+                        
+                        elif  category in ["openassessment"]:
+
+                            if "submission_uuid" in submission_state:
+                                temp["submission_status"] = "Submitted"
+
+                            elif submission_state and "has_saved" in submission_state:
+                                temp["submission_status"] = "In Progress"
+                                temp["is_graded"] = "Not Graded" if showNotSubmitted else "-"
+                            else:
+                                temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
+                                temp["is_graded"] = "-"
+
+                        elif category in ["problem"]:
+                            if (student_module_info and student_module_info.state and "last_submission_time" in student_module_info.state):
+                                problemSubmissionStatus.append("Submitted")
+                            elif ("score" in submission_state and "raw_earned" in submission_state["score"] and submission_state["score"]["raw_earned"] == 0):
+                                problemSubmissionStatus.append("In Progress")
+                            problemType = True
+
+                if not ignoreUnit:
+                    if problemType:
+                        if all([status == "Submitted" for status in problemSubmissionStatus ]):
+                            temp["submission_status"] = "Submitted"
+                            temp["is_graded"] = "Graded"
+                        elif all([status == "Not Submitted" for status in problemSubmissionStatus ]):
+                            temp["submission_status"] = "Not Submitted"  if showNotSubmitted else "-"
+                            temp["is_graded"] = "-"
+                        else:
+                            temp["submission_status"] = "Submitted"  if showNotSubmitted  else "In Progress"
+                            temp["is_graded"] = "Graded"  if showNotSubmitted  else "-"
+                        
+                    all_blocks_data.append(temp)
+        
+                        
+    filtered_sorted_date_blocks = sorted(all_blocks_data, key=lambda x: x['start_date'])
+    user_local_timezone = user_timezone_locale_prefs(request)
+    return {
+        'date_blocks': filtered_sorted_date_blocks,
+        "user_timezone" : user_local_timezone if user_local_timezone["user_timezone"] is not None else {"user_timezone" : ""}
+    }
