@@ -860,6 +860,7 @@ class VideoTranscriptsMixin:
         return transcript_language
 
     def get_transcripts_info(self, is_bumper=False):
+        log.info("Here")
         """
         Returns a transcript dictionary for the video.
 
