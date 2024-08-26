@@ -344,7 +344,7 @@ class VideoStudentViewHandlers:
                         output_format=Transcript.SJSON,
                         youtube_id=request.GET.get('videoId'),
                     )
-
+                log.info(content)
                 response = self.make_transcript_http_response(
                     content,
                     filename,
