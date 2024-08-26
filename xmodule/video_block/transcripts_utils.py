@@ -891,7 +891,6 @@ class VideoTranscriptsMixin:
                     sub = NON_EXISTENT_TRANSCRIPT
                 elif not transcripts.get(language_code):
                     transcripts[language_code] = NON_EXISTENT_TRANSCRIPT
-        log.info(transcripts)
         return {
             "sub": sub,
             "transcripts": transcripts,
@@ -971,6 +970,7 @@ def get_transcript_from_contentstore(video, language, output_format, transcripts
     Returns:
         tuple containing content, filename, mimetype
     """
+    log.info("Here")
     input_format, base_name, transcript_content = None, None, None
     if output_format not in (Transcript.SRT, Transcript.SJSON, Transcript.TXT):
         raise NotFoundError(f'Invalid transcript format `{output_format}`')
