@@ -13,4 +13,5 @@
     <button class="action setting-upload" type="button" name="setting-upload" value="<%- gettext("Upload New Transcript") %>" data-tooltip="<%- gettext("Upload New .srt Transcript") %>">
         <span><%- gettext("Upload New Transcript") %></span>
     </button>
+    <input type="text" class="input" name="setting-upload" value="">
 </div>
