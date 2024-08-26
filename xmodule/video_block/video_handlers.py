@@ -515,6 +515,7 @@ class VideoStudioViewHandlers:
                             input_format=Transcript.SRT,
                             output_format=Transcript.SJSON
                         ).encode()
+                        log.info(sjson_subs)
                         create_or_update_video_transcript(
                             video_id=edx_video_id,
                             language_code=language_code,
