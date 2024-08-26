@@ -310,7 +310,7 @@ class VideoStudentViewHandlers:
                     Returns list of languages, for which transcript files exist.
                     For 'en' check if SJSON exists. For non-`en` check if SRT file exists.
         """
-        log.info(self)
+        log.info(self.transcript_url)
         is_bumper = request.GET.get('is_bumper', False)
         transcripts = self.get_transcripts_info(is_bumper)
 
