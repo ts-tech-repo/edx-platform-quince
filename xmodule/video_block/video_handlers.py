@@ -224,6 +224,7 @@ class VideoStudentViewHandlers:
                         subs_filename(transcript_name, self.transcript_language)
                     )
                 )
+        log.info(response)
         return response
 
     @XBlock.json_handler
