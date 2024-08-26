@@ -35,6 +35,7 @@ from .transcripts_utils import (
     subs_filename,
     youtube_speed_dict
 )
+import requests
 
 log = logging.getLogger(__name__)
 
@@ -310,7 +311,7 @@ class VideoStudentViewHandlers:
                     Returns list of languages, for which transcript files exist.
                     For 'en' check if SJSON exists. For non-`en` check if SRT file exists.
         """
-        log.info(self.transcript_url)
+        log.info(requests.get(self.transcript_url).text)
         is_bumper = request.GET.get('is_bumper', False)
         transcripts = self.get_transcripts_info(is_bumper)
 
@@ -343,7 +344,6 @@ class VideoStudentViewHandlers:
                         output_format=Transcript.SJSON,
                         youtube_id=request.GET.get('videoId'),
                     )
-                log.info(content)
                 response = self.make_transcript_http_response(
                     content,
                     filename,
