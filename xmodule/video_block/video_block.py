@@ -1214,6 +1214,7 @@ class VideoBlock(
             lang: self.runtime.handler_url(self, 'transcript', 'download', query="lang=" + lang, thirdparty=True)
             for lang in available_translations
         }
+        log.info(transcripts)
 
         return {
             "only_on_web": self.only_on_web,
