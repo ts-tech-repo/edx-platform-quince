@@ -616,7 +616,6 @@ def get_video_transcript_content(edx_video_id, language_code):
     if edxval_api and edx_video_id:
         try:
             transcript = edxval_api.get_video_transcript_data(edx_video_id, language_code)
-            log.info(transcript)
         except ValueError:
             log.exception(
                 f"Error getting transcript from edx-val id: {edx_video_id}: language code {language_code}"
