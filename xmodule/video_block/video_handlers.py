@@ -315,7 +315,7 @@ class VideoStudentViewHandlers:
                 content=requests.get(self.transcript_url).text,
                 input_format=Transcript.SRT,
                 output_format=Transcript.SJSON
-            ).encode()))
+            )))
         is_bumper = request.GET.get('is_bumper', False)
         transcripts = self.get_transcripts_info(is_bumper)
 
