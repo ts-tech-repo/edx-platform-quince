@@ -312,12 +312,16 @@ class VideoStudentViewHandlers:
                     For 'en' check if SJSON exists. For non-`en` check if SRT file exists.
         """
         if self.transcript_url:
-            return Response(Transcript.convert(
-                    content=requests.get(self.transcript_url).text,
-                    input_format=Transcript.SRT,
-                    output_format=Transcript.SJSON
-                ))
-        
+            try:
+                return Response(Transcript.convert(
+                        content=requests.get(self.transcript_url).text,
+                        input_format=Transcript.SRT,
+                        output_format=Transcript.SJSON
+                    ))
+
+            except Exception as err:
+                return Response(status=404)
+
         is_bumper = request.GET.get('is_bumper', False)
         transcripts = self.get_transcripts_info(is_bumper)
 
