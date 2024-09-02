@@ -1729,15 +1729,19 @@ def extras_update_lti_grades(request):
 
     try:
         #Fetch Grades based on userid and block id
-        studentmodule = StudentModule.objects.get(student_id = user_id, module_state_key = usage_id)
+        try:
+            studentmodule = StudentModule.objects.get(student_id = user_id, module_state_key = usage_id)
+            #Update Grades
+            studentmodule.grade = grade
+            student_state = json.loads(studentmodule.state)
+            log.info(grade)
+            student_state["module_score"] = grade
+            studentmodule.state = json.dumps(student_state)
+            studentmodule.save()
+        except StudentModule.DoesNotExist:
+            studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}))
 
-        #Update Grades
-        studentmodule.grade = grade
-        student_state = json.loads(studentmodule.state)
-        log.info(grade)
-        student_state["module_score"] = grade
-        studentmodule.state = json.dumps(student_state)
-        studentmodule.save()
+        
         grades_signals.PROBLEM_RAW_SCORE_CHANGED.send(
             sender=None,
             raw_earned=grade,
