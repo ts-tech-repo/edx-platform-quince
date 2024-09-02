@@ -1733,7 +1733,7 @@ def extras_update_lti_grades(request):
         studentmodule.grade = grade
         student_state = json.loads(studentmodule.state)
         log.info(student_state)
-        student_state.module_score = grade
+        student_state["module_score"] = grade
         studentmodule.state = json.dumps(student_state)
         studentmodule.save()
     
