@@ -1741,7 +1741,7 @@ def extras_update_lti_grades(request):
         grades_signals.PROBLEM_RAW_SCORE_CHANGED.send(
             sender=None,
             raw_earned=grade,
-            raw_possible=student_state.max_score,
+            raw_possible=student_state.max_grade,
             weight=getattr(usage_id, 'weight', None),
             user_id=user_id,
             course_id=str(studentmodule.course_id),
