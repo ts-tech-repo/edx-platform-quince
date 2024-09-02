@@ -1722,10 +1722,11 @@ def extras_get_assessment_details(request):
 
 @csrf_exempt
 def extras_update_lti_grades(request):
-    user_email = request.POST.get("user_email", "")
-    usage_id = request.POST.get("usage_id", "")
+    form_data = json.loads(request.body)
+    user_email = form_data("user_email", "")
+    usage_id = form_data("usage_id", "")
     user_id = User.objects.get(email = user_email).id
-    grade = request.POST.get("user_grade", "")
+    grade = form_data("user_grade", "")
     log.info(user_email)
 
     try:
