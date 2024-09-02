@@ -1727,7 +1727,7 @@ def extras_update_lti_grades(request):
 
     try:
         #Fetch Grades based on userid and block id
-        studentmodule = StudentModule.objects.get(student_id = user_id, module_id = usage_id)
+        studentmodule = StudentModule.objects.get(student_id = user_id, module_state_key = usage_id)
 
         #Update Grades
         studentmodule.grade = grade
