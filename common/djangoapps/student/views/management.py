@@ -1746,7 +1746,7 @@ def extras_update_lti_grades(request):
             user_id=user_id,
             course_id=str(studentmodule.course_id),
             usage_id=str(usage_id),
-            score_deleted=True,
+            score_deleted=False,
             only_if_higher=False,
             modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
             score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
