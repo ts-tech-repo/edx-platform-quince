@@ -1726,6 +1726,7 @@ def extras_update_lti_grades(request):
     usage_id = request.POST.get("usage_id", "")
     user_id = User.objects.get(email = user_email).id
     grade = request.POST.get("user_grade", "")
+    log.info(user_email)
 
     try:
         #Fetch Grades based on userid and block id
