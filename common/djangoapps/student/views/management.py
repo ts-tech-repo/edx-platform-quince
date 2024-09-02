@@ -26,6 +26,7 @@ from django.core.validators import ValidationError, validate_email
 from django.core.cache import cache
 from cms.djangoapps.contentstore.utils import get_subsections_by_assignment_type
 from lms.djangoapps.course_blocks.api import get_course_blocks
+from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
 from openedx.core.djangoapps.enrollments.api import add_enrollment
 from common.djangoapps.student.helpers import DISABLE_UNENROLL_CERT_STATES, cert_info, do_create_account, get_assessments_for_courses
@@ -1716,3 +1717,28 @@ def extras_get_assessment_details(request):
             })
             visited_activity_ids.append(assignment.first_component_block_id)
     return JsonResponse(context)
+
+@csrf_exempt
+def extras_update_lti_grades(request):
+    user_email = request.POST.get("user_email", "")
+    usage_id = request.POST.get("usage_id", "")
+    user_id = User.objects.get(email = user_email).id
+    grade = request.POST.get("user_grade", "")
+
+    try:
+        #Fetch Grades based on userid and block id
+        studentmodule = StudentModule.objects.get(student_id = user_id, module_id = usage_id)
+
+        #Update Grades
+        studentmodule.grade = grade
+        student_state = json.loads(studentmodule.state)
+        student_state.module_score = grade
+        studentmodule.state = json.dumps(student_state)
+        studentmodule.save()
+    
+    except Exception as err:
+        log.info({"Status" : "Error", "message" : "Something went wrong {0}".format(err)})
+        return JsonResponse({"Status" : "Error", "message" : "Something went wrong"})
+
+    return JsonResponse({"Status" : "Success", "message" : "Grades updated successfully"})
+
