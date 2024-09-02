@@ -108,6 +108,8 @@ from common.djangoapps.util.json_request import JsonResponse
 from common.djangoapps.student.signals import USER_EMAIL_CHANGED
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 from django.core.paginator import Paginator, EmptyPage
+from lms.djangoapps.grades.api import constants as grades_constants
+from lms.djangoapps.grades.api import signals as grades_signals
 
 log = logging.getLogger("edx.student")
 
@@ -1736,6 +1738,19 @@ def extras_update_lti_grades(request):
         student_state["module_score"] = grade
         studentmodule.state = json.dumps(student_state)
         studentmodule.save()
+        grades_signals.PROBLEM_RAW_SCORE_CHANGED.send(
+            sender=None,
+            raw_earned=grade,
+            raw_possible=student_state.max_score,
+            weight=getattr(usage_id, 'weight', None),
+            user_id=user_id,
+            course_id=str(studentmodule.course_id),
+            usage_id=str(usage_id),
+            score_deleted=True,
+            only_if_higher=False,
+            modified=datetime.now().replace(tzinfo=pytz.UTC),
+            score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
+        )
     
     except Exception as err:
         log.info({"Status" : "Error", "message" : "Something went wrong {0}".format(err)})
