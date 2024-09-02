@@ -121,6 +121,7 @@ class MasqueradeView(View):
                 'group_id': course.group_id,
                 'role': course.role,
                 'user_name': course.user_name or None,
+                'user_email': User.objects.get(username=course.user_name).email if course.user_name else '',
                 'user_partition_id': course.user_partition_id,
             },
             'available': [
@@ -153,6 +154,7 @@ class MasqueradeView(View):
                         'user_partition_id': partition.id,
                     }
                     for group in partition.groups
+                    if group.name != "Audit"
                 ])
         data['active']['group_name'] = course.get_active_group_name(data['available'])
         return JsonResponse(data)
