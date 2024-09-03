@@ -1724,8 +1724,10 @@ def extras_get_assessment_details(request):
 def extras_update_lti_grades(request):
     user_email = request.POST.get("user_email", "")
     usage_id = request.POST.get("usage_id", "")
-    user_id = User.objects.get(email = user_email).id
+    user_object = User.objects.get(email = user_email)
+    user_id = user_object.id
     grade = request.POST.get("user_grade", "")
+    course_id = request.POST.get("course_id", "")
 
     try:
         #Fetch Grades based on userid and block id
@@ -1738,23 +1740,36 @@ def extras_update_lti_grades(request):
             student_state["module_score"] = grade
             studentmodule.state = json.dumps(student_state)
             studentmodule.save()
+            grades_signals.PROBLEM_RAW_SCORE_CHANGED.send(
+                sender=None,
+                raw_earned=grade,
+                raw_possible=studentmodule.max_grade,
+                weight=getattr(usage_id, 'weight', None),
+                user_id=user_id,
+                course_id=str(studentmodule.course_id),
+                usage_id=str(usage_id),
+                score_deleted=False,
+                only_if_higher=False,
+                modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
+                score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
+            )
         except StudentModule.DoesNotExist:
+            block_data = get_course_blocks(User.objects.get(id = user_id), modulestore().make_course_usage_key(CourseKey.from_string(str(course_id))), allow_start_dates_in_future=True, include_completion=True)
             studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}))
 
+            log.info("Student module created {0}".format(studentmodule))
+            
+            grades_signals.SCORE_PUBLISHED.send(
+                sender=None,
+                block=usage_id,
+                user_id=user_id,
+                raw_earned=grade,
+                raw_possible=block_data.get_xblock_field(usage_id, 'weight'),
+                only_if_higher=False,
+                score_deleted=False,
+            )
+
         
-        grades_signals.PROBLEM_RAW_SCORE_CHANGED.send(
-            sender=None,
-            raw_earned=grade,
-            raw_possible=studentmodule.max_grade,
-            weight=getattr(usage_id, 'weight', None),
-            user_id=user_id,
-            course_id=str(studentmodule.course_id),
-            usage_id=str(usage_id),
-            score_deleted=True,
-            only_if_higher=False,
-            modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
-            score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
-        )
     
     except Exception as err:
         log.info({"Status" : "Error", "message" : "Something went wrong {0}".format(err)})
