@@ -1721,7 +1721,6 @@ def extras_get_assessment_details(request):
     return JsonResponse(context)
 
 @csrf_exempt
-@transaction.atomic_requests
 def extras_update_lti_grades(request):
     user_email = request.POST.get("user_email", "")
     usage_id = request.POST.get("usage_id", "")
