@@ -1729,50 +1729,50 @@ def extras_update_lti_grades(request):
     grade = request.POST.get("user_grade", "")
     course_id = request.POST.get("course_id", "")
 
-    try:
+    # try:
         #Fetch Grades based on userid and block id
-        try:
-            studentmodule = StudentModule.objects.get(student_id = user_id, module_state_key = usage_id)
-            #Update Grades
-            studentmodule.grade = grade
-            student_state = json.loads(studentmodule.state)
-            student_state["module_score"] = grade
-            studentmodule.state = json.dumps(student_state)
-            studentmodule.save()
-            grades_signals.PROBLEM_RAW_SCORE_CHANGED.send(
-                sender=None,
-                raw_earned=grade,
-                raw_possible=studentmodule.max_grade,
-                weight=getattr(usage_id, 'weight', None),
-                user_id=user_id,
-                course_id=str(studentmodule.course_id),
-                usage_id=str(usage_id),
-                score_deleted=True,
-                only_if_higher=False,
-                modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
-                score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
-            )
-        except StudentModule.DoesNotExist:
-            block_data = get_course_blocks(User.objects.get(id = user_id), modulestore().make_course_usage_key(CourseKey.from_string(str(course_id))), allow_start_dates_in_future=True, include_completion=True)
-            studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}))
+    try:
+        studentmodule = StudentModule.objects.get(student_id = user_id, module_state_key = usage_id)
+        #Update Grades
+        studentmodule.grade = grade
+        student_state = json.loads(studentmodule.state)
+        student_state["module_score"] = grade
+        studentmodule.state = json.dumps(student_state)
+        studentmodule.save()
+        grades_signals.PROBLEM_RAW_SCORE_CHANGED.send(
+            sender=None,
+            raw_earned=grade,
+            raw_possible=studentmodule.max_grade,
+            weight=getattr(usage_id, 'weight', None),
+            user_id=user_id,
+            course_id=str(studentmodule.course_id),
+            usage_id=str(usage_id),
+            score_deleted=True,
+            only_if_higher=False,
+            modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
+            score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
+        )
+    except StudentModule.DoesNotExist:
+        block_data = get_course_blocks(User.objects.get(id = user_id), modulestore().make_course_usage_key(CourseKey.from_string(str(course_id))), allow_start_dates_in_future=True, include_completion=True)
+        studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}))
 
-            log.info("Student module created {0}".format(studentmodule))
-            
-            grades_signals.SCORE_PUBLISHED.send(
-                sender=None,
-                block=studentmodule.module_state_key,
-                user=user_object,
-                raw_earned=grade,
-                raw_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
-                only_if_higher=False,
-                score_deleted=False,
-            )
+        log.info("Student module created {0}".format(studentmodule))
+        
+        grades_signals.SCORE_PUBLISHED.send(
+            sender=None,
+            block=studentmodule.module_state_key,
+            user=user_object,
+            raw_earned=grade,
+            raw_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
+            only_if_higher=False,
+            score_deleted=False,
+        )
 
         
     
-    except Exception as err:
-        log.info({"Status" : "Error", "message" : "Something went wrong {0}".format(err)})
-        return JsonResponse({"Status" : "Error", "message" : "Something went wrong"})
+    # except Exception as err:
+    #     log.info({"Status" : "Error", "message" : "Something went wrong {0}".format(err)})
+    #     return JsonResponse({"Status" : "Error", "message" : "Something went wrong"})
 
     return JsonResponse({"Status" : "Success", "message" : "Grades updated successfully"})
 
