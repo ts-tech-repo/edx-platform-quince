@@ -25,6 +25,7 @@ from django.contrib.sites.models import Site
 from django.core.validators import ValidationError, validate_email
 from django.core.cache import cache
 from cms.djangoapps.contentstore.utils import get_subsections_by_assignment_type
+from cms.djangoapps.contentstore.xblock_storage_handlers.view_handlers import get_xblock
 from lms.djangoapps.course_blocks.api import get_course_blocks
 from lms.djangoapps.courseware.models import StudentModule
 from lms.djangoapps.grades.models import PersistentSubsectionGrade
@@ -1760,7 +1761,7 @@ def extras_update_lti_grades(request):
         
         grades_signals.SCORE_PUBLISHED.send(
             sender=None,
-            block=studentmodule.module_state_key,
+            block=get_xblock(studentmodule.module_state_key, user_object),
             user=user_object,
             raw_earned=grade,
             raw_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
