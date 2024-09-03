@@ -1736,7 +1736,6 @@ def extras_update_lti_grades(request):
             #Update Grades
             studentmodule.grade = grade
             student_state = json.loads(studentmodule.state)
-            log.info(grade)
             student_state["module_score"] = grade
             studentmodule.state = json.dumps(student_state)
             studentmodule.save()
@@ -1748,7 +1747,7 @@ def extras_update_lti_grades(request):
                 user_id=user_id,
                 course_id=str(studentmodule.course_id),
                 usage_id=str(usage_id),
-                score_deleted=False,
+                score_deleted=True,
                 only_if_higher=False,
                 modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
                 score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
