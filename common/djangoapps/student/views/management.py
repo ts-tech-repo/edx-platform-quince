@@ -1763,7 +1763,7 @@ def extras_update_lti_grades(request):
                 block=studentmodule.module_state_key,
                 user=user_object,
                 raw_earned=grade,
-                raw_possible=block_data.get_xblock_field(usage_id, 'weight'),
+                raw_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
                 only_if_higher=False,
                 score_deleted=False,
             )
