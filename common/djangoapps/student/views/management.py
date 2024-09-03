@@ -1760,7 +1760,7 @@ def extras_update_lti_grades(request):
             
             grades_signals.SCORE_PUBLISHED.send(
                 sender=None,
-                block=usage_id,
+                block=studentmodule.module_state_key,
                 user=user_object,
                 raw_earned=grade,
                 raw_possible=block_data.get_xblock_field(usage_id, 'weight'),
