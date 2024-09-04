@@ -875,6 +875,7 @@ class VideoBlock(
         video_url = metadata_fields['html5_sources']
         video_id = metadata_fields['edx_video_id']
         youtube_id_1_0 = metadata_fields['youtube_id_1_0']
+        transcript_url = metadata_fields['transcript_url']
 
         def get_youtube_link(video_id):
             """
