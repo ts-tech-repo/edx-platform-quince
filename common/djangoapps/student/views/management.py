@@ -1729,12 +1729,14 @@ def extras_update_lti_grades(request):
     user_id = user_object.id
     grade = request.POST.get("user_grade", "")
     course_id = request.POST.get("course_id", "")
+    block_data = get_course_blocks(User.objects.get(id = user_id), modulestore().make_course_usage_key(CourseKey.from_string(str(course_id))), allow_start_dates_in_future=True, include_completion=True)
     weight = getattr(usage_id, 'weight', None)
 
     # try:
         #Fetch Grades based on userid and block id
     try:
         studentmodule = StudentModule.objects.get(student_id = user_id, module_state_key = usage_id)
+        
         #Update Grades
         studentmodule.grade = grade
         student_state = json.loads(studentmodule.state)
@@ -1745,7 +1747,7 @@ def extras_update_lti_grades(request):
             sender=None,
             raw_earned=grade,
             raw_possible=studentmodule.max_grade,
-            weight=weight,
+            weight=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
             user_id=user_id,
             course_id=str(studentmodule.course_id),
             usage_id=str(usage_id),
@@ -1764,7 +1766,7 @@ def extras_update_lti_grades(request):
             block=modulestore().get_item(studentmodule.module_state_key),
             user=user_object,
             raw_earned=grade,
-            raw_possible=weight,
+            raw_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
             only_if_higher=False,
             score_deleted=False,
         )
@@ -1775,7 +1777,7 @@ def extras_update_lti_grades(request):
             course_id=course_id,
             usage_id=usage_id,
             weighted_earned=grade,
-            weighted_possible=weight,
+            weighted_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
             modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
             score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module
         )
