@@ -1771,7 +1771,7 @@ def extras_update_lti_grades(request):
     
     handlers.scorable_block_completion(
             sender="",
-            user_id=user_signup_handler,
+            user_id=user_id,
             course_id=course_id,
             usage_id=usage_id,
             weighted_earned=grade,
