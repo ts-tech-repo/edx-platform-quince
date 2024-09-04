@@ -143,6 +143,7 @@ class _ContentSerializer(serializers.Serializer):
     id = serializers.CharField(read_only=True)  # pylint: disable=invalid-name
     author = serializers.SerializerMethodField()
     author_label = serializers.SerializerMethodField()
+    author_first_name = serializers.SerializerMethodField()
     created_at = serializers.CharField(read_only=True)
     updated_at = serializers.CharField(read_only=True)
     raw_body = serializers.CharField(source="body", validators=[validate_not_blank])
@@ -204,7 +205,9 @@ class _ContentSerializer(serializers.Serializer):
         Returns the role label (i.e. "Staff" or "Community TA") for the user
         with the given id.
         """
-        is_staff = user_id in self.context["course_staff_user_ids"] or user_id in self.context["moderator_user_ids"]
+        user = User.objects.get(id=user_id)
+        is_global_satff = user.is_staff or (user.is_superuser and user.is_staff)
+        is_staff = user_id in self.context["course_staff_user_ids"] or user_id in self.context["moderator_user_ids"] or is_global_satff
         is_ta = user_id in self.context["ta_user_ids"]
 
         return (
@@ -212,6 +215,18 @@ class _ContentSerializer(serializers.Serializer):
             "Community TA" if is_ta else
             None
         )
+    
+    def get_author_first_name(self, obj):
+        """
+        Returns the author's first name, or None if the content is anonymous.
+        """
+        if self._is_anonymous(obj):
+            return None
+        try:
+            user = User.objects.get(username=obj["username"])
+            return user.first_name
+        except ObjectDoesNotExist:
+            return None
 
     def _get_user_label_from_username(self, username):
         """
@@ -822,6 +837,7 @@ class UserStatsSerializer(serializers.Serializer):
     active_flags = serializers.IntegerField()
     inactive_flags = serializers.IntegerField()
     username = serializers.CharField()
+    user_first_name = serializers.CharField()
 
     def to_representation(self, instance):
         """Remove flag counts if user is not privileged."""
