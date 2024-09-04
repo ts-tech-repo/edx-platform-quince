@@ -1730,7 +1730,6 @@ def extras_update_lti_grades(request):
     grade = request.POST.get("user_grade", "")
     course_id = request.POST.get("course_id", "")
     block_data = get_course_blocks(User.objects.get(id = user_id), modulestore().make_course_usage_key(CourseKey.from_string(str(course_id))), allow_start_dates_in_future=True, include_completion=True)
-    weight = getattr(usage_id, 'weight', None)
 
     # try:
         #Fetch Grades based on userid and block id
@@ -1757,7 +1756,7 @@ def extras_update_lti_grades(request):
             score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
         )
     except StudentModule.DoesNotExist:
-        studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}))
+        studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}), max_grade= block_data.get_xblock_field(studentmodule.module_state_key, 'weight'))
 
         log.info("Student module created {0}".format(studentmodule))
         
