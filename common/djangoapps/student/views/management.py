@@ -110,6 +110,7 @@ from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disa
 from django.core.paginator import Paginator, EmptyPage
 from lms.djangoapps.grades.api import constants as grades_constants
 from lms.djangoapps.grades.api import signals as grades_signals
+from completion import handlers
 
 log = logging.getLogger("edx.student")
 
@@ -1728,6 +1729,7 @@ def extras_update_lti_grades(request):
     user_id = user_object.id
     grade = request.POST.get("user_grade", "")
     course_id = request.POST.get("course_id", "")
+    weight = getattr(usage_id, 'weight', None)
 
     # try:
         #Fetch Grades based on userid and block id
@@ -1743,7 +1745,7 @@ def extras_update_lti_grades(request):
             sender=None,
             raw_earned=grade,
             raw_possible=studentmodule.max_grade,
-            weight=getattr(usage_id, 'weight', None),
+            weight=weight,
             user_id=user_id,
             course_id=str(studentmodule.course_id),
             usage_id=str(usage_id),
@@ -1753,7 +1755,6 @@ def extras_update_lti_grades(request):
             score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
         )
     except StudentModule.DoesNotExist:
-        block_data = get_course_blocks(User.objects.get(id = user_id), modulestore().make_course_usage_key(CourseKey.from_string(str(course_id))), allow_start_dates_in_future=True, include_completion=True)
         studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}))
 
         log.info("Student module created {0}".format(studentmodule))
@@ -1763,9 +1764,20 @@ def extras_update_lti_grades(request):
             block=modulestore().get_item(studentmodule.module_state_key),
             user=user_object,
             raw_earned=grade,
-            raw_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
+            raw_possible=weight,
             only_if_higher=False,
             score_deleted=False,
+        )
+    
+    handlers.scorable_block_completion(
+            sender="",
+            user_id=user_signup_handler,
+            course_id=course_id,
+            usage_id=usage_id,
+            weighted_earned=grade,
+            weighted_possible=weight,
+            modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
+            score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module
         )
 
         
