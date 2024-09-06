@@ -492,6 +492,7 @@ def get_course_date_blocks(course, user, request=None, include_access=False,
     blocks.extend([cls(course, user) for cls in default_block_classes])
 
     blocks = filter(lambda b: b.is_allowed and b.date and (include_past_dates or b.is_enabled), blocks)
+    log.info(blocks)
     return sorted(blocks, key=date_block_key_fn)
 
 
