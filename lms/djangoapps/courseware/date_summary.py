@@ -369,9 +369,6 @@ class CourseAssignmentDate(DateSummary):
     def link(self, link):
         self.assignment_link = link
 
-    @link.setter
-    def link(self, past_due):
-        self.past_due = past_due
 
     @property
     def title(self):
