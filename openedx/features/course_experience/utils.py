@@ -12,7 +12,7 @@ from openedx.core.lib.cache_utils import request_cached
 from openedx.features.course_experience import RELATIVE_DATES_DISABLE_RESET_FLAG, RELATIVE_DATES_FLAG, ENABLE_COMPLETION_TRACKING_FLAG
 from common.djangoapps.student.models import CourseEnrollment
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
-
+from completion.services import CompletionService
 
 @request_cached()
 def get_course_outline_block_tree(request, course_id, user=None, allow_start_dates_in_future=False):  # lint-amnesty, pylint: disable=too-many-statements
@@ -211,7 +211,7 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
         # user can't see this content and we continue, we might accidentally say this block is complete because it
         # isn't scored (which most hierarchy blocks wouldn't be).
         return False
-    complete = block_data.get_xblock_field(block_key, 'complete', False)
+    complete = CompletionService.can_mark_block_complete_on_view(block_key)
     graded = block_data.get_xblock_field(block_key, 'graded', False)
     has_score = block_data.get_xblock_field(block_key, 'has_score', False)
     weight = block_data.get_xblock_field(block_key, 'weight', 1)
