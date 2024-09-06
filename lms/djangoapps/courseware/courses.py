@@ -492,7 +492,6 @@ def get_course_date_blocks(course, user, request=None, include_access=False,
     blocks.extend([cls(course, user) for cls in default_block_classes])
 
     blocks = filter(lambda b: b.is_allowed and b.date and (include_past_dates or b.is_enabled), blocks)
-    log.info(blocks)
     return sorted(blocks, key=date_block_key_fn)
 
 
@@ -547,6 +546,7 @@ def get_course_assignment_date_blocks(course, user, request, num_return=None,
         date_block._extra_info = assignment.extra_info  # pylint: disable=protected-access
         date_blocks.append(date_block)
     date_blocks = sorted((b for b in date_blocks if b.is_enabled or include_past_dates), key=date_block_key_fn)
+    log.info(date_blocks)
     if num_return:
         return date_blocks[:num_return]
     return date_blocks
