@@ -631,6 +631,7 @@ def get_course_assignments(course_key, user, include_access=False, customAPI=Fal
                     complete, past_due, assignment_type, None, first_component_block_id, start, block_data
                 ))
             assignments.extend(get_ora_blocks_as_assignments(block_data, subsection_key, course_key))
+    log.info(assignments)
     return assignments
 
 
