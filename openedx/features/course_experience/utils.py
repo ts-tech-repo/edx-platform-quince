@@ -204,7 +204,7 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
     children = block_data.get_children(block_key)
     if children:
         return all(is_block_structure_complete_for_assignments(block_data, child_key, course_key) for child_key in children)
-    logging.info(block_data,type(block_data))
+    log.info(block_data)
     category = block_data.get_xblock_field(block_key, 'category')
     if category in ('course', 'chapter', 'sequential', 'vertical'):
         # If there are no children for these "hierarchy" block types, just bail. This could be because the
@@ -218,7 +218,7 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
     has_score = block_data.get_xblock_field(block_key, 'has_score', False)
     weight = block_data.get_xblock_field(block_key, 'weight', 1)
     scored = has_score and (weight is None or weight > 0)
-    logging.info(complete,'compteeeeeeeeee',type(complete))
+    log.info(complete)
     if course_key:
         if not ENABLE_COMPLETION_TRACKING_FLAG.is_enabled(course_key):
             return graded or scored
