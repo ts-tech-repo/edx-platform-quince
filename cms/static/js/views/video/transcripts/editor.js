@@ -3,10 +3,11 @@ define(
         'jquery', 'backbone', 'underscore',
         'js/views/video/transcripts/utils',
         'js/views/video/transcripts/get_cdn_secure_video_url',
+        'js/views/video/transcripts/get_cdn_secure_transcript_url',
         'js/views/metadata', 'js/collections/metadata',
         'js/views/video/transcripts/metadata_videolist'
     ],
-    function($, Backbone, _, Utils, CDN, MetadataView, MetadataCollection) {
+    function($, Backbone, _, Utils, CDN, CDNSrt, MetadataView, MetadataCollection) {
         var Editor = Backbone.View.extend({
 
             tagName: 'div',
@@ -41,6 +42,7 @@ define(
                 // actually binded
                 this.handleFieldChanged();
             CDN.cdn_m3u8();
+            CDNSrt.cdn_srt();
             },
 
             /**
