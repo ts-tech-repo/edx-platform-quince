@@ -74,8 +74,10 @@ class CourseWaffleFlag(WaffleFlag):
             self.cached_flags()[course_cache_key] = course_override
 
         if course_override == WaffleFlagCourseOverrideModel.ALL_CHOICES.on:
+            log.info('111111')
             return True
         if course_override == WaffleFlagCourseOverrideModel.ALL_CHOICES.off:
+            log.info('22222222')
             return False
 
         # Since no course-specific override was found, fall back to checking at the org-level.
@@ -91,8 +93,10 @@ class CourseWaffleFlag(WaffleFlag):
                 self.cached_flags()[org_cache_key] = org_override
 
             if org_override == WaffleFlagOrgOverrideModel.ALL_CHOICES.on:
+                log.info('33333333')
                 return True
             if org_override == WaffleFlagOrgOverrideModel.ALL_CHOICES.off:
+                log.info('444444444')
                 return False
 
         return None
@@ -113,6 +117,11 @@ class CourseWaffleFlag(WaffleFlag):
                 course_key
             )
         is_enabled_for_course = self._get_course_override_value(course_key)
+        log.info(is_enabled_for_course)
         if is_enabled_for_course is not None:
+            log.info("enabled == ------ Not None")
             return is_enabled_for_course
-        return super().is_enabled()
+        global_is_enabled = super().is_enabled()
+        log.info(f"global_is_enabled:{global_is_enabled}")
+        return global_is_enabled
+        # return super().is_enabled()
