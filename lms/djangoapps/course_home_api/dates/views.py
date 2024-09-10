@@ -6,7 +6,7 @@ from edx_django_utils import monitoring as monitoring_utils
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from edx_rest_framework_extensions.auth.session.authentication import SessionAuthenticationAllowInactiveUser
 from opaque_keys.edx.keys import CourseKey
-from openedx.core.djangoapps.waffle_utils import CourseWaffleFlag
+from openedx.features.course_experience import ENABLE_COMPLETION_TRACKING_FLAG
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -111,7 +111,7 @@ class DatesTabView(RetrieveAPIView):
         course_date_blocks = []
         for block in blocks:
             if not isinstance(block, TodaysDate):
-                block.complete = True if CourseWaffleFlag.custom_is_enabled() else False
+                block.complete = True if ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled() else False
                 course_date_blocks.append(block)
 
 
