@@ -27,7 +27,7 @@ define(["jquery", "backbone", "underscore"], function($, Backbone) {
                     scroll: true,
                     autoFocus: true,
                     select: function(event, ui) {
-                        ui.item.value = "https://" + ui.item.domain + "/e_content/" + ui.item.value;
+                        ui.item.value = "https://" + ui.item.domain + "/content/" + ui.item.value;
                         $(this).val(ui.item.value);
                         $(this).trigger("input");
                         event.preventDefault();
