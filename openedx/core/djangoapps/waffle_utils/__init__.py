@@ -126,5 +126,4 @@ class CourseWaffleFlag(WaffleFlag):
             return is_enabled_for_course
         global_is_enabled = super().is_enabled()
         log.info(f"global_is_enabled:{global_is_enabled}")
-        return global_is_enabled
-        # return super().is_enabled()
+        return super().is_enabled()
