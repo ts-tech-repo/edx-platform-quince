@@ -115,3 +115,7 @@ class CourseWaffleFlag(WaffleFlag):
         if is_enabled_for_course is not None:
             return is_enabled_for_course
         return super().is_enabled()
+
+    def custom_is_enabled(self):
+        return super().is_enabled()
+
