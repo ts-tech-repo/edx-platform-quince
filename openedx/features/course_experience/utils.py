@@ -205,7 +205,7 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
     # if children:
     #     return all(is_block_structure_complete_for_assignments(block_data, child_key, course_key) for child_key in children)
     if children:
-        # Recursively check all children
+       
         for child_key in children:
             child_complete = is_block_structure_complete_for_assignments(block_data, child_key, course_key)
             if not child_complete:
@@ -231,5 +231,5 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
     if course_key:
         if not ENABLE_COMPLETION_TRACKING_FLAG.is_enabled(course_key):
             return graded or scored
-    
-    return complete or not graded or not scored
+    log.info(complete)
+    return complete
