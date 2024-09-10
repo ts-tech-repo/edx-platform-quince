@@ -107,10 +107,15 @@ class DatesTabView(RetrieveAPIView):
         # User locale settings
         user_timezone_locale = user_timezone_locale_prefs(request)
         user_timezone = user_timezone_locale['user_timezone']
+        course_date_blocks = []
+        for block in blocks:
+            if not isinstance(block, TodaysDate):
+                course_date_blocks.append(block)
+
 
         data = {
             'has_ended': course.has_ended(),
-            'course_date_blocks': [block for block in blocks if not isinstance(block, TodaysDate)],
+            'course_date_blocks': course_date_blocks,
             'learner_is_full_access': learner_is_full_access,
             'user_timezone': user_timezone,
         }
