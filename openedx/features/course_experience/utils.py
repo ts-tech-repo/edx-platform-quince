@@ -202,21 +202,32 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
     readings or videos) do not count. We only care about actual homework content.
     """
     children = block_data.get_children(block_key)
+    # if children:
+    #     return all(is_block_structure_complete_for_assignments(block_data, child_key, course_key) for child_key in children)
     if children:
-        return all(is_block_structure_complete_for_assignments(block_data, child_key, course_key) for child_key in children)
+        # Recursively check all children
+        for child_key in children:
+            child_complete = is_block_structure_complete_for_assignments(block_data, child_key, course_key)
+            if not child_complete:
+                log.info(f"Block {child_key} is incomplete.")
+                return False
+        return True
     category = block_data.get_xblock_field(block_key, 'category')
+    log.info(category)
     if category in ('course', 'chapter', 'sequential', 'vertical'):
         # If there are no children for these "hierarchy" block types, just bail. This could be because the
         # content isn't available yet (start date in future) or we're too late and the block has hide_after_due
         # set. Or maybe a different transformer cut off content for whatever reason. Regardless of the cause - if the
         # user can't see this content and we continue, we might accidentally say this block is complete because it
         # isn't scored (which most hierarchy blocks wouldn't be).
+        log.info(f"Block {block_key} is a hierarchy block with no children.")
         return False
     complete = block_data.get_xblock_field(block_key, 'complete', False)
     graded = block_data.get_xblock_field(block_key, 'graded', False)
     has_score = block_data.get_xblock_field(block_key, 'has_score', False)
     weight = block_data.get_xblock_field(block_key, 'weight', 1)
     scored = has_score and (weight is None or weight > 0)
+    log.info(f"Block {block_key}: complete={complete}, graded={graded}, has_score={has_score}, scored={scored}")
     if course_key:
         if not ENABLE_COMPLETION_TRACKING_FLAG.is_enabled(course_key):
             return graded or scored
