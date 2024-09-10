@@ -66,11 +66,12 @@ class CourseWaffleFlag(WaffleFlag):
 
         course_cache_key = f"{self.name}.cwaffle.{str(course_key)}"
         course_override = self.cached_flags().get(course_cache_key)
-
+        log.info(f"course_override:{course_override},1111'")
         if course_override is None:
             course_override = WaffleFlagCourseOverrideModel.override_value(
                 self.name, course_key
             )
+            log.info(f"course_override:{course_override},2222'")
             self.cached_flags()[course_cache_key] = course_override
 
         if course_override == WaffleFlagCourseOverrideModel.ALL_CHOICES.on:
@@ -85,11 +86,13 @@ class CourseWaffleFlag(WaffleFlag):
             org = course_key.org
             org_cache_key = f"{self.name}.owaffle.{org}"
             org_override = self.cached_flags().get(org_cache_key)
-
+            log.info(f"org_override:{org_override}11111")
             if org_override is None:
                 org_override = WaffleFlagOrgOverrideModel.override_value(
                     self.name, org
                 )
+                log.info(f"org_override:{org_override}222222")
+
                 self.cached_flags()[org_cache_key] = org_override
 
             if org_override == WaffleFlagOrgOverrideModel.ALL_CHOICES.on:
