@@ -202,16 +202,8 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
     readings or videos) do not count. We only care about actual homework content.
     """
     children = block_data.get_children(block_key)
-    # if children:
-    #     return all(is_block_structure_complete_for_assignments(block_data, child_key, course_key) for child_key in children)
     if children:
-       
-        for child_key in children:
-            child_complete = is_block_structure_complete_for_assignments(block_data, child_key, course_key)
-            if not child_complete:
-                log.info(f"Block {child_key} is incomplete.")
-                return False
-        return True
+        return all(is_block_structure_complete_for_assignments(block_data, child_key, course_key) for child_key in children)
     category = block_data.get_xblock_field(block_key, 'category')
     log.info(category)
     if category in ('course', 'chapter', 'sequential', 'vertical'):
