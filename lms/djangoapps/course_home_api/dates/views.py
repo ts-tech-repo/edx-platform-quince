@@ -100,7 +100,7 @@ class DatesTabView(RetrieveAPIView):
             return Response('User not enrolled.', status=401)
 
         blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-
+        log.info(f"blocks:{blocks}")
         learner_is_full_access = not ContentTypeGatingConfig.enabled_for_enrollment(
             user=request.user,
             course_key=course_key,
