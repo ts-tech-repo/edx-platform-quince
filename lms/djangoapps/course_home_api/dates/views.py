@@ -6,6 +6,7 @@ from edx_django_utils import monitoring as monitoring_utils
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from edx_rest_framework_extensions.auth.session.authentication import SessionAuthenticationAllowInactiveUser
 from opaque_keys.edx.keys import CourseKey
+from openedx.features.course_experience import ENABLE_COMPLETION_TRACKING_FLAG
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -21,7 +22,8 @@ from lms.djangoapps.courseware.date_summary import TodaysDate
 from lms.djangoapps.courseware.masquerade import setup_masquerade
 from openedx.core.lib.api.authentication import BearerAuthenticationAllowInactiveUser
 from openedx.features.content_type_gating.models import ContentTypeGatingConfig
-
+import logging
+log = logging.getLogger(__name__)
 
 class DatesTabView(RetrieveAPIView):
     """
@@ -107,10 +109,17 @@ class DatesTabView(RetrieveAPIView):
         # User locale settings
         user_timezone_locale = user_timezone_locale_prefs(request)
         user_timezone = user_timezone_locale['user_timezone']
+        course_date_blocks = []
+        for block in blocks:
+            if not isinstance(block, TodaysDate):
+                log.info(ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled())
+                block.complete = True if ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled() else False
+                course_date_blocks.append(block)
+
 
         data = {
             'has_ended': course.has_ended(),
-            'course_date_blocks': [block for block in blocks if not isinstance(block, TodaysDate)],
+            'course_date_blocks': course_date_blocks,
             'learner_is_full_access': learner_is_full_access,
             'user_timezone': user_timezone,
         }

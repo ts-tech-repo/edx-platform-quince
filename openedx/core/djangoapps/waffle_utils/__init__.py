@@ -66,7 +66,6 @@ class CourseWaffleFlag(WaffleFlag):
 
         course_cache_key = f"{self.name}.cwaffle.{str(course_key)}"
         course_override = self.cached_flags().get(course_cache_key)
-
         if course_override is None:
             course_override = WaffleFlagCourseOverrideModel.override_value(
                 self.name, course_key
@@ -74,10 +73,8 @@ class CourseWaffleFlag(WaffleFlag):
             self.cached_flags()[course_cache_key] = course_override
 
         if course_override == WaffleFlagCourseOverrideModel.ALL_CHOICES.on:
-            log.info('111111')
             return True
         if course_override == WaffleFlagCourseOverrideModel.ALL_CHOICES.off:
-            log.info('22222222')
             return False
 
         # Since no course-specific override was found, fall back to checking at the org-level.
@@ -85,18 +82,16 @@ class CourseWaffleFlag(WaffleFlag):
             org = course_key.org
             org_cache_key = f"{self.name}.owaffle.{org}"
             org_override = self.cached_flags().get(org_cache_key)
-
             if org_override is None:
                 org_override = WaffleFlagOrgOverrideModel.override_value(
                     self.name, org
                 )
+
                 self.cached_flags()[org_cache_key] = org_override
 
             if org_override == WaffleFlagOrgOverrideModel.ALL_CHOICES.on:
-                log.info('33333333')
                 return True
             if org_override == WaffleFlagOrgOverrideModel.ALL_CHOICES.off:
-                log.info('444444444')
                 return False
 
         return None
@@ -117,11 +112,11 @@ class CourseWaffleFlag(WaffleFlag):
                 course_key
             )
         is_enabled_for_course = self._get_course_override_value(course_key)
-        log.info(is_enabled_for_course)
+        log.info(f"is_enabled_for_course:{is_enabled_for_course}")
         if is_enabled_for_course is not None:
-            log.info("enabled == ------ Not None")
             return is_enabled_for_course
-        global_is_enabled = super().is_enabled()
-        log.info(f"global_is_enabled:{global_is_enabled}")
-        return global_is_enabled
-        # return super().is_enabled()
+        return super().is_enabled()
+
+    def custom_is_enabled(self):
+        return super().is_enabled()
+
