@@ -100,7 +100,7 @@ class DatesTabView(RetrieveAPIView):
             return Response('User not enrolled.', status=401)
 
         blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-        log.info(f"blocks:{blocks}")
+        
         learner_is_full_access = not ContentTypeGatingConfig.enabled_for_enrollment(
             user=request.user,
             course_key=course_key,
@@ -111,6 +111,7 @@ class DatesTabView(RetrieveAPIView):
         user_timezone = user_timezone_locale['user_timezone']
         course_date_blocks = []
         for block in blocks:
+            log.info(f"completeee:{block.complete}")
             if not isinstance(block, TodaysDate):
                 log.info(ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled())
                 block.complete = True if ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled() else False
