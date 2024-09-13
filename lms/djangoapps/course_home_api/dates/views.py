@@ -111,10 +111,9 @@ class DatesTabView(RetrieveAPIView):
         user_timezone = user_timezone_locale['user_timezone']
         course_date_blocks = []
         for block in blocks:
-            log.info(f"completeee:{block.complete}")
             if not isinstance(block, TodaysDate):
-                log.info(ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled())
-                block.complete = True if ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled() else False
+                # log.info(ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled())
+                # block.complete = True if ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled() else False
                 course_date_blocks.append(block)
 
 
