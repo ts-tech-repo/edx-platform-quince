@@ -159,6 +159,7 @@ class BlockSerializer(serializers.Serializer):  # pylint: disable=abstract-metho
         )
         user_timezone_locale = user_timezone_locale_prefs(self.context['request'])
         user_timezone = timezone(user_timezone_locale['user_timezone'] or str(UTC))
+        log.info(user_timezone)
         data = {
             'id': str(block_key),
             'block_id': str(block_key.block_id),
@@ -190,8 +191,7 @@ class BlockSerializer(serializers.Serializer):  # pylint: disable=abstract-metho
                 if field_value is not None:
                     # only return fields that have data
                     if supported_field.block_field_name == "due":
-                        block_date = field_value.replace(tzinfo=user_timezone)
-                        block_date = block_date.astimezone(user_timezone)
+                        block_date = field_value.astimezone(user_timezone)
                         data[supported_field.serializer_field_name] = block_date
                     else:
                         data[supported_field.serializer_field_name] = field_value
