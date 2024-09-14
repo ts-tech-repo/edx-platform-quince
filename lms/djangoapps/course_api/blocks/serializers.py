@@ -127,7 +127,6 @@ class BlockSerializer(serializers.Serializer):  # pylint: disable=abstract-metho
         transformer block field, or an entire tranformer block data dict.
         """
         value = None
-        log.info(field_name)
         if transformer is None:
             value = self.context['block_structure'].get_xblock_field(block_key, field_name)
         elif field_name is None:
