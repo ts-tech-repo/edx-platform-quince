@@ -189,8 +189,7 @@ class BlockSerializer(serializers.Serializer):  # pylint: disable=abstract-metho
                     supported_field.default_value,
                 )
                 if supported_field.block_field_name == "due":
-                    block_date = datetime.strptime(field_value[:19], '%Y-%m-%dT%H:%M:%S')
-                    block_date = block_date.replace(tzinfo=UTC)
+                    block_date = field_value.replace(tzinfo=UTC)
                     block_date = block_date.astimezone(user_timezone)
                     field_value = block_date
                 if field_value is not None:
