@@ -217,6 +217,7 @@ class BlockDictSerializer(serializers.Serializer):  # pylint: disable=abstract-m
         """
         Serialize to a dictionary of blocks keyed by the block's usage_key.
         """
+        log.info(self.user)
         return {
             str(block_key): BlockSerializer(block_key, context=self.context).data
             for block_key in structure

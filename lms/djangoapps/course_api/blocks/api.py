@@ -143,6 +143,7 @@ def get_blocks(
         'request': request,
         'block_structure': blocks,
         'requested_fields': requested_fields or [],
+        'user' : user,
     }
 
     if return_type == 'dict':
