@@ -2,6 +2,7 @@
 Outline Tab Views
 """
 from datetime import datetime, timezone
+import logging
 
 from completion.exceptions import UnavailableCompletionData  # lint-amnesty, pylint: disable=wrong-import-order
 from completion.utilities import get_key_to_last_completed_block  # lint-amnesty, pylint: disable=wrong-import-order
@@ -54,7 +55,7 @@ from openedx.features.course_experience.utils import get_course_outline_block_tr
 from openedx.features.discounts.utils import generate_offer_data
 from xmodule.course_block import COURSE_VISIBILITY_PUBLIC, COURSE_VISIBILITY_PUBLIC_OUTLINE  # lint-amnesty, pylint: disable=wrong-import-order
 
-
+log = logging.getLogger(__name__)
 class UnableToDismissWelcomeMessage(APIException):
     status_code = 400
     default_detail = 'Unable to dismiss welcome message.'
@@ -238,6 +239,7 @@ class OutlineTabView(RetrieveAPIView):
         enable_proctored_exams = False
         if show_enrolled:
             course_blocks = get_course_outline_block_tree(request, course_key_string, request.user)
+            log.info(course_blocks)
             date_blocks = get_course_date_blocks(course, request.user, request, num_assignments=1)
             dates_widget['course_date_blocks'] = [block for block in date_blocks if not isinstance(block, TodaysDate)]
 
