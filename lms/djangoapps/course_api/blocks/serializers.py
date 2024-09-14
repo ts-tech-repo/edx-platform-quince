@@ -2,7 +2,9 @@
 Serializers for Course Blocks related return objects.
 """
 
+from pytz import UTC, timezone
 from django.conf import settings
+from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 
@@ -217,7 +219,9 @@ class BlockDictSerializer(serializers.Serializer):  # pylint: disable=abstract-m
         """
         Serialize to a dictionary of blocks keyed by the block's usage_key.
         """
-        log.info(self.context)
+        user_timezone_locale = user_timezone_locale_prefs(self.context.request)
+        user_timezone = timezone(user_timezone_locale['user_timezone'] or str(UTC))
+        log.info(user_timezone)
         return {
             str(block_key): BlockSerializer(block_key, context=self.context).data
             for block_key in structure
