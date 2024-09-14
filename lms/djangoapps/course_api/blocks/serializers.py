@@ -15,6 +15,9 @@ from .transformers.extra_fields import ExtraFieldsTransformer
 from .transformers.milestones import MilestonesAndSpecialExamsTransformer
 from .transformers.navigation import BlockNavigationTransformer
 from .transformers.student_view import StudentViewTransformer
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class SupportedFieldType:
@@ -121,6 +124,7 @@ class BlockSerializer(serializers.Serializer):  # pylint: disable=abstract-metho
         transformer block field, or an entire tranformer block data dict.
         """
         value = None
+        log.info(field_name)
         if transformer is None:
             value = self.context['block_structure'].get_xblock_field(block_key, field_name)
         elif field_name is None:

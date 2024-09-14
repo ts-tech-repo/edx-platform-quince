@@ -239,7 +239,6 @@ class OutlineTabView(RetrieveAPIView):
         enable_proctored_exams = False
         if show_enrolled:
             course_blocks = get_course_outline_block_tree(request, course_key_string, request.user)
-            log.info(course_blocks)
             date_blocks = get_course_date_blocks(course, request.user, request, num_assignments=1)
             dates_widget['course_date_blocks'] = [block for block in date_blocks if not isinstance(block, TodaysDate)]
 
