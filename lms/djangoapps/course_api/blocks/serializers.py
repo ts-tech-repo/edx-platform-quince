@@ -2,6 +2,7 @@
 Serializers for Course Blocks related return objects.
 """
 
+from datetime import datetime
 from pytz import UTC, timezone
 from django.conf import settings
 from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
@@ -188,7 +189,10 @@ class BlockSerializer(serializers.Serializer):  # pylint: disable=abstract-metho
                     supported_field.default_value,
                 )
                 if supported_field.block_field_name == "due":
-                    log.info(field_value)
+                    block_date = datetime.strptime(field_value[:19], '%Y-%m-%dT%H:%M:%S')
+                    block_date = block_date.replace(tzinfo=UTC)
+                    block_date = block_date.astimezone(user_timezone)
+                    field_value = block_date
                 if field_value is not None:
                     # only return fields that have data
                     data[supported_field.serializer_field_name] = field_value
