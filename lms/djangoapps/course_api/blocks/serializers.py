@@ -219,7 +219,7 @@ class BlockDictSerializer(serializers.Serializer):  # pylint: disable=abstract-m
         """
         Serialize to a dictionary of blocks keyed by the block's usage_key.
         """
-        user_timezone_locale = user_timezone_locale_prefs(self.context.request)
+        user_timezone_locale = user_timezone_locale_prefs(self.context['request'])
         user_timezone = timezone(user_timezone_locale['user_timezone'] or str(UTC))
         log.info(user_timezone)
         return {
