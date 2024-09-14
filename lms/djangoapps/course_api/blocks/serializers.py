@@ -157,7 +157,8 @@ class BlockSerializer(serializers.Serializer):  # pylint: disable=abstract-metho
             },
             request=self.context['request'],
         )
-
+        user_timezone_locale = user_timezone_locale_prefs(self.context['request'])
+        user_timezone = timezone(user_timezone_locale['user_timezone'] or str(UTC))
         data = {
             'id': str(block_key),
             'block_id': str(block_key.block_id),
@@ -186,6 +187,8 @@ class BlockSerializer(serializers.Serializer):  # pylint: disable=abstract-metho
                     supported_field.block_field_name,
                     supported_field.default_value,
                 )
+                if supported_field.block_field_name == "due":
+                    log.info(field_value)
                 if field_value is not None:
                     # only return fields that have data
                     data[supported_field.serializer_field_name] = field_value
@@ -219,9 +222,6 @@ class BlockDictSerializer(serializers.Serializer):  # pylint: disable=abstract-m
         """
         Serialize to a dictionary of blocks keyed by the block's usage_key.
         """
-        user_timezone_locale = user_timezone_locale_prefs(self.context['request'])
-        user_timezone = timezone(user_timezone_locale['user_timezone'] or str(UTC))
-        log.info(user_timezone)
         return {
             str(block_key): BlockSerializer(block_key, context=self.context).data
             for block_key in structure
