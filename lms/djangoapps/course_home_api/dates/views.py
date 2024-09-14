@@ -22,7 +22,8 @@ from lms.djangoapps.courseware.date_summary import TodaysDate
 from lms.djangoapps.courseware.masquerade import setup_masquerade
 from openedx.core.lib.api.authentication import BearerAuthenticationAllowInactiveUser
 from openedx.features.content_type_gating.models import ContentTypeGatingConfig
-
+import logging
+log = logging.getLogger(__name__)
 
 class DatesTabView(RetrieveAPIView):
     """
@@ -99,7 +100,7 @@ class DatesTabView(RetrieveAPIView):
             return Response('User not enrolled.', status=401)
 
         blocks = get_course_date_blocks(course, request.user, request, include_access=True, include_past_dates=True)
-
+        
         learner_is_full_access = not ContentTypeGatingConfig.enabled_for_enrollment(
             user=request.user,
             course_key=course_key,
@@ -111,7 +112,8 @@ class DatesTabView(RetrieveAPIView):
         course_date_blocks = []
         for block in blocks:
             if not isinstance(block, TodaysDate):
-                block.complete = True if ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled() else False
+                # log.info(ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled())
+                # block.complete = True if ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled() else False
                 course_date_blocks.append(block)
 
 
