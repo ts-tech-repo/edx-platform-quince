@@ -624,7 +624,6 @@ def get_course_assignments(course_key, user, include_access=False, customAPI=Fal
                     complete = is_block_structure_complete_for_assignments(block_data, subsection_key, course_key)
                 else:
                     complete = False
-                log.info(complete)
                 past_due = not complete and due < now
                 assignments.append(_Assignment(
                     subsection_key, title, url, due, contains_gated_content,

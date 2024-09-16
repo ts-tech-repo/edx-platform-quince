@@ -112,8 +112,6 @@ class DatesTabView(RetrieveAPIView):
         course_date_blocks = []
         for block in blocks:
             if not isinstance(block, TodaysDate):
-                # log.info(ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled())
-                # block.complete = True if ENABLE_COMPLETION_TRACKING_FLAG.custom_is_enabled() else False
                 course_date_blocks.append(block)
 
 

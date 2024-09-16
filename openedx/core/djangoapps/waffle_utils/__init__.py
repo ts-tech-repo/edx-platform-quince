@@ -112,7 +112,6 @@ class CourseWaffleFlag(WaffleFlag):
                 course_key
             )
         is_enabled_for_course = self._get_course_override_value(course_key)
-        log.info(f"is_enabled_for_course:{is_enabled_for_course}")
         if is_enabled_for_course is not None:
             return is_enabled_for_course
         return super().is_enabled()

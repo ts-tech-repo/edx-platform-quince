@@ -205,14 +205,12 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
     if children:
         return all(is_block_structure_complete_for_assignments(block_data, child_key, course_key) for child_key in children)
     category = block_data.get_xblock_field(block_key, 'category')
-    log.info(category)
     if category in ('course', 'chapter', 'sequential', 'vertical'):
         # If there are no children for these "hierarchy" block types, just bail. This could be because the
         # content isn't available yet (start date in future) or we're too late and the block has hide_after_due
         # set. Or maybe a different transformer cut off content for whatever reason. Regardless of the cause - if the
         # user can't see this content and we continue, we might accidentally say this block is complete because it
-        # isn't scored (which most hierarchy blocks wouldn't be).
-        log.info(f"Block {block_key} is a hierarchy block with no children.")
+        # isn't scored (which most hierarchy blocks wouldn't be).       
         return False
     complete = block_data.get_xblock_field(block_key, 'complete', False)
     graded = block_data.get_xblock_field(block_key, 'graded', False)
@@ -221,6 +219,5 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
     scored = has_score and (weight is None or weight > 0)
     if course_key:
         if not ENABLE_COMPLETION_TRACKING_FLAG.is_enabled(course_key):
-            log.info(ENABLE_COMPLETION_TRACKING_FLAG.is_enabled(course_key))
             return graded or scored
     return complete or not graded or not scored
