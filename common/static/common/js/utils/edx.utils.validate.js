@@ -28,7 +28,7 @@
                         email: gettext("The email address you've provided isn't formatted correctly."),
                         min: gettext('%(field)s must have at least %(count)d characters.'),
                         max: gettext('%(field)s can only contain up to %(count)d characters.'),
-                        required: gettext('Enter your %(field)s.')
+                        required: gettext('Enter your %(field)s')
                     },
 
                     field: function(el) {
@@ -170,6 +170,7 @@
                                     content: content,
                                     suppressAttr: suppressAttr
                                 }));
+                                console.log(txt);
                             }
                         });
 
