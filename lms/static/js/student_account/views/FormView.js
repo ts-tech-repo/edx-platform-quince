@@ -187,32 +187,34 @@
                             $el.removeClass('error');
                             $label.removeClass('error');
                         } else {
-                            key_id = $el.attr('id') || false;
-                            console.log(key_id);
-                            if(key_id) {
-                                if(key_id.indexOf('login-email') !== -1 || key_id.indexOf('login-password') !== -1) {
-                                    validation.message = "<p>Please fill in the fields below.</p>";
-                                } else if (key_id.indexOf('password-reset-email') !== -1) {
-                                    validation.message = "<p>Enter your email below.</p>";
-                                }
-                            } else if (this.interesting_fields($el)) {
+                            if (this.interesting_fields($el)) {
                                 $validationNode = this.get_error_validation_node($el, $form);
                                 if ($validationNode) {
                                     $n = $.parseHTML(validation.message);
-                                    tpl = HtmlUtils.template('<i class="fa fa-exclamation-triangle"></i>');
+                                    //tpl = HtmlUtils.template('<i class="fa fa-exclamation-triangle"></i>');
 
-                                    HtmlUtils.prepend($n, tpl());
+                                    //HtmlUtils.prepend($n, tpl());
                                     HtmlUtils.append($validationNode, HtmlUtils.HTML($n));
                                 }
 
                                 $desc = $form.find('#' + $el.attr('id') + '-desc');
                                 $desc.remove();
                             }
-
-                            errors.push(validation.message);
+                            
+                            key_id = $el.attr('id') || false;
+                            if(key_id) {
+                                if(key_id.indexOf('login-email') !== -1 || key_id.indexOf('login-password') !== -1) {
+                                    validation.message = "<p>Please fill in the fields below.</p>";
+                                } else if (key_id.indexOf('password-reset-email') !== -1) {
+                                    validation.message = "<p>Enter your email below.</p>";
+                                }
+                            }
+                            
+                            if(errors.length === 0) {
+                                errors.push(validation.message);
+                            }
                             $el.addClass('error');
                             $label.addClass('error');
-                            break;
                         }
                     }
                 }
