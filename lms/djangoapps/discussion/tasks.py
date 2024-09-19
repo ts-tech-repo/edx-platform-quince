@@ -35,6 +35,7 @@ from openedx.core.djangoapps.ace_common.template_context import get_base_templat
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 from openedx.core.djangoapps.django_comment_common.models import DiscussionsIdMapping
 from openedx.core.lib.celery.task_utils import emulate_http_request
+from lms.djangoapps.discussion.rest_api.utils import DiscussionNotificationSender
 
 log = logging.getLogger(__name__)
 
@@ -81,16 +82,19 @@ def send_ace_message(context):  # lint-amnesty, pylint: disable=missing-function
     if _should_send_message(context):
         context['site'] = Site.objects.get(id=context['site_id'])
         thread_author = User.objects.get(id=context['thread_author_id'])
-        with emulate_http_request(site=context['site'], user=thread_author):
-            message_context = _build_message_context(context)
-            message = ResponseNotification().personalize(
-                Recipient(thread_author.id, thread_author.email),
-                _get_course_language(context['course_id']),
-                message_context
-            )
-            log.info('Sending forum comment email notification with context %s', message_context)
-            ace.send(message)
-            _track_notification_sent(message, context)
+        subscribed_users = DiscussionNotificationSender.get_subscribed_users_for_thread(context['thread_id'], context['course_id'])
+        for subscribed_user in subscribed_users:
+            user = User.objects.get(id=subscribed_user['id'])
+            with emulate_http_request(site=context['site'], user=user):
+                message_context = _build_message_context(context)
+                message = ResponseNotification().personalize(
+                    Recipient(user.id, user.email),
+                    _get_course_language(context['course_id']),
+                    message_context
+                )
+                log.info('Sending forum comment email notification with context %s', message_context)
+                ace.send(message)
+                _track_notification_sent(message, context)
 
 
 @shared_task(base=LoggedTask)
@@ -151,8 +155,7 @@ def _should_send_message(context):
     cc_thread_author = cc.User(id=context['thread_author_id'], course_id=context['course_id'])
     return (
         _is_user_subscribed_to_thread(cc_thread_author, context['thread_id']) and
-        _is_not_subcomment(context['comment_id']) and
-        _is_first_comment(context['comment_id'], context['thread_id'])
+        _is_not_subcomment(context['comment_id'])
     )
 
 
