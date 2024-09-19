@@ -377,9 +377,12 @@ def is_discussion_cohorted(course_key_str):
     """
     Returns if the discussion is divided by cohorts
     """
-    cohort_settings = CourseCohortsSettings.objects.get(course_id=course_key_str)
-    discussion_settings = CourseDiscussionSettings.objects.get(course_id=course_key_str)
-    return cohort_settings.is_cohorted and discussion_settings.always_divide_inline_discussions
+    try:
+        cohort_settings = CourseCohortsSettings.objects.get(course_id=course_key_str)
+        discussion_settings = CourseDiscussionSettings.objects.get(course_id=course_key_str)
+        return cohort_settings.is_cohorted and discussion_settings.always_divide_inline_discussions
+    except CourseCohortsSettings.DoesNotExist:
+        return False
 
 
 class DiscussionNotificationSender:
