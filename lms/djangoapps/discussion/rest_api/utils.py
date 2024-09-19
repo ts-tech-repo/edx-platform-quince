@@ -377,9 +377,12 @@ def is_discussion_cohorted(course_key_str):
     """
     Returns if the discussion is divided by cohorts
     """
-    cohort_settings = CourseCohortsSettings.objects.get(course_id=course_key_str)
-    discussion_settings = CourseDiscussionSettings.objects.get(course_id=course_key_str)
-    return cohort_settings.is_cohorted and discussion_settings.always_divide_inline_discussions
+    try:
+        cohort_settings = CourseCohortsSettings.objects.get(course_id=course_key_str)
+        discussion_settings = CourseDiscussionSettings.objects.get(course_id=course_key_str)
+        return cohort_settings.is_cohorted and discussion_settings.always_divide_inline_discussions
+    except CourseCohortsSettings.DoesNotExist:
+        return False
 
 
 class DiscussionNotificationSender:
@@ -495,7 +498,8 @@ class DiscussionNotificationSender:
         if not self.parent_id and self.creator.id != int(self.thread.user_id):
             subscribed_users = self.get_subscribed_users_for_thread(self.thread.id, str(self.course.id))
             subscribed_user_ids = [user.id for user in subscribed_users]
-            self._send_notification(subscribed_user_ids.append(int(self.thread.user_id)), "new_response")
+            subscribed_user_ids = subscribed_user_ids.append(int(self.thread.user_id)) if int(self.thread.user_id) not in subscribed_user_ids else subscribed_user_ids
+            self._send_notification(subscribed_user_ids, "new_response")
 
     def _response_and_thread_has_same_creator(self) -> bool:
         """
@@ -564,13 +568,14 @@ class DiscussionNotificationSender:
         }
         self._send_notification(user_ids, notification_type, context)
 
-    def get_subscribed_users_for_thread(self, thread_id, course_id):
+    @staticmethod
+    def get_subscribed_users_for_thread(thread_id, course_id):
         user_ids = CourseEnrollment.objects.filter(
                 course__id=course_id, is_active=True
             ).values_list('user__id', flat=True)
         comment_service_users = [
-            cc.User(id=user_id, course_id=self.course.id) for user_id in user_ids 
-            if user_id != int(self.thread.user_id) and cc.User(id=user_id, course_id=self.course.id)
+            cc.User(id=user_id, course_id=course_id) for user_id in user_ids 
+            if cc.User(id=user_id, course_id=course_id)
         ]
         subscribed_users = [
             user for user in comment_service_users 
