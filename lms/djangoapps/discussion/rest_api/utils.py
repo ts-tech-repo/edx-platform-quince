@@ -29,6 +29,8 @@ from openedx.core.djangoapps.django_comment_common.models import (
 from openedx_events.learning.signals import USER_NOTIFICATION_REQUESTED
 from openedx_events.learning.data import UserNotificationData
 from openedx.core.djangoapps.django_comment_common.comment_client.comment import Comment
+import openedx.core.djangoapps.django_comment_common.comment_client as cc
+from lms.djangoapps.discussion import tasks
 
 
 class AttributeDict(dict):
@@ -491,7 +493,9 @@ class DiscussionNotificationSender:
         there is a response to the main thread.
         """
         if not self.parent_id and self.creator.id != int(self.thread.user_id):
-            self._send_notification([self.thread.user_id], "new_response")
+            subscribed_users = self.get_subscribed_users_for_thread(self.thread.id, str(self.course.id))
+            subscribed_user_ids = [user.id for user in subscribed_users]
+            self._send_notification(subscribed_user_ids.append(int(self.thread.user_id)), "new_response")
 
     def _response_and_thread_has_same_creator(self) -> bool:
         """
@@ -560,6 +564,19 @@ class DiscussionNotificationSender:
         }
         self._send_notification(user_ids, notification_type, context)
 
+    def get_subscribed_users_for_thread(self, thread_id, course_id):
+        user_ids = CourseEnrollment.objects.filter(
+                course__id=course_id, is_active=True
+            ).values_list('user__id', flat=True)
+        comment_service_users = [
+            cc.User(id=user_id, course_id=self.course.id) for user_id in user_ids 
+            if user_id != int(self.thread.user_id) and cc.User(id=user_id, course_id=self.course.id)
+        ]
+        subscribed_users = [
+            user for user in comment_service_users 
+            if tasks._is_user_subscribed_to_thread(user, thread_id)
+        ]
+        return subscribed_users
 
 def is_posting_allowed(posting_restrictions: str, blackout_schedules: List):
     """

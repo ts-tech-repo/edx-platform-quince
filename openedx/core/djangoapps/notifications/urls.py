@@ -11,7 +11,8 @@ from .views import (
     NotificationCountView,
     NotificationListAPIView,
     NotificationReadAPIView,
-    UserNotificationPreferenceView
+    UserNotificationPreferenceView,
+    MarkNotificationsUnSeenAPIView
 )
 
 router = routers.DefaultRouter()
@@ -30,6 +31,11 @@ urlpatterns = [
         'mark-seen/<app_name>/',
         MarkNotificationsSeenAPIView.as_view(),
         name='mark-notifications-seen'
+    ),
+    path(
+        'mark-notifications-unseen/<app_name>',
+        MarkNotificationsUnSeenAPIView.as_view(),
+        name='mark-notifications-unseen'
     ),
     path('read/', NotificationReadAPIView.as_view(), name='notifications-read'),
 

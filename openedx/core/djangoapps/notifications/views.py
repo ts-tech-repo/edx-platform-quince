@@ -418,3 +418,31 @@ class NotificationReadAPIView(APIView):
             return Response({'message': _('Notifications marked read.')}, status=status.HTTP_200_OK)
 
         return Response({'error': _('Invalid app_name or notification_id.')}, status=status.HTTP_400_BAD_REQUEST)
+    
+class MarkNotificationsUnSeenAPIView(UpdateAPIView):
+    """
+    API view for marking user's all notifications unseen for a provided app_name.
+    """
+
+    def update(self, request, *args, **kwargs):
+        """
+        Marks all notifications for the given app name unseen for the authenticated user.
+
+        **Args:**
+            app_name: The name of the app to mark notifications unseen for.
+        **Response Format:**
+        """
+        app_name = self.kwargs.get('app_name')
+
+        if not app_name:
+            return Response({'error': _('Invalid app name.')}, status=400)
+
+        notifications = Notification.objects.filter(
+            user=request.user,
+            app_name=app_name,
+            last_seen__isnull=False,
+        )
+
+        notifications.update(last_seen=None)
+
+        return Response({'message': _('Notifications marked as unseen.')}, status=200)
