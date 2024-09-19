@@ -25,7 +25,7 @@
                     template: _.template('<li <%- suppressAttr %>><%- content %></li>'),
 
                     msg: {
-                        email: gettext("The email address you've provided isn't formatted correctly."),
+                        email: gettext("Enter a valid email address"),
                         min: gettext('%(field)s must have at least %(count)d characters.'),
                         max: gettext('%(field)s can only contain up to %(count)d characters.'),
                         required: gettext('Enter your %(field)s')
@@ -158,7 +158,7 @@
                                         context.count = parseInt($el.attr('maxlength'), 10);
                                     }
 
-                                    content = _.sprintf(_fn.validate.msg[key], context);
+                                    content = _.sprintf(_fn.validate.msg[key.toLowerCase()], context);
                                 }
 
                                 suppressAttr = '';
@@ -170,7 +170,6 @@
                                     content: content,
                                     suppressAttr: suppressAttr
                                 }));
-                                console.log(txt);
                             }
                         });
 
