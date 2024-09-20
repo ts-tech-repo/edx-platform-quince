@@ -17,7 +17,7 @@
             fieldTpl: '#form_field-tpl',
             formErrorsTpl: formErrorsTpl,
             formErrorsJsHook: 'js-form-errors',
-            defaultFormErrorsTitle: gettext('An error occurred.'),
+            defaultFormErrorsTitle: gettext('We were unable to contact you.'),
             events: {},
             errors: [],
             formType: '',
