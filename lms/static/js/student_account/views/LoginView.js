@@ -40,7 +40,6 @@
             isEnterpriseEnable: false,
 
             preRender: function(data) {
-                console.log(data);
                 this.providers = data.thirdPartyAuth.providers || [];
                 this.hasSecondaryProviders = (
                     data.thirdPartyAuth.secondaryProviders && data.thirdPartyAuth.secondaryProviders.length
@@ -171,7 +170,43 @@
                 var email = $('#password-reset-email').val(),
                     successTitle = gettext('Check Your Email'),
                     successMessageHtml = HtmlUtils.interpolateHtml(
-                        gettext('{paragraphStart}we sent an email to {email} with instructions to reset your password. If you do not receive a password reset message after 1 minute, verify that you entered the correct email address, or check your spam folder.. If you need further assistance, {anchorStart}contact technical support{anchorEnd}.{paragraphEnd}'), { // eslint-disable-line max-len
+                        gettext('{paragraphStart}You entered {boldStart}{email}{boldEnd}. If this email address is associated with your {platform_name} account, we will send a message with password recovery instructions to this email address.{paragraphEnd}' // eslint-disable-line max-len
+                        + '{paragraphStart}If you do not receive a password reset message after 1 minute, verify that you entered the correct email address, or check your spam folder.{paragraphEnd}' // eslint-disable-line max-len
+                        + '{paragraphStart}If you need further assistance, {anchorStart}contact technical support{anchorEnd}.{paragraphEnd}'), { // eslint-disable-line max-len
+                            boldStart: HtmlUtils.HTML('<b data-hj-suppress>'),
+                            boldEnd: HtmlUtils.HTML('</b>'),
+                            paragraphStart: HtmlUtils.HTML('<p>'),
+                            paragraphEnd: HtmlUtils.HTML('</p>'),
+                            email: email,
+                            platform_name: this.platformName,
+                            anchorStart: HtmlUtils.HTML(
+                                StringUtils.interpolate(
+                                    '<a href="{passwordResetSupportUrl}">', {
+                                        passwordResetSupportUrl: this.passwordResetSupportUrl
+                                    }
+                                )
+                            ),
+                            anchorEnd: HtmlUtils.HTML('</a>')
+                        }
+                    );
+
+                this.clearFormErrors();
+                this.clearPasswordResetSuccess();
+
+                this.renderFormFeedback(this.formSuccessTpl, {
+                    jsHook: this.passwordResetSuccessJsHook,
+                    title: successTitle,
+                    messageHtml: successMessageHtml
+                });
+            },
+
+            resetEmail: function() {
+                var email = $('#password-reset-email').val(),
+                    successTitle = gettext('Check Your Email'),
+                    successMessageHtml = HtmlUtils.interpolateHtml(
+                        gettext('{paragraphStart}we sent an email to {spanStart}{email}{spanEnd} with instructions to reset your password. If you do not receive a password reset message after 1 minute, verify that you entered the correct email address, or check your spam folder.. If you need further assistance, {anchorStart}contact technical support{anchorEnd}.{paragraphEnd}'), { // eslint-disable-line max-len
+                            spanStart: HtmlUtils.HTML('<span data-hj-suppress>'),
+                            spanEnd: HtmlUtils.HTML('</span>'),
                             paragraphStart: HtmlUtils.HTML('<p>'),
                             paragraphEnd: HtmlUtils.HTML('</p>'),
                             email: email,
