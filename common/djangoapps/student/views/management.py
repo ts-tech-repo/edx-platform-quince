@@ -111,6 +111,8 @@ from django.core.paginator import Paginator, EmptyPage
 from lms.djangoapps.grades.api import constants as grades_constants
 from lms.djangoapps.grades.api import signals as grades_signals
 from completion import handlers
+from django import template
+register = template.Library()
 
 log = logging.getLogger("edx.student")
 
@@ -1326,11 +1328,14 @@ def extras_reset_password_link(request):
 @login_required
 def user_tracker_link(request):
     params = {"wstoken": configuration_helpers.get_value("MOODLE_TOKEN", True), "wsfunction": "mod_assign_get_assignment_details", "moodlewsrestformat" : "json", "email": request.user.email, "site": configuration_helpers.get_value("course_org_filter", True)}
-    data = requests.post(configuration_helpers.get_value("MOODLE_URL", "") + "/webservice/rest/server.php", data=params).json() 
-    if configuration_helpers.get_value("course_org_filter", True) != 'TECHWISE':
+    data = requests.post(configuration_helpers.get_value("MOODLE_URL", "") + "/webservice/rest/server.php", data=params).json()
+    template = configuration_helpers.get_value('EXTRAS_ASSESSMENT_TRACKER_TEMPLATE')
+    program_image_url = configuration_helpers.get_value("MKTG_URLS", True)["HEADER_LOGO"]
+    if template:
+        return render(request, template, {'data': data, 'program_image_url': program_image_url})
+    else:
         data = map(ist_to_utc, data)
-    return render(request, 'user_tracker_link.html', {'data': data, 'program_image_url': configuration_helpers.get_value("MKTG_URLS", True)["HEADER_LOGO"]})
-
+        return render(request, 'user_tracker_link.html', {'data': data, 'program_image_url': program_image_url})
 
 def ist_to_utc(item):
     utc = pytz.timezone("UTC")
