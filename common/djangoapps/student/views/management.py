@@ -111,8 +111,6 @@ from django.core.paginator import Paginator, EmptyPage
 from lms.djangoapps.grades.api import constants as grades_constants
 from lms.djangoapps.grades.api import signals as grades_signals
 from completion import handlers
-from django import template
-register = template.Library()
 
 log = logging.getLogger("edx.student")
 
