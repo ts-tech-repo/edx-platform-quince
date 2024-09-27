@@ -83,4 +83,28 @@ from openedx.core.djangolib.markup import HTML
     function emit_event(message) {
         parent.postMessage(message, '*');
     }
+
+    function formatLocalizedDatetime(selector) {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(element => {
+            const datetimeString = element.dataset.datetime; 
+            const userTimezone = element.dataset.timezone; 
+
+            const date = new Date(datetimeString);
+
+            const options = {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+                timeZone: userTimezone != 'None' ? userTimezone : 'Asia/Kolkata', 
+            };
+
+            const formattedDate = date.toLocaleString(undefined, options);
+            element.textContent = formattedDate; 
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        formatLocalizedDatetime('.localized-datetime');
+    });
 </script>
