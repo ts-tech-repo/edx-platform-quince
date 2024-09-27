@@ -1327,13 +1327,8 @@ def extras_reset_password_link(request):
 def user_tracker_link(request):
     params = {"wstoken": configuration_helpers.get_value("MOODLE_TOKEN", True), "wsfunction": "mod_assign_get_assignment_details", "moodlewsrestformat" : "json", "email": request.user.email, "site": configuration_helpers.get_value("course_org_filter", True)}
     data = requests.post(configuration_helpers.get_value("MOODLE_URL", "") + "/webservice/rest/server.php", data=params).json()
-    template = configuration_helpers.get_value('EXTRAS_ASSESSMENT_TRACKER_TEMPLATE')
-    program_image_url = configuration_helpers.get_value("MKTG_URLS", True)["HEADER_LOGO"]
-    if template:
-        return render(request, template, {'data': data, 'program_image_url': program_image_url})
-    else:
-        data = map(ist_to_utc, data)
-        return render(request, 'user_tracker_link.html', {'data': data, 'program_image_url': program_image_url})
+    data = map(ist_to_utc, data)
+    return render(request, 'user_tracker_link.html', {'data': data, 'program_image_url': configuration_helpers.get_value("MKTG_URLS", True)["HEADER_LOGO"]})        
 
 def ist_to_utc(item):
     utc = pytz.timezone("UTC")
@@ -1341,7 +1336,7 @@ def ist_to_utc(item):
         if item[date] != 'Jan 01, 1970 05:30 AM':
             dateobj = datetime.datetime.strptime(item[date], "%b %d, %Y %I:%M %p")
             utc_dt = utc.localize(dateobj)
-            local_dt = utc_dt.astimezone(pytz.timezone('Asia/Kolkata'))
+            local_dt = utc_dt.astimezone(pytz.timezone(configuration_helpers.get_value("TIME_ZONE", 'Asia/Kolkata')))
             item[date] = local_dt.strftime("%b %d, %Y %I:%M %p")
         else:
             item[date] = '-'
