@@ -68,9 +68,4 @@ class MFEConfigView(APIView):
                 settings.MFE_CONFIG_OVERRIDES,
             )
             mfe_config.update(app_config.get(mfe, {}))
-            marketing_urls = configuration_helpers.get_value(
-                'MKTG_URLS',
-                settings.MKTG_URLS
-            )
-            mfe_config.update({"MKTG_URLS": marketing_urls if marketing_urls else {}})
         return JsonResponse(mfe_config, status=status.HTTP_200_OK)
