@@ -78,7 +78,7 @@ from openedx.core.djangolib.markup import HTML
 <%static:require_module_async module_name="js/dateutil_factory" class_name="DateUtilFactory">
 DateUtilFactory.transform('.localized-datetime', function(element) {
   const datetime = new Date(element.getAttribute('data-datetime'));
-  const timezone = element.getAttribute('data-timezone') != 'None' : 'Asia/Kolkata';
+  const timezone = element.getAttribute('data-timezone') != 'None' ? element.getAttribute('data-timezone') : 'Asia/Kolkata';
   const options = {
       year: 'numeric', 
       month: 'short', 
