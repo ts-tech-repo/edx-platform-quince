@@ -15,11 +15,11 @@ from openedx.core.djangolib.markup import HTML
 % if has_assignments and due:
   % if subsection_format:
     <%
-    data_string = _("{subsection_format} due {{date}} ({{timezone}})").format(subsection_format=subsection_format)
+    data_string = _("{subsection_format} due {{date}}").format(subsection_format=subsection_format)
     %>
   % else:
     <%
-    data_string = _("Due {date} ({{timezone}})")
+    data_string = _("Due {date}")
     %>
   % endif
   <div class="vert-due-date">
@@ -76,21 +76,7 @@ from openedx.core.djangolib.markup import HTML
 % endif
 
 <%static:require_module_async module_name="js/dateutil_factory" class_name="DateUtilFactory">
-DateUtilFactory.transform('.localized-datetime', function(element) {
-  const datetime = new Date(element.getAttribute('data-datetime'));
-  const timezone = element.getAttribute('data-timezone') != 'None' ? element.getAttribute('data-timezone') : 'Asia/Kolkata';
-  const options = {
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric', 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      timeZoneName: 'short',
-      timeZone: timezone
-  };
-  const formattedDate = datetime.toLocaleString('en-US', options);
-  element.innerHTML = element.getAttribute('data-string').replace('{date}', formattedDate).replace('{timezone}', timezone);
-});
+    DateUtilFactory.transform('.localized-datetime');
 </%static:require_module_async>
 
 <script>
