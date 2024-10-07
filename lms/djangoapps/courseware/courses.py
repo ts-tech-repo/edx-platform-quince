@@ -17,6 +17,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from edx_django_utils.monitoring import function_trace
 from fs.errors import ResourceNotFound
+from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
 from opaque_keys.edx.keys import UsageKey
 from path import Path as path
 
@@ -533,6 +534,8 @@ def get_course_assignment_date_blocks(course, user, request, num_return=None,
     if num_return is None in date increasing order.
     """
     date_blocks = []
+    user_local_timezone = user_timezone_locale_prefs(request)
+    log.info(user_local_timezone["user_timezone"])
     for assignment in get_course_assignments(course.id, user, include_access=include_access):
         date_block = CourseAssignmentDate(course, user)
         date_block.date = assignment.date
