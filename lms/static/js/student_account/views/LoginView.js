@@ -204,9 +204,8 @@
                 var email = $('#password-reset-email').val(),
                     successTitle = gettext('Check Your Email'),
                     successMessageHtml = HtmlUtils.interpolateHtml(
-                        gettext('{paragraphStart}we sent an email to {spanStart}{email}{spanEnd} with instructions to reset your password. If you do not receive a password reset message after 1 minute, verify that you entered the correct email address, or check your spam folder.. If you need further assistance, {anchorStart}contact technical support{anchorEnd}.{paragraphEnd}'), { // eslint-disable-line max-len
-                            spanStart: HtmlUtils.HTML('<span data-hj-suppress>'),
-                            spanEnd: HtmlUtils.HTML('</span>'),
+                        gettext('{paragraphStart}we sent an email to {brTag}{email}{brTag} with instructions to reset your password. If you do not receive a password reset message after 1 minute, verify that you entered the correct email address, or check your spam folder.. If you need further assistance, {anchorStart}contact technical support{anchorEnd}.{paragraphEnd}'), { // eslint-disable-line max-len
+                            brTag: HtmlUtils.HTML('<br />'),
                             paragraphStart: HtmlUtils.HTML('<p>'),
                             paragraphEnd: HtmlUtils.HTML('</p>'),
                             email: email,
