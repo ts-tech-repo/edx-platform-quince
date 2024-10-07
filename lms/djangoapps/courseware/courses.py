@@ -23,7 +23,7 @@ from path import Path as path
 
 from common.djangoapps.edxmako.shortcuts import render_to_string
 from common.djangoapps.static_replace import replace_static_urls
-from common.djangoapps.util.date_utils import strftime_localized, strftime_localized_html
+from common.djangoapps.util.date_utils import strftime_localized
 from lms.djangoapps import branding
 from lms.djangoapps.course_blocks.api import get_course_blocks
 from lms.djangoapps.courseware.access import has_access
@@ -535,7 +535,7 @@ def get_course_assignment_date_blocks(course, user, request, num_return=None,
     """
     date_blocks = []
     user_local_timezone = user_timezone_locale_prefs(request)
-    log.info(user_local_timezone["user_timezone"])
+    user_timezone = user_local_timezone["user_timezone"] or str("UTC")
     for assignment in get_course_assignments(course.id, user, include_access=include_access):
         date_block = CourseAssignmentDate(course, user)
         date_block.date = assignment.date
@@ -543,7 +543,7 @@ def get_course_assignment_date_blocks(course, user, request, num_return=None,
         date_block.first_component_block_id = assignment.first_component_block_id
         date_block.complete = assignment.complete
         date_block.assignment_type = assignment.assignment_type
-        date_block.past_due = strftime_localized_html(assignment.past_due, user_local_timezone["user_timezone"])
+        date_block.past_due = assignment.past_due.astimezone(user_timezone)
         date_block.link = _get_absolute_url(request, assignment.url)
         date_block.set_title(assignment.title, link=assignment.url)
         date_block._extra_info = assignment.extra_info  # pylint: disable=protected-access
