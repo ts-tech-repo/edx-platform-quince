@@ -1794,8 +1794,9 @@ def extras_update_lti_grades(request):
 @csrf_exempt
 def extras_get_peer_profiles(request):
     try:
+        course_key = CourseKey.from_string(request.GET.get('course_id'))
         user_names = CourseEnrollment.objects.filter(
-            course__id=request.GET['course_id'], is_active=True
+            course__id=course_key, is_active=True
             ).values_list('user__username', flat=True)
         user_names_str = ",".join(map(str, user_names))
         root_url = configuration_helpers.get_value('LMS_ROOT_URL', settings.LMS_ROOT_URL)
@@ -1803,7 +1804,7 @@ def extras_get_peer_profiles(request):
         params = {
             'username' : user_names_str
         }
-        
+
         response = requests.get(url, params=params)
         if response.status_code == 200:
             account_data = response.json()
