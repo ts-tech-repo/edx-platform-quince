@@ -111,6 +111,8 @@ from django.core.paginator import Paginator, EmptyPage
 from lms.djangoapps.grades.api import constants as grades_constants
 from lms.djangoapps.grades.api import signals as grades_signals
 from completion import handlers
+from django.http import JsonResponse
+from common.djangoapps.student.models import CourseEnrollment
 
 log = logging.getLogger("edx.student")
 
@@ -1788,4 +1790,26 @@ def extras_update_lti_grades(request):
     #     return JsonResponse({"Status" : "Error", "message" : "Something went wrong"})
 
     return JsonResponse({"Status" : "Success", "message" : "Grades updated successfully"})
+
+@csrf_exempt
+def extras_get_peer_profiles(request):
+    try:
+        user_names = CourseEnrollment.objects.filter(
+            course__id=request.GET['course_id'], is_active=True
+            ).values_list('user__username', flat=True)
+        user_names_str = ",".join(map(str, user_names))
+        root_url = configuration_helpers.get_value('LMS_ROOT_URL', settings.LMS_ROOT_URL)
+        url = "{root_url}/api/user/v1/accounts"
+        params = {
+            'username' : user_names_str
+        }
+        
+        response = requests.get(url, params=params)
+        if response.status_code == 200:
+            account_data = response.json()
+            return JsonResponse(account_data)
+        else:
+            return JsonResponse({'error': 'Failed to fetch user accounts'}, status=response.status_code)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
 
