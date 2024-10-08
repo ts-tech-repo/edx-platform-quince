@@ -112,7 +112,9 @@ from lms.djangoapps.grades.api import constants as grades_constants
 from lms.djangoapps.grades.api import signals as grades_signals
 from completion import handlers
 from django.http import JsonResponse
-from common.djangoapps.student.models import CourseEnrollment
+from common.djangoapps.student.models import CourseEnrollment, SocialLink
+from django.db.models import Prefetch
+from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
 
 log = logging.getLogger("edx.student")
 
@@ -1793,24 +1795,36 @@ def extras_update_lti_grades(request):
 
 @csrf_exempt
 def extras_get_peer_profiles(request):
+    level_of_education = dict(UserProfile.LEVEL_OF_EDUCATION_CHOICES)
+    base_url = configuration_helpers.get_value('LMS_ROOT_URL', settings.LMS_ROOT_URL)
     try:
-        course_key = CourseKey.from_string(request.GET.get('course_id'))
+        course_key = CourseKey.from_string(request.POST.get('course_id'))
         user_names = CourseEnrollment.objects.filter(
             course__id=course_key, is_active=True
             ).values_list('user__username', flat=True)
-        user_names_str = ",".join(map(str, user_names))
-        root_url = configuration_helpers.get_value('LMS_ROOT_URL', settings.LMS_ROOT_URL)
-        url = "{root_url}/api/user/v1/accounts"
-        params = {
-            'username' : user_names_str
-        }
+        user_profiles = (
+            UserProfile.objects.filter(user__username__in=user_names)
+            .select_related('user')
+            .prefetch_related(Prefetch('social_links'))
+            .only('id', 'bio', 'level_of_education', 'profile_image_uploaded_at', 
+                   'user__id', 'user__username', 'user__email', 'user__first_name', 'user__last_name')
+        )
 
-        response = requests.get(url, params=params)
-        if response.status_code == 200:
-            account_data = response.json()
-            return JsonResponse(account_data)
-        else:
-            return JsonResponse({'error': 'Failed to fetch user accounts'}, status=response.status_code)
+        profiles_list = []
+        for profile in user_profiles:
+            has_image = bool(profile.profile_image_uploaded_at)
+            profile_image_urls = get_profile_image_urls_for_user(profile.user)
+
+            for size in profile_image_urls:
+                profile_image_urls[size] =  base_url + profile_image_urls[size]
+
+            profiles_list.append({
+                "user_id": profile.user.id, "username": profile.user.username, "email": profile.user.email,
+                "first_name": profile.user.first_name, "last_name": profile.user.last_name, "level_of_education" : level_of_education.get(profile.level_of_education, ""),
+                "bio": profile.bio, "social_links": [{'platform': link.platform, 'url': link.social_link} for link in profile.social_links.all()],
+                "has_profile_image": has_image, "profile_image_urls": profile_image_urls
+            })
+        return JsonResponse(profiles_list, safe=False)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
