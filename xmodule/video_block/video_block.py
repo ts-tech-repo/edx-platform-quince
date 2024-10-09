@@ -404,7 +404,6 @@ class VideoBlock(
         autoadvance_this_video = self.auto_advance and autoadvance_enabled
         is_embed = context.get('public_video_embed', False)
         is_public_view = view == PUBLIC_VIEW
-        log.info(settings.COMPLETION_VIDEO_COMPLETE_PERCENTAGE)
         metadata = {
             'autoAdvance': autoadvance_this_video,
             # For now, the option "data-autohide-html5" is hard coded. This option
@@ -870,7 +869,6 @@ class VideoBlock(
             'data': self.data,
         })
 
-        log.info(self.editable_metadata_fields)
         metadata_fields = copy.deepcopy(self.editable_metadata_fields)
 
         display_name = metadata_fields['display_name']
@@ -929,7 +927,7 @@ class VideoBlock(
         # Only add if html5 sources do not already contain source_url.
         if source_url and source_url not in video_url['value']:
             video_url['value'].insert(0, source_url)
-
+        log.info(transcript_url)
         metadata = {
             'display_name': display_name,
             'video_url': video_url,
