@@ -248,6 +248,16 @@ define(
                         type: MetadataModel.GENERIC_TYPE,
                         value: 'advanced tab video id'
                     },
+                    transcriptUrlEntry = {
+                        default_value: 'test default value',
+                        display_name: 'Transcript URL',
+                        explicitly_set: true,
+                        field_name: 'transcript_url',
+                        help: 'Specifies the transcript url.',
+                        options: [],
+                        type: MetadataModel.GENERIC_TYPE,
+                        value: 'advanced tab transcript url'
+                    },
                     metadataCollection,
                     metadataView;
 
@@ -265,7 +275,8 @@ define(
                             subEntry,
                             html5SourcesEntry,
                             youtubeEntry,
-                            videoIDEntry
+                            videoIDEntry,
+                            transcriptUrlEntry
                         ]
                     );
 
