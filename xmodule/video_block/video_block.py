@@ -593,6 +593,7 @@ class VideoBlock(
         That means that html5_sources are always in list of fields that were changed (`metadata` param in save_item).
         This should be fixed too.
         """
+        log.info("Here")
         metadata_was_changed_by_user = old_metadata != own_metadata(self)
 
         # There is an edge case when old_metadata and own_metadata are same and we are importing transcript from youtube
@@ -927,7 +928,7 @@ class VideoBlock(
         # Only add if html5 sources do not already contain source_url.
         if source_url and source_url not in video_url['value']:
             video_url['value'].insert(0, source_url)
-        log.info(transcript_url)
+        log.info(self)
         metadata = {
             'display_name': display_name,
             'video_url': video_url,
