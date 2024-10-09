@@ -1802,7 +1802,7 @@ def extras_get_peer_profiles(request):
         course_key = CourseKey.from_string(request.POST.get('course_id', ''))
 
         user_names = CourseEnrollment.objects.filter(
-            course__id__in=course_key, is_active=True
+            course__id=course_key, is_active=True
             ).values_list('user__username', flat=True).distinct()
         
         user_profiles = (
