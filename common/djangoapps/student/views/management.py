@@ -115,7 +115,6 @@ from django.http import JsonResponse
 from common.djangoapps.student.models import CourseEnrollment, SocialLink
 from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
-from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 
 log = logging.getLogger("edx.student")
 
@@ -1800,11 +1799,10 @@ def extras_get_peer_profiles(request):
     base_url = configuration_helpers.get_value('LMS_ROOT_URL', settings.LMS_ROOT_URL)
 
     try:
-        tab_name = request.GET.get("tab_name", "")
-        course_keys = CourseOverview.objects.filter(display_number_with_default=tab_name).values_list('id', flat=True)
+        course_key = CourseKey.from_string(request.POST.get('course_id', ''))
 
         user_names = CourseEnrollment.objects.filter(
-            course__id__in=course_keys, is_active=True
+            course__id=course_key, is_active=True
             ).values_list('user__username', flat=True).distinct()
         
         user_profiles = (
