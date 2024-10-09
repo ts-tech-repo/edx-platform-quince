@@ -1797,21 +1797,24 @@ def extras_update_lti_grades(request):
 def extras_get_peer_profiles(request):
     level_of_education = dict(UserProfile.LEVEL_OF_EDUCATION_CHOICES)
     base_url = configuration_helpers.get_value('LMS_ROOT_URL', settings.LMS_ROOT_URL)
+
     try:
         course_ids = request.POST.get('course_ids', '').split(',')
         course_keys = [CourseKey.from_string(course_id) for course_id in course_ids]
+
         user_names = CourseEnrollment.objects.filter(
             course__id__in=course_keys, is_active=True
             ).values_list('user__username', flat=True).distinct()
+        
         user_profiles = (
             UserProfile.objects.filter(user__username__in=user_names)
             .select_related('user')
             .prefetch_related(Prefetch('social_links'))
             .only('id', 'bio', 'level_of_education', 'profile_image_uploaded_at', 
-                   'user__id', 'user__username', 'user__email', 'user__first_name', 'user__last_name')
+                   'user__id', 'user__username', 'user__email', 'user__first_name', 'user__last_name', 'user__is_staff')
         )
 
-        profiles_list = []
+        profiles = []
         for profile in user_profiles:
             has_image = bool(profile.profile_image_uploaded_at)
             profile_image_urls = get_profile_image_urls_for_user(profile.user)
@@ -1819,13 +1822,14 @@ def extras_get_peer_profiles(request):
             for size in profile_image_urls:
                 profile_image_urls[size] =  base_url + profile_image_urls[size]
 
-            profiles_list.append({
+            profiles.append({
                 "user_id": profile.user.id, "username": profile.user.username, "email": profile.user.email,
-                "first_name": profile.user.first_name, "last_name": profile.user.last_name, "level_of_education" : level_of_education.get(profile.level_of_education, ""),
+                "first_name": profile.user.first_name, "last_name": profile.user.last_name, "is_staff": profile.user.is_staff, "level_of_education": level_of_education.get(profile.level_of_education, ""),
                 "bio": profile.bio, "social_links": [{'platform': link.platform, 'url': link.social_link} for link in profile.social_links.all()],
                 "has_profile_image": has_image, "profile_image_urls": profile_image_urls
             })
-        return JsonResponse(profiles_list, safe=False)
+
+        return JsonResponse(profiles, safe=False)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'Failed to fetch peer profiles details': str(e)}, status=500)
 
