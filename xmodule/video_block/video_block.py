@@ -870,6 +870,7 @@ class VideoBlock(
             'data': self.data,
         })
 
+        log.info(self.editable_metadata_fields)
         metadata_fields = copy.deepcopy(self.editable_metadata_fields)
 
         display_name = metadata_fields['display_name']
