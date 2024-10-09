@@ -500,7 +500,7 @@ class VideoStudioViewHandlers:
                 UnicodeDecodeError: non-UTF8 uploaded file content encoding.
         """
         _ = self.runtime.service(self, "i18n").ugettext
-
+        log.info("Here")
         if dispatch.startswith('translation'):
 
             if request.method == 'POST':
