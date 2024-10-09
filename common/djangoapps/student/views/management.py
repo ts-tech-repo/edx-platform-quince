@@ -1798,10 +1798,11 @@ def extras_get_peer_profiles(request):
     level_of_education = dict(UserProfile.LEVEL_OF_EDUCATION_CHOICES)
     base_url = configuration_helpers.get_value('LMS_ROOT_URL', settings.LMS_ROOT_URL)
     try:
-        course_key = CourseKey.from_string(request.POST.get('course_id'))
+        course_ids = request.POST.get('course_ids', '').split(',')
+        course_keys = [CourseKey.from_string(course_id) for course_id in course_ids]
         user_names = CourseEnrollment.objects.filter(
-            course__id=course_key, is_active=True
-            ).values_list('user__username', flat=True)
+            course__id__in=course_keys, is_active=True
+            ).values_list('user__username', flat=True).distinct()
         user_profiles = (
             UserProfile.objects.filter(user__username__in=user_names)
             .select_related('user')
