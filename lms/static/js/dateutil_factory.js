@@ -72,25 +72,17 @@
         };
 
         function convertTimezoneFormat(datetimeString, timezone) {
-            // Convert numeric offsets like +01, -10 to GMT+1 or GMT-10
+            // Convert UTC offsets directly to GMT format
             var gmtFormatted = datetimeString.replace(
-                /([+-]\d{2}):(\d{2})/,
+                /([+-]\d{2})(?::(\d{2}))?/,
                 function(match, p1, p2) {
+                    // Convert to 'GMT+1', 'GMT-10', etc.
                     return 'GMT' + p1;
                 }
             );
 
-            // Custom mapping for specific abbreviations to GMT equivalents
-            var timezoneMappings = {
-                'EAT': 'GMT+3',  // Eastern Africa Time
-                // Add other mappings as necessary
-            };
-
-            // If the timezone abbreviation exists in our mapping, replace it
-            if (timezoneMappings[timezone]) {
-                gmtFormatted = gmtFormatted.replace(/GMT.*$/, timezoneMappings[timezone]);
-            } else if (!gmtFormatted.match(/GMT/) && timezone) {
-                // For timezones like CST that are not mapped, keep the abbreviation
+            // If timezone is not a numeric offset, append it as is
+            if (!/GMT/.test(gmtFormatted) && timezone) {
                 gmtFormatted = gmtFormatted.replace(/GMT.*$/, timezone);
             }
 
