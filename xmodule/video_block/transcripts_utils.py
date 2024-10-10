@@ -909,7 +909,7 @@ def get_transcript_from_val(edx_video_id, lang=None, output_format=Transcript.SR
         tuple containing content, filename, mimetype
     """
     transcript = get_video_transcript_content(edx_video_id, lang)
-    log.info(transcript)
+    
     if not transcript:
         raise NotFoundError(f'Transcript not found for {edx_video_id}, lang: {lang}')
 
@@ -1068,7 +1068,7 @@ def get_transcript_from_blockstore(video_block, language, output_format, transcr
     try:
         content_binary = blockstore_cache.get_bundle_file_data_with_cache(bundle_uuid, path, bundle_version, draft_name)
     except blockstore_api.BundleFileNotFound:
-        raise NotFoundError("Transcript file '{}' missing for video XBlock {}".format(  # lint-amnesty, pylint: disable=raise-missing-from
+        raise NotFoundError("Transcript file '{}'   {}".format(  # lint-amnesty, pylint: disable=raise-missing-from
             path,
             video_block.scope_ids.usage_id,
         ))
