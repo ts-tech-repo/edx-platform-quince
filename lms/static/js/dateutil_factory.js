@@ -72,30 +72,26 @@
         };
 
         function convertTimezoneFormat(datetimeString, timezone) {
-            // Convert numeric offsets like +01, -10 to GMT format
+            // Convert numeric offsets like +01, -10 to GMT+1 or GMT-10
             var gmtFormatted = datetimeString.replace(
                 /([+-]\d{2}):(\d{2})/,
                 function(match, p1, p2) {
-                    return 'GMT' + p1 + (p2 !== '00' ? ':' + p2 : '');
+                    return 'GMT' + p1;
                 }
             );
 
-            // Attempt to dynamically convert using Intl API if available
-            try {
-                var intlOptions = {
-                    timeZone: timezone,
-                    timeZoneName: 'short'
-                };
-                var date = new Date(datetimeString);
-                var formatted = new Intl.DateTimeFormat('en-US', intlOptions).format(date);
+            // Custom mapping for specific abbreviations to GMT equivalents
+            var timezoneMappings = {
+                'EAT': 'GMT+3',  // Eastern Africa Time
+                // Add other mappings as necessary
+            };
 
-                // Extracting the correct format (GMT+3 or CST, etc.)
-                var match = formatted.match(/GMT[+-]\d+|[A-Z]{3}/);
-                if (match) {
-                    gmtFormatted = gmtFormatted.replace(/GMT.*$/, match[0]);
-                }
-            } catch (e) {
-                console.warn('Intl API failed or unsupported time zone format:', e);
+            // If the timezone abbreviation exists in our mapping, replace it
+            if (timezoneMappings[timezone]) {
+                gmtFormatted = gmtFormatted.replace(/GMT.*$/, timezoneMappings[timezone]);
+            } else if (!gmtFormatted.match(/GMT/) && timezone) {
+                // For timezones like CST that are not mapped, keep the abbreviation
+                gmtFormatted = gmtFormatted.replace(/GMT.*$/, timezone);
             }
 
             return gmtFormatted;
