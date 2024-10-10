@@ -651,7 +651,7 @@ class XModuleMixin(XModuleFields, XBlock):
                 continue
             if field.scope not in (Scope.settings, Scope.content):
                 continue
-
+            log.info(field.name)
             metadata_fields[field.name] = self._create_metadata_editor_info(field)
 
         return metadata_fields
