@@ -31,10 +31,10 @@
         var dateFormat;
 
         dueDateFormat = Object.freeze({
-            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm [GMT]Z', // example: 2018, 01 Jan 15:30 GMT+0
-            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm [GMT]Z', // example: Jan 01, 2018 15:30 GMT+0
-            '%d-%m-%Y': 'D MMM YYYY HH[:]mm [GMT]Z', // example: 01 Jan, 2018 15:30 GMT+0
-            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm [GMT]Z' // example: 2018, Jan 01 15:30 GMT+0
+            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm z', // example: 2018, 01 Jan 15:30 UTC
+            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm z', // example: Jan 01, 2018 15:30 UTC
+            '%d-%m-%Y': 'D MMM YYYY HH[:]mm z', // example: 01 Jan, 2018 15:30 UTC
+            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm z' // example: 2018, Jan 01 15:30 UTC
         });
 
         transform = function(iterationKey) {
