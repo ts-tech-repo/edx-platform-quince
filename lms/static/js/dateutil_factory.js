@@ -31,11 +31,11 @@
         var dateFormat;
 
         dueDateFormat = Object.freeze({
-            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm Z', // example: 2018, 01 Jan 15:30 UTC
-            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm Z', // example: Jan 01, 2018 15:30 UTC
-            '%d-%m-%Y': 'D MMM YYYY HH[:]mm Z', // example: 01 Jan, 2018 15:30 UTC
-            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm Z' // example: 2018, Jan 01 15:30 UTC
-        });
+            '%Y-%d-%m': 'MMM D, YYYY, h:mm A [GMT]Z', // example: Jan 1, 2024, 8:30 AM GMT
+            '%m-%d-%Y': 'MMM D, YYYY, h:mm A [GMT]Z', // example: Aug 1, 2024, 9:30 AM GMT+1
+            '%d-%m-%Y': 'MMM D, YYYY, h:mm A [GMT]Z', // example: Jul 31, 2024, 10:30 PM GMT-10
+            '%Y-%m-%d': 'MMM D, YYYY, h:mm A [GMT]Z'  // example: Aug 1, 2024, 11:30 AM GMT+3
+        });        
 
         transform = function(iterationKey) {
             var context;
