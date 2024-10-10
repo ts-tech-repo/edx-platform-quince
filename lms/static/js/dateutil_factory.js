@@ -31,10 +31,10 @@
         var dateFormat;
 
         dueDateFormat = Object.freeze({
-            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm z', // example: 2018, 01 Jan 15:30 UTC
-            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm z', // example: Jan 01, 2018 15:30 UTC
-            '%d-%m-%Y': 'D MMM YYYY HH[:]mm z', // example: 01 Jan, 2018 15:30 UTC
-            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm z' // example: 2018, Jan 01 15:30 UTC
+            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm', // example: 2018, 01 Jan 15:30
+            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm', // example: Jan 01, 2018 15:30
+            '%d-%m-%Y': 'D MMM YYYY HH[:]mm', // example: 01 Jan, 2018 15:30
+            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm' // example: 2018, Jan 01 15:30
         });
 
         transform = function(iterationKey) {
@@ -66,11 +66,27 @@
             });
         };
 
-        localizedTime = function(context) {
-            return DateUtils.localize(context);
+        localizedTime = function (context) {
+            var localizedDate = DateUtils.localize(context);
+            var timezoneOffset = DateUtils.getTimezoneOffset(context.timezone);
+            var formattedTimezone;
+
+            if (timezoneOffset === 0) {
+                formattedTimezone = 'GMT';
+            } else {
+                var offsetHours = Math.floor(Math.abs(timezoneOffset) / 60);
+                var offsetMinutes = Math.abs(timezoneOffset) % 60;
+                var sign = timezoneOffset > 0 ? '+' : '-';
+                formattedTimezone = 'GMT' + sign + offsetHours;
+
+                if (offsetMinutes > 0) {
+                    formattedTimezone += ':' + String(offsetMinutes).padStart(2, '0');
+                }
+            }
+            return localizedDate.replace('z', formattedTimezone);
         };
 
-        stringHandler = function(localTimeString, containerString, token) {
+        stringHandler = function (localTimeString, containerString, token) {
             var returnString;
             var interpolateDict = {};
             var dateToken;
