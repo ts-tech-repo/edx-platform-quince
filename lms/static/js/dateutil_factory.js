@@ -67,8 +67,39 @@
         };
 
         localizedTime = function(context) {
-            return DateUtils.localize(context);
+            var localized = DateUtils.localize(context);
+            return convertTimezoneFormat(localized, context.timezone);
         };
+
+        function convertTimezoneFormat(datetimeString, timezone) {
+            // Convert numeric offsets like +01, -10 to GMT format
+            var gmtFormatted = datetimeString.replace(
+                /([+-]\d{2}):(\d{2})/,
+                function(match, p1, p2) {
+                    return 'GMT' + p1 + (p2 !== '00' ? ':' + p2 : '');
+                }
+            );
+
+            // Attempt to dynamically convert using Intl API if available
+            try {
+                var intlOptions = {
+                    timeZone: timezone,
+                    timeZoneName: 'short'
+                };
+                var date = new Date(datetimeString);
+                var formatted = new Intl.DateTimeFormat('en-US', intlOptions).format(date);
+
+                // Extracting the correct format (GMT+3 or CST, etc.)
+                var match = formatted.match(/GMT[+-]\d+|[A-Z]{3}/);
+                if (match) {
+                    gmtFormatted = gmtFormatted.replace(/GMT.*$/, match[0]);
+                }
+            } catch (e) {
+                console.warn('Intl API failed or unsupported time zone format:', e);
+            }
+
+            return gmtFormatted;
+        }
 
         stringHandler = function(localTimeString, containerString, token) {
             var returnString;
@@ -98,6 +129,7 @@
                 && candidateVariable !== 'Invalid date'
                 && candidateVariable !== 'None';
         };
+
         DateUtilFactory = {
             transform: transform,
             stringHandler: stringHandler
