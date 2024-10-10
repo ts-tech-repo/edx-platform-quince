@@ -680,6 +680,8 @@ class XModuleMixin(XModuleFields, XBlock):
             else:
                 return self.runtime.service(self, "i18n").ugettext(value)
 
+        log.info(field.name)
+        log.info(self)
         # gets the 'default_value' and 'explicitly_set' attrs
         metadata_field_editor_info = self.runtime.get_field_provenance(self, field)
         metadata_field_editor_info['field_name'] = field.name
@@ -693,7 +695,7 @@ class XModuleMixin(XModuleFields, XBlock):
         # 3. A generic string editor for anything else (editing JSON representation of the value).
         editor_type = "Generic"
         values = field.values
-        log.info(values)
+        
         if "values_provider" in field.runtime_options:
             values = field.runtime_options['values_provider'](self)
         if isinstance(values, (tuple, list)) and len(values) > 0:
