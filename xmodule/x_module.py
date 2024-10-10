@@ -651,7 +651,6 @@ class XModuleMixin(XModuleFields, XBlock):
                 continue
             if field.scope not in (Scope.settings, Scope.content):
                 continue
-            log.info(field)
             metadata_fields[field.name] = self._create_metadata_editor_info(field)
 
         return metadata_fields
@@ -694,6 +693,7 @@ class XModuleMixin(XModuleFields, XBlock):
         # 3. A generic string editor for anything else (editing JSON representation of the value).
         editor_type = "Generic"
         values = field.values
+        log.info(values)
         if "values_provider" in field.runtime_options:
             values = field.runtime_options['values_provider'](self)
         if isinstance(values, (tuple, list)) and len(values) > 0:
