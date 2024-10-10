@@ -1,18 +1,3 @@
-/**
- *
- * A helper function to utilize DateUtils quickly in display templates.
- *
- * @param: {string} data-datetime A pre-localized datetime string, assumed to be in UTC.
- * @param: {string} lang The user's preferred language.
- * @param: {string} data-timezone (optional) A user-set timezone preference.
- * @param: {object} data-format (optional) a format constant as defined in DataUtil.dateFormatEnum.
- * @param: {string} data-string (optional) a string for parsing through StringUtils after localizing
- * datetime
- *
- * @return: {string} a user-time, localized, formatted datetime string
- *
- */
-
 (function(define) {
     'use strict';
 
@@ -31,15 +16,15 @@
         var dateFormat;
 
         dueDateFormat = Object.freeze({
-            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm [GMT]Z', // example: 2018, 01 Jan 15:30 GMT-4
-            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm [GMT]Z', // example: Jan 01, 2018 15:30 GMT-4
-            '%d-%m-%Y': 'D MMM YYYY HH[:]mm [GMT]Z', // example: 01 Jan, 2018 15:30 GMT-4
-            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm [GMT]Z' // example: 2018, Jan 01 15:30 GMT-4
+            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm [GMT]Z',
+            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm [GMT]Z',
+            '%d-%m-%Y': 'D MMM YYYY HH[:]mm [GMT]Z',
+            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm [GMT]Z'
         });
 
-        transform = function (iterationKey) {
+        transform = function(iterationKey) {
             var context;
-            $(iterationKey).each(function () {
+            $(iterationKey).each(function() {
                 if (isValid($(this).data('datetime'))) {
                     dateFormat = DateUtils.dateFormatEnum[$(this).data('format')];
                     if (typeof dateFormat === 'undefined') {
@@ -68,25 +53,29 @@
 
         localizedTime = function(context) {
             var localized = DateUtils.localize(context);
-            return convertTimezoneFormat(localized, context.timezone);
+
+            // Get the formatted date string and append the proper timezone format
+            var formattedDate = formatDateWithTimezone(localized, context.timezone);
+            return formattedDate;
         };
 
-        function convertTimezoneFormat(datetimeString, timezone) {
-            // Convert UTC offsets directly to GMT format
-            var gmtFormatted = datetimeString.replace(
-                /([+-]\d{2})(?::(\d{2}))?/,
-                function(match, p1, p2) {
-                    // Convert to 'GMT+1', 'GMT-10', etc.
-                    return 'GMT' + p1;
-                }
-            );
+        function formatDateWithTimezone(datetimeString, timezone) {
+            var dateObj = new Date(datetimeString);
+            var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+            var formattedDate = dateObj.toLocaleString('en-US', options);
+            
+            var gmtString = calculateGMTOffset(timezone);
+            return formattedDate + ' ' + gmtString;
+        }
 
-            // If timezone is not a numeric offset, append it as is
-            if (!/GMT/.test(gmtFormatted) && timezone) {
-                gmtFormatted = gmtFormatted.replace(/GMT.*$/, timezone);
-            }
+        function calculateGMTOffset(timezone) {
+            var dateObj = new Date();
+            var utcOffset = dateObj.toLocaleString("en-US", {timeZone: timezone, timeZoneName: 'short'}).split(' ')[2];
+            var offsetHours = utcOffset.includes('-') ? utcOffset.split('-')[1] : utcOffset.split('+')[1];
+            var sign = utcOffset.includes('-') ? 'GMT-' : 'GMT+';
 
-            return gmtFormatted;
+            var offset = parseInt(offsetHours) * (utcOffset.includes('D') ? 1 : 1); 
+            return sign + Math.abs(offset);
         }
 
         stringHandler = function(localTimeString, containerString, token) {
