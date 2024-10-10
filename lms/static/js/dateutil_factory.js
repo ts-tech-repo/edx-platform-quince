@@ -31,11 +31,11 @@
         var dateFormat;
 
         dueDateFormat = Object.freeze({
-            '%Y-%d-%m': 'MMM D, YYYY, h:mm A [GMT]Z', // example: Jan 1, 2024, 8:30 AM GMT
-            '%m-%d-%Y': 'MMM D, YYYY, h:mm A [GMT]Z', // example: Aug 1, 2024, 9:30 AM GMT+1
-            '%d-%m-%Y': 'MMM D, YYYY, h:mm A [GMT]Z', // example: Jul 31, 2024, 10:30 PM GMT-10
-            '%Y-%m-%d': 'MMM D, YYYY, h:mm A [GMT]Z'  // example: Aug 1, 2024, 11:30 AM GMT+3
-        });        
+            '%Y-%d-%m': 'MMM D, YYYY, HH:mm', // example: Jan 1, 2024, 08:30
+            '%m-%d-%Y': 'MMM D, YYYY, HH:mm', // example: Aug 1, 2024, 09:30
+            '%d-%m-%Y': 'MMM D, YYYY, HH:mm', // example: Jul 31, 2024, 22:30
+            '%Y-%m-%d': 'MMM D, YYYY, HH:mm'  // example: Aug 1, 2024, 11:30
+        });
 
         transform = function(iterationKey) {
             var context;
@@ -67,7 +67,10 @@
         };
 
         localizedTime = function(context) {
-            return DateUtils.localize(context);
+            var date = DateUtils.localize(context);
+            var timezoneOffset = date.format('Z'); // Gets the offset like "+03:00"
+            var formattedOffset = 'GMT' + timezoneOffset.replace(':', '');
+            return date.format('MMM D, YYYY, HH:mm') + ' ' + formattedOffset;
         };
 
         stringHandler = function(localTimeString, containerString, token) {
