@@ -31,10 +31,10 @@
         var dateFormat;
 
         dueDateFormat = Object.freeze({
-            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm', // example: 2018, 01 Jan 15:30
-            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm', // example: Jan 01, 2018 15:30
-            '%d-%m-%Y': 'D MMM YYYY HH[:]mm', // example: 01 Jan, 2018 15:30
-            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm' // example: 2018, Jan 01 15:30
+            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm [GMT]Z', // example: 2018, 01 Jan 15:30 GMT-4
+            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm [GMT]Z', // example: Jan 01, 2018 15:30 GMT-4
+            '%d-%m-%Y': 'D MMM YYYY HH[:]mm [GMT]Z', // example: 01 Jan, 2018 15:30 GMT-4
+            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm [GMT]Z' // example: 2018, Jan 01 15:30 GMT-4
         });
 
         transform = function (iterationKey) {
@@ -56,39 +56,21 @@
                         $(this).data('string'),
                         $(this).data('datetoken')
                     );
-                    console.log(`Time Zone: ${context.timezone}, Output: ${displayDatetime}`);
                     $(this).text(displayDatetime);
                 } else {
                     displayDatetime = stringHandler(
                         $(this).data('string')
                     );
-                    console.log(`Invalid Date, Output: ${displayDatetime}`);
                     $(this).text(displayDatetime);
                 }
             });
         };
 
-        localizedTime = function (context) {
-            var localizedDate = DateUtils.localize(context);
-            var timezoneOffset = DateUtils.getTimezoneOffset(context.timezone);
-            var formattedTimezone;
-
-            if (timezoneOffset === 0) {
-                formattedTimezone = 'GMT';
-            } else {
-                var offsetHours = Math.floor(Math.abs(timezoneOffset) / 60);
-                var offsetMinutes = Math.abs(timezoneOffset) % 60;
-                var sign = timezoneOffset > 0 ? '+' : '-';
-                formattedTimezone = 'GMT' + sign + offsetHours;
-
-                if (offsetMinutes > 0) {
-                    formattedTimezone += ':' + String(offsetMinutes).padStart(2, '0');
-                }
-            }
-            return localizedDate.replace('z', formattedTimezone);
+        localizedTime = function(context) {
+            return DateUtils.localize(context);
         };
 
-        stringHandler = function (localTimeString, containerString, token) {
+        stringHandler = function(localTimeString, containerString, token) {
             var returnString;
             var interpolateDict = {};
             var dateToken;
