@@ -37,9 +37,9 @@
             '%Y-%m-%d': 'YYYY, MMM D HH[:]mm' // example: 2018, Jan 01 15:30
         });
 
-        transform = function(iterationKey) {
+        transform = function (iterationKey) {
             var context;
-            $(iterationKey).each(function() {
+            $(iterationKey).each(function () {
                 if (isValid($(this).data('datetime'))) {
                     dateFormat = DateUtils.dateFormatEnum[$(this).data('format')];
                     if (typeof dateFormat === 'undefined') {
@@ -56,11 +56,13 @@
                         $(this).data('string'),
                         $(this).data('datetoken')
                     );
+                    console.log(`Time Zone: ${context.timezone}, Output: ${displayDatetime}`);
                     $(this).text(displayDatetime);
                 } else {
                     displayDatetime = stringHandler(
                         $(this).data('string')
                     );
+                    console.log(`Invalid Date, Output: ${displayDatetime}`);
                     $(this).text(displayDatetime);
                 }
             });
