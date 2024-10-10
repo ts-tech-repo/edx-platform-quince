@@ -31,10 +31,10 @@
         var dateFormat;
 
         dueDateFormat = Object.freeze({
-            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm Z', // example: 2018, 01 Jan 15:30 UTC
-            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm Z', // example: Jan 01, 2018 15:30 UTC
-            '%d-%m-%Y': 'D MMM YYYY HH[:]mm Z', // example: 01 Jan, 2018 15:30 UTC
-            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm Z' // example: 2018, Jan 01 15:30 UTC
+            '%Y-%d-%m': 'MMM D, YYYY, HH:mm', // example: Jan 1, 2024, 08:30
+            '%m-%d-%Y': 'MMM D, YYYY, HH:mm', // example: Aug 1, 2024, 09:30
+            '%d-%m-%Y': 'MMM D, YYYY, HH:mm', // example: Jul 31, 2024, 22:30
+            '%Y-%m-%d': 'MMM D, YYYY, HH:mm'  // example: Aug 1, 2024, 11:30
         });
 
         transform = function(iterationKey) {
@@ -67,7 +67,10 @@
         };
 
         localizedTime = function(context) {
-            return DateUtils.localize(context);
+            var date = DateUtils.localize(context);
+            var timezoneOffset = date.format('Z'); // Gets the offset like "+03:00"
+            var formattedOffset = 'GMT' + timezoneOffset.replace(':', '');
+            return date.format('MMM D, YYYY, HH:mm') + ' ' + formattedOffset;
         };
 
         stringHandler = function(localTimeString, containerString, token) {
