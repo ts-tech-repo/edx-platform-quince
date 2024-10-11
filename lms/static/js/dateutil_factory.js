@@ -52,28 +52,27 @@
         };
 
         localizedTime = function(context) {
-            const utcDate = new Date(context.datetime);
-            const options = {
-                timeZone: context.timezone,
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false, // Use 24-hour format
-                timeZoneName: 'short'
-            };
-
-            // Format the date based on the user's timezone
-            const formattedDate = utcDate.toLocaleString(context.language, options);
-
-            // Replace 'GMT' in the output with the required format
-            const timezone = context.timezone ? context.timezone : 'UTC';
-            const timezoneOffset = utcDate.getTimezoneOffset() / -60; // Get offset in hours
-            const formattedTimezone = timezoneOffset >= 0 ? `GMT+${timezoneOffset}` : `GMT${timezoneOffset}`;
-
-            return `${formattedDate} ${formattedTimezone}`;
+            var localizedString = DateUtils.localize(context);
+            var timezone = context.timezone;
+            var formattedTimezone;
+        
+            // Check if the timezone is already in the desired format (e.g., CST)
+            if (timezone && timezone.startsWith('GMT') || timezone.startsWith('UTC')) {
+                formattedTimezone = timezone; // Use as is if it's GMT/UTC
+            } else if (timezone && (timezone.includes('+') || timezone.includes('-'))) {
+                // Convert offsets like +01, -10 to GMT+1, GMT-10
+                var offset = timezone.replace(/(\+|-)/, 'GMT$1').replace(/^0+/, '');
+                formattedTimezone = offset;
+            } else {
+                // Use the timezone abbreviation if available
+                formattedTimezone = timezone;
+            }
+        
+            // Replace the timezone part in the localized string
+            localizedString = localizedString.replace(/GMT.*$/, formattedTimezone);
+            return localizedString;
         };
+        
 
         stringHandler = function(localTimeString, containerString, token) {
             var returnString;
