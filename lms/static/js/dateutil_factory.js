@@ -1,3 +1,18 @@
+/**
+ *
+ * A helper function to utilize DateUtils quickly in display templates.
+ *
+ * @param: {string} data-datetime A pre-localized datetime string, assumed to be in UTC.
+ * @param: {string} lang The user's preferred language.
+ * @param: {string} data-timezone (optional) A user-set timezone preference.
+ * @param: {object} data-format (optional) a format constant as defined in DataUtil.dateFormatEnum.
+ * @param: {string} data-string (optional) a string for parsing through StringUtils after localizing
+ * datetime
+ *
+ * @return: {string} a user-time, localized, formatted datetime string
+ *
+ */
+
 (function(define) {
     'use strict';
 
@@ -16,11 +31,12 @@
         var dateFormat;
 
         dueDateFormat = Object.freeze({
-            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm z', // example: 2018, 01 Jan 15:30 UTC
-            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm z', // example: Jan 01, 2018 15:30 UTC
-            '%d-%m-%Y': 'D MMM YYYY HH[:]mm z', // example: 01 Jan, 2018 15:30 UTC
-            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm z' // example: 2018, Jan 01 15:30 UTC
+            '%Y-%d-%m': 'YYYY, D MMM HH:mm [GMT]',
+            '%m-%d-%Y': 'MMM D, YYYY HH:mm [GMT]',
+            '%d-%m-%Y': 'D MMM YYYY HH:mm [GMT]',
+            '%Y-%m-%d': 'YYYY, MMM D HH:mm [GMT]'
         });
+        
 
         transform = function(iterationKey) {
             var context;
@@ -52,27 +68,8 @@
         };
 
         localizedTime = function(context) {
-            var localizedString = DateUtils.localize(context);
-            var timezone = context.timezone;
-            var formattedTimezone;
-        
-            // Check if the timezone is already in the desired format (e.g., CST)
-            if (timezone && timezone.startsWith('GMT') || timezone.startsWith('UTC')) {
-                formattedTimezone = timezone; // Use as is if it's GMT/UTC
-            } else if (timezone && (timezone.includes('+') || timezone.includes('-'))) {
-                // Convert offsets like +01, -10 to GMT+1, GMT-10
-                var offset = timezone.replace(/(\+|-)/, 'GMT$1').replace(/^0+/, '');
-                formattedTimezone = offset;
-            } else {
-                // Use the timezone abbreviation if available
-                formattedTimezone = timezone;
-            }
-        
-            // Replace the timezone part in the localized string
-            localizedString = localizedString.replace(/GMT.*$/, formattedTimezone);
-            return localizedString;
+            return DateUtils.localize(context);
         };
-        
 
         stringHandler = function(localTimeString, containerString, token) {
             var returnString;
@@ -102,7 +99,6 @@
                 && candidateVariable !== 'Invalid date'
                 && candidateVariable !== 'None';
         };
-
         DateUtilFactory = {
             transform: transform,
             stringHandler: stringHandler
