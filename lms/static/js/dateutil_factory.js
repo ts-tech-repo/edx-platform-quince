@@ -16,10 +16,10 @@
         var dateFormat;
 
         dueDateFormat = Object.freeze({
-            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm [GMT]Z',
-            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm [GMT]Z',
-            '%d-%m-%Y': 'D MMM YYYY HH[:]mm [GMT]Z',
-            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm [GMT]Z'
+            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm z', // example: 2018, 01 Jan 15:30 UTC
+            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm z', // example: Jan 01, 2018 15:30 UTC
+            '%d-%m-%Y': 'D MMM YYYY HH[:]mm z', // example: 01 Jan, 2018 15:30 UTC
+            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm z' // example: 2018, Jan 01 15:30 UTC
         });
 
         transform = function(iterationKey) {
@@ -52,31 +52,28 @@
         };
 
         localizedTime = function(context) {
-            var localized = DateUtils.localize(context);
+            const utcDate = new Date(context.datetime);
+            const options = {
+                timeZone: context.timezone,
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false, // Use 24-hour format
+                timeZoneName: 'short'
+            };
 
-            // Get the formatted date string and append the proper timezone format
-            var formattedDate = formatDateWithTimezone(localized, context.timezone);
-            return formattedDate;
+            // Format the date based on the user's timezone
+            const formattedDate = utcDate.toLocaleString(context.language, options);
+
+            // Replace 'GMT' in the output with the required format
+            const timezone = context.timezone ? context.timezone : 'UTC';
+            const timezoneOffset = utcDate.getTimezoneOffset() / -60; // Get offset in hours
+            const formattedTimezone = timezoneOffset >= 0 ? `GMT+${timezoneOffset}` : `GMT${timezoneOffset}`;
+
+            return `${formattedDate} ${formattedTimezone}`;
         };
-
-        function formatDateWithTimezone(datetimeString, timezone) {
-            var dateObj = new Date(datetimeString);
-            var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
-            var formattedDate = dateObj.toLocaleString('en-US', options);
-            
-            var gmtString = calculateGMTOffset(timezone);
-            return formattedDate + ' ' + gmtString;
-        }
-
-        function calculateGMTOffset(timezone) {
-            var dateObj = new Date();
-            var utcOffset = dateObj.toLocaleString("en-US", {timeZone: timezone, timeZoneName: 'short'}).split(' ')[2];
-            var offsetHours = utcOffset.includes('-') ? utcOffset.split('-')[1] : utcOffset.split('+')[1];
-            var sign = utcOffset.includes('-') ? 'GMT-' : 'GMT+';
-
-            var offset = parseInt(offsetHours) * (utcOffset.includes('D') ? 1 : 1); 
-            return sign + Math.abs(offset);
-        }
 
         stringHandler = function(localTimeString, containerString, token) {
             var returnString;
