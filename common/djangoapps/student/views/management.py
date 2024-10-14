@@ -1177,6 +1177,8 @@ def get_zoom_link(meeting_id, webinar_id, data):
         
         
         zoom_token = _get_zoom_auth_token() if not useLens else "Basic {0}".format(base64.b64encode("ts_c83ae02c3213115a:f7cdfc2017ebdd4c19a45702db789632".encode("UTF-8")))
+        log.info(zoom_token)
+        log.info(zoom_url)
         if zoom_token:
             headers = {"Authorization" : zoom_token, "Content-Type" : "application/json"}
             response = requests.post(zoom_url, data=json.dumps(zoom_data), headers=headers)
