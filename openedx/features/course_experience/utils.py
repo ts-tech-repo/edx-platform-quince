@@ -222,5 +222,5 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
             return graded or scored
     log.info(complete)
     log.info(graded)
-    log.info(weight)
+    log.info(has_score)
     return complete or not graded or not scored
