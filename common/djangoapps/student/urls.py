@@ -13,7 +13,7 @@ urlpatterns = [
 
     re_path(r'^extras/join_zoom_meeting$', views.join_zoom_meeting, name = "join_zoom_meeting"),
     re_path(r'^extras/join_lens_meeting$', views.join_lens_meeting, name = "join_lens_meeting"),
-    re_path(r'^extras/join_lens$', views.join_lens, name = "join_lens"),
+    re_path(r'^extras/join_lens$', views.extras_join_lens, name = "join_lens"),
     re_path(r'^extras/{}/join_zoom'.format(settings.COURSE_ID_PATTERN), views.extras_join_zoom, name = 'extras_join_zoom'),
 
     re_path(r'^extras/course_enroll_user/', csrf_exempt(views.extras_course_enroll_user), name = 'extras_course_enroll_user'),
