@@ -1134,6 +1134,7 @@ def get_zoom_link(meeting_id, webinar_id, data):
     join_url = cache.get(session_key, None)
     space_unicode = u'\u0020'
     r_data = {}
+    useLens = configuration_helpers.get_value("USE_LENS", True)
     if join_url is not None:
         log.info("Key exists in the session")
         r_data["join_url"] = join_url
@@ -1142,7 +1143,7 @@ def get_zoom_link(meeting_id, webinar_id, data):
         zoom_data = {"email" : data["email"]}
         if meeting_id != "0":
             delimiter = _get_delimiter(int(meeting_id[-1]))
-            zoom_url = "https://api.zoom.us/v2/meetings/" + meeting_id +"/registrants"
+            zoom_url = "https://api.zoom.us/v2/meetings/" if not useLens else "https://meeting-service.wiseapp.live/proxy/v2/meetings/" + meeting_id +"/registrants"
         elif webinar_id != "0":
             delimiter = _get_delimiter(int(webinar_id[-1]))
             zoom_url = "https://api.zoom.us/v2/webinars/" + webinar_id +"/registrants"
@@ -1174,7 +1175,8 @@ def get_zoom_link(meeting_id, webinar_id, data):
         zoom_data = {"email" : data["email"], "first_name" : first_name, "last_name" : last_name}
         log.error(zoom_data)
         
-        zoom_token = _get_zoom_auth_token()
+        
+        zoom_token = _get_zoom_auth_token() if not useLens else "Basic {0}".format(base64.b64encode("ts_c83ae02c3213115a:f7cdfc2017ebdd4c19a45702db789632"))
         if zoom_token:
             headers = {"Authorization" : zoom_token, "Content-Type" : "application/json"}
             response = requests.post(zoom_url, data=json.dumps(zoom_data), headers=headers)
