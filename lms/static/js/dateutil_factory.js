@@ -31,10 +31,10 @@
         var dateFormat;
 
         dueDateFormat = Object.freeze({
-            '%Y-%d-%m': 'YYYY, D MMM HH[:]mm [GMT]Z', // example: 2018, 01 Jan 15:30 GMT+0
-            '%m-%d-%Y': 'MMM D, YYYY HH[:]mm [GMT]Z', // example: Jan 01, 2018 15:30 GMT+0
-            '%d-%m-%Y': 'D MMM YYYY HH[:]mm [GMT]Z', // example: 01 Jan, 2018 15:30 GMT+0
-            '%Y-%m-%d': 'YYYY, MMM D HH[:]mm [GMT]Z' // example: 2018, Jan 01 15:30 GMT+0
+            '%Y-%d-%m': 'YYYY, D MMM HH:mm [GMT]ZZ', // example: 2018, 01 Jan 15:30 GMT+0000
+            '%m-%d-%Y': 'MMM D, YYYY, HH:mm [GMT]ZZ', // example: Jan 01, 2018, 15:30 GMT+0000
+            '%d-%m-%Y': 'D MMM YYYY, HH:mm [GMT]ZZ', // example: 01 Jan, 2018, 15:30 GMT+0000
+            '%Y-%m-%d': 'YYYY, MMM D HH:mm [GMT]ZZ' // example: 2018, Jan 01 15:30 GMT+0000
         });
         
 
@@ -68,7 +68,8 @@
         };
 
         localizedTime = function(context) {
-            return DateUtils.localize(context);
+            var localizedDateTime = DateUtils.localize(context);
+            return localizedDateTime.replace(/GMT\+0000/, 'GMT').replace(/GMT([+-]\d{2})(\d{2})/, 'GMT$1');
         };
 
         stringHandler = function(localTimeString, containerString, token) {
