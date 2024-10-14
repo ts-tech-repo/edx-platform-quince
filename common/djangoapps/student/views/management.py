@@ -1127,14 +1127,13 @@ def _get_zoom_auth_token():
     cache.set(session_key, "{0} {1}".format(r_data["token_type"], r_data["access_token"]), 3300)
     return cache.get(session_key, "")
 
-def get_zoom_link(meeting_id, webinar_id, data):
+def get_zoom_link(meeting_id, webinar_id, data, useLens = False):
     user = User.objects.get(email = data["email"]) 
     session_key = str(meeting_id) + "-" + str(user.id)
     MEMCACHE_TIMEOUT = 28800
     join_url = cache.get(session_key, None)
     space_unicode = u'\u0020'
     r_data = {}
-    useLens = configuration_helpers.get_value("USE_LENS", True)
     if join_url is not None:
         log.info("Key exists in the session")
         r_data["join_url"] = join_url
@@ -1836,3 +1835,34 @@ def extras_get_peer_profiles(request):
     except Exception as e:
         return JsonResponse({'Failed to fetch peer profiles details': str(e)}, status=500)
 
+@csrf_exempt
+@login_required
+def join_lens_meeting(request):
+    try:
+        meeting_id = request.GET["meeting_id"]
+        data = {"email" : request.user.email, "username" : request.user.username, "first_name" : request.user.first_name, "last_name" : request.user.last_name} 
+
+        r_data = get_zoom_link(meeting_id, "0", data, True)
+        log.error(r_data)
+        return redirect(r_data["join_url"])
+    except Exception as err:
+        log.error("ZOOM Error: " + str(err))
+        return HttpResponse("Please contact support")
+
+@csrf_exempt
+@login_required
+def extras_join_lens(request, course_id):
+	try:
+		course_key = CourseKey.from_string(course_id)
+		cdn_data = {"org" : [str(course_key.org)], "course_id" : course_id}
+		r = requests.post("https://cdn.exec.talentsprint.com/app/getMeetingRooms", headers = {'content-type': 'application/json'}, data = json.dumps(cdn_data))
+		r_data = json.loads(r.text)
+		log.error(r_data)
+		meeting_id = r_data["meeting_id"]
+		data = {"email" : request.user.email, "username" : request.user.username, "first_name" : request.user.first_name, "last_name" : request.user.last_name}
+		zoom_data = get_zoom_link(meeting_id, "0", data, True)
+		log.error(zoom_data)
+		return redirect(zoom_data["join_url"])
+	except Exception as err:
+		log.error("ZOOM Error: " + str(err))
+		return HttpResponse("Please contact support")
