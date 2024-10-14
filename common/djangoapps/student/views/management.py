@@ -1176,7 +1176,7 @@ def get_zoom_link(meeting_id, webinar_id, data):
         log.error(zoom_data)
         
         
-        zoom_token = _get_zoom_auth_token() if not useLens else "Basic {0}".format(str(base64.b64encode("ts_c83ae02c3213115a:f7cdfc2017ebdd4c19a45702db789632".encode("UTF-8"))))
+        zoom_token = _get_zoom_auth_token() if not useLens else "Basic {0}".format(str(base64.b64encode("ts_c83ae02c3213115a:f7cdfc2017ebdd4c19a45702db789632".encode("UTF-8")).decode()))
         log.info(zoom_token)
         log.info(zoom_url)
         if zoom_token:
