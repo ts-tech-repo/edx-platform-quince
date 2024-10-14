@@ -1198,7 +1198,7 @@ def extras_join_zoom(request, course_id):
 		log.error(r_data)
 		meeting_id = r_data["meeting_id"]
 		data = {"email" : request.user.email, "username" : request.user.username, "first_name" : request.user.first_name, "last_name" : request.user.last_name}
-		zoom_data = get_zoom_link(meeting_id, "0", data)
+		zoom_data = get_zoom_link(meeting_id, "0", data, False)
 		log.error(zoom_data)
 		return redirect(zoom_data["join_url"])
 	except Exception as err:
@@ -1212,7 +1212,7 @@ def join_zoom_meeting(request):
 		meeting_id = request.GET["meeting_id"]
 		data = {"email" : request.user.email, "username" : request.user.username, "first_name" : request.user.first_name, "last_name" : request.user.last_name} 
 
-		r_data = get_zoom_link(meeting_id, "0", data)
+		r_data = get_zoom_link(meeting_id, "0", data, False)
 		log.error(r_data)
 		return redirect(r_data["join_url"])
 	except Exception as err:
