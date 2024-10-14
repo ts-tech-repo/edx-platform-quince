@@ -220,6 +220,7 @@ def is_block_structure_complete_for_assignments(block_data, block_key, course_ke
     if course_key:
         if not ENABLE_COMPLETION_TRACKING_FLAG.is_enabled(course_key):
             return graded or scored
+    log.info(block_key)
     log.info(complete)
     log.info(graded)
     log.info(has_score)
