@@ -63,12 +63,18 @@
     };
 
     localizedTime = function (context) {
-      var localizedDateTime = DateUtils.localize(context);
-      if (context?.timezone) {
-        // Assuming localizedDateTime is in UTC, we will format it according to the user's timezone
-        localizedDateTime = moment(localizedDateTime).tz(context.timezone).format("YYYY-MM-DD HH:mm:ss");
-      }
-      return localizedDateTime.replace(/GMT\+0000/, "GMT").replace(/GMT([+-]\d{2})(\d{2})/, "GMT$1");
+      //   var localizedDateTime = DateUtils.localize(context);
+      //   if (context?.timezone) {
+      //     // Assuming localizedDateTime is in UTC, we will format it according to the user's timezone
+      //     localizedDateTime = moment(localizedDateTime).tz(context.timezone).format("YYYY-MM-DD HH:mm:ss");
+      //   }
+      var utcDateTime = moment.utc(context.datetime);
+
+      // Format the datetime to the user's timezone without any conversion
+      // Use the user's timezone directly
+      var localDateTime = utcDateTime.tz(context.timezone, true).format("YYYY-MM-DD HH:mm:ss"); // Use 'true' to avoid DST adjustment
+
+      return localDateTime.replace(/GMT\+0000/, "GMT").replace(/GMT([+-]\d{2})(\d{2})/, "GMT$1");
     };
 
     stringHandler = function (localTimeString, containerString, token) {
