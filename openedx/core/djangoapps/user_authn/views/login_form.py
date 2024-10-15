@@ -201,7 +201,7 @@ def login_and_registration_form(request, initial_mode="login"):
         )
 
     enterprise_customer = enterprise_customer_for_request(request)
-
+    mfe_config = configuration_helpers.get_value('MFE_CONFIG', settings.MFE_CONFIG)
     if should_redirect_to_authn_microfrontend() and \
             not enterprise_customer and \
             not tpa_hint_provider and \
@@ -219,7 +219,7 @@ def login_and_registration_form(request, initial_mode="login"):
             initial_mode,
             '?' + query_params if query_params else ''
         )
-        return redirect(settings.AUTHN_MICROFRONTEND_URL + url_path)
+        return redirect(mfe_config["AUTHN_MICROFRONTEND_URL"] + url_path)
 
     # Account activation message
     account_activation_messages = [
