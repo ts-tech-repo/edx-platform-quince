@@ -258,6 +258,16 @@ define(
                         type: MetadataModel.GENERIC_TYPE,
                         value: 'advanced tab transcript url'
                     },
+                    transcriptDownloadRoleEntry = {
+                        default_value: ['*', 'All'],
+                        display_name: 'Transcript Download Role',
+                        explicitly_set: true,
+                        field_name: 'transcript_download_role',
+                        help: 'Select the transcript download role.',
+                        options: [],
+                        type: MetadataModel.LIST_TYPE,
+                        value: ['*']
+                    },
                     metadataCollection,
                     metadataView;
 
@@ -276,7 +286,8 @@ define(
                             html5SourcesEntry,
                             youtubeEntry,
                             videoIDEntry,
-                            transcriptUrlEntry
+                            transcriptUrlEntry,
+                            transcriptDownloadRoleEntry
                         ]
                     );
 

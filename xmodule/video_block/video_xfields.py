@@ -6,6 +6,7 @@ XFields for video block.
 import datetime
 
 from xblock.fields import Boolean, DateTime, Dict, Float, List, Scope, String
+from common.djangoapps.student.roles import REGISTERED_ACCESS_ROLES
 
 from xmodule.fields import RelativeTime
 
@@ -126,6 +127,23 @@ class VideoFields:
         display_name=_("Transcript URL"),
         scope=Scope.settings,
         default=""
+    )
+
+    def _get_registered_roles():
+        """
+        Gets REGISTERED_ACCESS_ROLES
+        """
+        return [{'value': "*", 'display_name': _('ALL')}] + sorted([
+            {'value': role_name, 'display_name': role_name}
+            for role_name in REGISTERED_ACCESS_ROLES.keys()
+        ], key=lambda item: item.get('display_name'))
+
+    transcript_download_role = String(
+        display_name=_("Transcript Download Role"),
+        help=_('Choose a role to be able to download transcripts.'),
+        default="*",
+        values=_get_registered_roles(),
+        scope=Scope.settings,
     )
 
     show_captions = Boolean(
