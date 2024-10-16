@@ -63,18 +63,23 @@
     };
 
     localizedTime = function (context) {
-      //   var localizedDateTime = DateUtils.localize(context);
-      //   if (context?.timezone) {
-      //     // Assuming localizedDateTime is in UTC, we will format it according to the user's timezone
-      //     localizedDateTime = moment(localizedDateTime).tz(context.timezone).format("YYYY-MM-DD HH:mm:ss");
-      //   }
-      var utcDateTime = moment.utc(context.datetime);
+      function formatTimeInTimezone(dateTime, timeZone = "UTC") {
+        const options = {
+          year: "numeric",
+          month: "short", // 'short' gives the abbreviated month name (e.g., "Aug")
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false, // 24-hour format (set to `true` for 12-hour format)
+          timeZone: timeZone, // Specify the desired timezone (e.g., CST)
+          timeZoneName: "short", // Include the short timezone abbreviation (CST, PDT, etc.)
+        };
 
-      // Format the datetime to the user's timezone without any conversion
-      // Use the user's timezone directly
-      var localDateTime = utcDateTime.tz(context.timezone, true).format("YYYY-MM-DD HH:mm:ss"); // Use 'true' to avoid DST adjustment
-
-      return localDateTime.replace(/GMT\+0000/, "GMT").replace(/GMT([+-]\d{2})(\d{2})/, "GMT$1");
+        const formattedTime = new Intl.DateTimeFormat(context.language, options).format(new Date(dateTime));
+        return formattedTime;
+      }
+      return formatTimeInTimezone(context.datetime, context.timezone);
+      // Output: "Aug 1, 2024, 02:30 CST"
     };
 
     stringHandler = function (localTimeString, containerString, token) {
