@@ -877,6 +877,7 @@ class VideoBlock(
         video_id = metadata_fields['edx_video_id']
         youtube_id_1_0 = metadata_fields['youtube_id_1_0']
         transcript_url = metadata_fields['transcript_url']
+        transcript_download_role = metadata_fields['transcript_download_role']
         def get_youtube_link(video_id):
             """
             Returns the fully-qualified YouTube URL for the given video identifier
@@ -933,7 +934,8 @@ class VideoBlock(
             'display_name': display_name,
             'video_url': video_url,
             'edx_video_id': video_id,
-            'transcript_url': transcript_url
+            'transcript_url': transcript_url,
+            'transcript_download_role': transcript_download_role,
         }
 
         _context.update({'transcripts_basic_tab_metadata': metadata})
