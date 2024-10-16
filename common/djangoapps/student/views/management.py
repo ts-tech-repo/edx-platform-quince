@@ -115,7 +115,7 @@ from django.http import JsonResponse
 from common.djangoapps.student.models import CourseEnrollment, SocialLink
 from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
-import jwt
+from jwcrypto import jwt
 
 log = logging.getLogger("edx.student")
 
