@@ -534,10 +534,7 @@ def get_course_assignment_date_blocks(course, user, request, num_return=None,
     if num_return is None in date increasing order.
     """
     date_blocks = []
-    user_local_timezone = user_timezone_locale_prefs(request)
-    user_timezone = user_local_timezone["user_timezone"] or str("UTC")
     for assignment in get_course_assignments(course.id, user, include_access=include_access):
-        log.info(assignment.past_due)
         date_block = CourseAssignmentDate(course, user)
         date_block.date = assignment.date
         date_block.contains_gated_content = assignment.contains_gated_content

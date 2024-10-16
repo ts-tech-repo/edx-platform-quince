@@ -23,7 +23,7 @@ urlpatterns = [
     re_path(r'^extras/get_almaConnect_link/$', views.extras_get_almaConnect_link, name = "extras_get_almaConnect_link"),
     re_path(r'^extras/user_details$', views.extras_userdetails, name = 'extras_userdetails'),
     re_path(r'^notebook_submissions', views.extras_notebook_submissions, name = 'extras_notebook_submissions'),
-
+    re_path(r'^cyberstruct_sso$', views.cyberstruct_sso, name = "cyberstruct_sso"),
     re_path(r'^extras/reset_password_link', views.extras_reset_password_link, name = "extras_reset_password_link"),
 
     re_path(r'^extras/start_mettl_test', views.extras_start_mettl_test, name = "extras_start_mettl_test"),
