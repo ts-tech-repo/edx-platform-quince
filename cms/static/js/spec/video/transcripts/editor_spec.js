@@ -259,14 +259,14 @@ define(
                         value: 'advanced tab transcript url'
                     },
                     transcriptDownloadRoleEntry = {
-                        default_value: '*',
+                        default_value: ['*', 'All'],
                         display_name: 'Transcript Download Role',
                         explicitly_set: true,
                         field_name: 'transcript_download_role',
-                        help: 'Specifies the transcript download role.',
+                        help: 'Select the transcript download role.',
                         options: [],
-                        type: MetadataModel.GENERIC_TYPE,
-                        value: 'advanced tab transcript download role'
+                        type: MetadataModel.LIST_TYPE,
+                        value: ['*']
                     },
                     metadataCollection,
                     metadataView;
