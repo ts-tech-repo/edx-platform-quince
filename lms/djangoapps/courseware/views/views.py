@@ -1526,7 +1526,6 @@ def render_xblock(request, usage_key_string, check_if_enrolled=True, disable_sta
     Returns an HttpResponse with HTML content for the xBlock with the given usage_key.
     The returned HTML is a chromeless rendering of the xBlock (excluding content of the containing courseware).
     """
-    log.info("HEre")
     usage_key = UsageKey.from_string(usage_key_string)
 
     usage_key = usage_key.replace(course_key=modulestore().fill_in_run(usage_key.course_key))
@@ -1659,6 +1658,7 @@ def render_xblock(request, usage_key_string, check_if_enrolled=True, disable_sta
 
             **optimization_flags,
         }
+        log.info(context)
         return render_to_response('courseware/courseware-chromeless.html', context)
 
 
