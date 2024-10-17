@@ -268,6 +268,16 @@ define(
                         type: MetadataModel.LIST_TYPE,
                         value: ['*']
                     },
+                    sessionIDEntry = {
+                        default_value: ['*', 'All'],
+                        display_name: 'Session ID',
+                        explicitly_set: true,
+                        field_name: 'session_id',
+                        help: 'Specifies Attendance Session ID.',
+                        options: [],
+                        type: MetadataModel.LIST_TYPE,
+                        value: ['*']
+                    },
                     metadataCollection,
                     metadataView;
 
@@ -287,7 +297,8 @@ define(
                             youtubeEntry,
                             videoIDEntry,
                             transcriptUrlEntry,
-                            transcriptDownloadRoleEntry
+                            transcriptDownloadRoleEntry,
+                            sessionIDEntry
                         ]
                     );
 
