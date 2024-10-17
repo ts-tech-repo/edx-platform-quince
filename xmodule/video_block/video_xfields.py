@@ -252,9 +252,3 @@ class VideoFields:
         scope=Scope.settings,
         default="",
     )
-    session_id = String(
-        help=_("Attendance Session ID."),
-        display_name=_("Session ID"),
-        scope=Scope.settings,
-        default=""
-    )

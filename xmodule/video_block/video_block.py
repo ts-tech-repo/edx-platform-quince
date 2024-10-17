@@ -936,7 +936,7 @@ class VideoBlock(
             'video_url': video_url,
             'edx_video_id': video_id,
             'transcript_url': transcript_url,
-            'session_id' : 'session_id',
+            'session_id' : session_id,
             'transcript_download_role': transcript_download_role,
         }
 
