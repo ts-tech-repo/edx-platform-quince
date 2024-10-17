@@ -407,6 +407,7 @@ class VideoStudentViewHandlers:
         without rendering the full student_view HTML. This is similar to student_view_state,
         but that one cannot contain user-specific info.
         """
+        log.info("Here")
         view_state = self.student_view_data()
         view_state.update({
             "saved_video_position": self.saved_video_position.total_seconds(),

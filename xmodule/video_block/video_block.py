@@ -689,7 +689,6 @@ class VideoBlock(
             'translation'
         ).rstrip('/?')
         editable_fields['handout']['type'] = 'FileUploader'
-        log.info(editable_fields)
         return editable_fields
 
     @classmethod
