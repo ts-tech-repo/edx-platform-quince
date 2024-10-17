@@ -70,7 +70,7 @@ from .transcripts_utils import (
 from .video_handlers import VideoStudentViewHandlers, VideoStudioViewHandlers
 from .video_utils import create_youtube_string, format_xml_exception_message, get_poster, rewrite_video_url
 from .video_xfields import VideoFields
-from common.djangoapps.student.roles import BulkRoleCache
+from lms.djangoapps.courseware.access import has_access
 
 # The following import/except block for edxval is temporary measure until
 # edxval is a proper XBlock Runtime Service.
@@ -159,6 +159,24 @@ class VideoBlock(
     js_module_name = "TabsEditingDescriptor"
 
     uses_xmodule_styles_setup = True
+
+    def check_user_role(self):
+        """
+        Check if the user is an instructor, staff, or learner in this course.
+        """
+        # Get the user from the runtime (self.runtime will be available within XBlock)
+        user = self.runtime.user
+
+        # Get the course object (assuming we are in a course context)
+        course = self.runtime.course
+
+        # Check if the user has the instructor role
+        if has_access(user, 'instructor', course):
+            return 'instructor'
+        elif has_access(user, 'staff', course):
+            return 'staff'
+        else:
+            return 'learner'
 
     def get_transcripts_for_student(self, transcripts):
         """Return transcript information necessary for rendering the XModule student view.
@@ -373,8 +391,10 @@ class VideoBlock(
 
         transcripts = self.get_transcripts_info()
         track_url, transcript_language, sorted_languages = self.get_transcripts_for_student(transcripts=transcripts)
-        role_user = self.runtime.get_user_role()
-        log.debug("#sabidDebug role_user: %s", role_user)
+        u = self.runtime.user
+        c = self.runtime.course
+
+        log.info("#sabidDebug user=%s, course=%s", u, c)
 
         cdn_eval = False
         cdn_exp_group = None
