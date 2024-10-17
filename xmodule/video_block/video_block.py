@@ -397,7 +397,7 @@ class VideoBlock(
         # Retrieve the course_id to check roles
         #course_id = self.scope_ids.usage_id.course_key
 
-        log.info("#sabidDebug user=%s, course=%s", context['course_id'], context)
+        log.info("#sabidDebug user=%s, course=%s", "", context)
 
         cdn_eval = False
         cdn_exp_group = None
