@@ -321,7 +321,7 @@ class VideoStudentViewHandlers:
 
             except Exception as err:
                 return Response(status=404)
-        log.info(self)
+        
         is_bumper = request.GET.get('is_bumper', False)
         transcripts = self.get_transcripts_info(is_bumper)
 
