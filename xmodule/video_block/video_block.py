@@ -373,7 +373,7 @@ class VideoBlock(
 
         transcripts = self.get_transcripts_info()
         track_url, transcript_language, sorted_languages = self.get_transcripts_for_student(transcripts=transcripts)
-        roles_data = BulkRoleCache.get_user_roles(user=self.runtime.service(self, 'user').get_current_user())
+        roles_data = self.runtime.service(self, 'user').get_current_user()
         log.debug("#sabidDebug roles_data: %s", roles_data)
 
         cdn_eval = False
