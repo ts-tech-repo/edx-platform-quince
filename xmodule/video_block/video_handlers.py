@@ -80,7 +80,7 @@ class VideoStudentViewHandlers:
             'bumper_last_view_date': to_boolean,
             'bumper_do_not_show_again': to_boolean,
         }
-        log.info("Here")
+        
         if dispatch == 'save_user_state':
             for key in data:
                 if key in accepted_keys:

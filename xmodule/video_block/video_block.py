@@ -389,6 +389,8 @@ class VideoBlock(
             completion_enabled = completion_service.completion_tracking_enabled()
         else:
             completion_enabled = False
+        
+        log.info("Here")
 
         # This is the setting that controls whether the autoadvance button will be visible, not whether the
         # video will autoadvance or not.
