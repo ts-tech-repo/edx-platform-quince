@@ -373,6 +373,8 @@ class VideoBlock(
 
         transcripts = self.get_transcripts_info()
         track_url, transcript_language, sorted_languages = self.get_transcripts_for_student(transcripts=transcripts)
+        role_user = self.runtime.user_role;
+        log.debug("#sabidDebug role_user: %s", role_user)
 
         cdn_eval = False
         cdn_exp_group = None
