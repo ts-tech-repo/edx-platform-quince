@@ -392,12 +392,12 @@ class VideoBlock(
         transcripts = self.get_transcripts_info()
         track_url, transcript_language, sorted_languages = self.get_transcripts_for_student(transcripts=transcripts)
         # Retrieve user from context if available
-        user = self.runtime.service(self, 'user').get_current_user()
+        #user = self.runtime.service(self, 'user').get_current_user()
         
         # Retrieve the course_id to check roles
         #course_id = self.scope_ids.usage_id.course_key
 
-        log.info("#sabidDebug user=%s, course=%s", user, "course_id")
+        log.info("#sabidDebug user=%s, course=%s", context['course_id'], context)
 
         cdn_eval = False
         cdn_exp_group = None
