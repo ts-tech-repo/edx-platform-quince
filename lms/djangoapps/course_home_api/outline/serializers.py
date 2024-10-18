@@ -9,9 +9,6 @@ from lms.djangoapps.course_home_api.dates.serializers import DateSummarySerializ
 from lms.djangoapps.course_home_api.progress.serializers import CertificateDataSerializer
 from lms.djangoapps.course_home_api.serializers import DatesBannerSerializer, VerifiedModeSerializer
 
-import logging
-log = logging.getLogger(__name__)
-
 
 class CourseBlockSerializer(serializers.Serializer):
     """
@@ -59,7 +56,6 @@ class CourseBlockSerializer(serializers.Serializer):
                 'has_scheduled_content': block.get('has_scheduled_content'),
             },
         }
-        log.info('#sabidDebug serialized: %s', serialized)
         for child in children:
             serialized.update(self.get_blocks(child))
         return serialized
