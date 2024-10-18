@@ -41,6 +41,7 @@ urlpatterns = [
     re_path(r'^extras/update_lti_grades', views.extras_update_lti_grades, name = "extras_update_lti_grades"),
     re_path(r'^extras/get_peer_profiles', views.extras_get_peer_profiles, name = "extras_get_peer_profiles"),
     re_path(r'^email_confirm/(?P<key>[^/]*)$', views.confirm_email_change, name='confirm_email_change'),
+    re_path(r'^extras/sync_moodle_attendance$', views.extras_sync_moodle_attendance, name='extras_sync_moodle_attendance'),
 
     re_path(r'^activate/(?P<key>[^/]*)$', views.activate_account, name="activate"),
 

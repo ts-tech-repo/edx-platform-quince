@@ -115,7 +115,7 @@ from django.http import JsonResponse
 from common.djangoapps.student.models import CourseEnrollment, SocialLink
 from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
-from jwcrypto import jwt
+from jwcrypto import jwt, jwk
 
 log = logging.getLogger("edx.student")
 
@@ -1872,11 +1872,18 @@ def extras_join_lens(request, course_id):
 @csrf_exempt
 @login_required
 def cyberstruct_sso(request):
-    key = {"kid":"c5pa5z4YzdFnfRht-S7VupIwQcj242NepR06PMKZzSQ","thumbprint":"c5pa5z4YzdFnfRht-S7VupIwQcj242NepR06PMKZzSQ"}
+    with open("/openedx/edx-platform/idp/saml2_config/{0}/private_key.pem".format(configuration_helpers.get_value("course_org_filter")), "rb") as pemfile: 
+        key = jwk.JWK.from_pem(pemfile.read())
 
     payload = { "name": request.user.first_name, "email": request.user.email, "iss": "https://cyberstruct.us.auth0.com/", "aud": "5v8UTnNByIQhTuLaGLaJiu5ZTegZCG5w", "iat": datetime.datetime.now(datetime.timezone.utc).timestamp(),  "exp": (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=100)).timestamp(), "sub": "oidc|talentsprint|{0}".format(request.user.username), }
     jwt_header = {"type": "JWT", "alg": "RS256", "kid": key["thumbprint"]}
     jwt_object = jwt.JWT(header=jwt_header, claims=payload)
     jwt_object.make_signed_token(key)
     token = jwt_object.serialize()
-    return HttpResponse(token)
+    return redirect(f"https://app.cyberstruct.io/api/login?organization=org_46qMyHyZqajmxIIZ&id_token={token}")
+
+@csrf_exempt
+@login_required
+def extras_sync_moodle_attendance(request):
+    usage_id = request.POST.get("unit_id")
+
