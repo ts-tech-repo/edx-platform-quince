@@ -1876,7 +1876,7 @@ def cyberstruct_sso(request):
         key = jwk.JWK.from_pem(pemfile.read())
 
     payload = { "name": request.user.first_name, "email": request.user.email, "iss": "https://cyberstruct.us.auth0.com/", "aud": "5v8UTnNByIQhTuLaGLaJiu5ZTegZCG5w", "iat": datetime.datetime.now(datetime.timezone.utc).timestamp(),  "exp": (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=100)).timestamp(), "sub": "oidc|talentsprint|{0}".format(request.user.username), }
-    jwt_header = {"type": "JWT", "alg": "RS256", "kid": key["thumbprint"]}
+    jwt_header = {"type": "JWT", "alg": "RS256", "kid": key.thumbprint()}
     jwt_object = jwt.JWT(header=jwt_header, claims=payload)
     jwt_object.make_signed_token(key)
     token = jwt_object.serialize()
