@@ -26,12 +26,14 @@
 
     <style>
       body {
-        font-family: "Metropolis", sans-serif; 
+        font-family: "Metropolis", sans-serif; /* Use the Metropolis font */
         background: linear-gradient(to bottom right, #d0ecfa, #ffffff, #caecfd);
         position: relative;
+        /* background-image: url('https://staging.quince02.talentsprint.com/static/imagesimages/bg1.svg') */
       }
       .container .card {
         width: 312px;
+        /* height: 350px; */
       }
       .card-header.bg-transparent.text-center {
         border-bottom: none;
@@ -125,11 +127,11 @@
     </style>
   </head>
   <body class="position-relative" style="height: 100vh;">
-    <img class="position-fixed" style="top: 0; right: 0px;" src="https://static.talentsprint.com/lms_maple/images/topRight.svg" alt="">
+    <img class="position-fixed" style="top: 0; right: 0px;" src="https://staging.quince02.talentsprint.com/static/imagesimages/topRight.svg" alt="">
 
     <nav class="top-0 z-3">
       <img
-        src="https://static.talentsprint.com/lms_maple/images/logo.png"
+        src="https://staging.quince02.talentsprint.com/static/imagesimages/logo.png"
         class="my-2"
         style="height: 62px; margin-left: 70px; width: 250px"
       />
@@ -147,6 +149,18 @@
           <div class="row gap" id="row"></div>
         </div>
       </div>
+      <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">        
+        <div class="profile-section d-flex align-items-center">
+            <img class="profile-img" src="https://staging.quince02.talentsprint.com/static/images/profiles/default_500.4215dbe8010f.png" alt="">
+            <p class="ml-4 font-weight-bold" style="font-size: 24px;">prasanna 2308972</p>
+        </div>
+        <div class="ed-section mt-3">
+            <p style="height:50px;color: rgba(0,0,0,0.5);font-size: 17px; overflow: hidden;display: -webkit-box;
+-webkit-line-clamp: 2; /* number of lines to show */
+-webkit-box-orient: vertical;">description</p>
+        </div>
+        <img src="https://staging.quince02.talentsprint.com/static/imagesimages/arrow.png" style="height: 35px; width: 35px">
+</div>
       <div
         class="modal"
         id="myModal"
@@ -164,8 +178,19 @@
         </div>
       </div>
     </section>
-    <img class="position-fixed" style="bottom: 0px; left: 0;z-index: 0;" src="https://static.talentsprint.com/lms_maple/images/bottomLeft.svg" alt="">
+    <img class="position-fixed" style="bottom: 0px; left: 0;z-index: 0;" src="https://staging.quince02.talentsprint.com/static/imagesimages/bottomLeft.svg" alt="">
 
-    <script src="peerProfile.js"></script>
+    <!-- <script src="peerProfile_new.js"></script> -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const courseElement = document.querySelector('.pgn__card-wrapper-image-cap');
+          if (courseElement && courseElement.hasAttribute('href')) {
+              const courseName = courseElement.getAttribute('href');
+              console.log(courseName);
+          } else {
+              console.log('Element not found');
+          }
+      });
+    </script>
   </body>
 </html>
