@@ -1882,11 +1882,11 @@ def cyberstruct_sso(request):
 def extras_sync_moodle_attendance(request):
     usage_id = request.POST.get("unit_id")
     user_email = request.POST.get("user_email")
-    isAttended = request.POST.get("isAttended")
+    attendance = request.POST.get("isAttended")
     user = User.objects.get(email = user_email)
     block_key = UsageKey.from_string(usage_id)
-    log.info(type(isAttended))
-    if not isAttended:
+
+    if attendance == "Absent":
         return JsonResponse({"Status" : "Success", "Response" : "User marked absent to the class"})
     handlers.scorable_block_completion(
             sender="",
