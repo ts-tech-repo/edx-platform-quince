@@ -491,6 +491,7 @@ class VideoBlock(
             'track': track_url,
             'transcript_download_format': transcript_download_format,
             'transcript_download_formats_list': self.fields['transcript_download_format'].values,  # lint-amnesty, pylint: disable=unsubscriptable-object
+            'showTranscriptDownload' : (loggedin_user.opt_attrs[ATTR_KEY_USER_ROLE] == getattr(self, 'transcript_download_role', True)) or getattr(self, 'transcript_download_role', True) == "*",
         }
         if self.is_public_sharing_enabled():
             public_video_url = self.get_public_video_url()
