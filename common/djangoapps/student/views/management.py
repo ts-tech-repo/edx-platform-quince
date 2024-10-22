@@ -1884,7 +1884,7 @@ def cyberstruct_sso(request):
 def extras_sync_moodle_attendance(request):
     usage_id = request.POST.get("unit_id")
     user_email = request.POST.get("user_email")
-    attendance = request.POST.get("isAttended")
+    attendance = request.POST.get("attendance")
     user = User.objects.get(email = user_email)
     block_key = UsageKey.from_string(usage_id)
 
