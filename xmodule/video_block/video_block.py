@@ -304,6 +304,7 @@ class VideoBlock(
         cdn_url = getattr(settings, 'VIDEO_CDN_URL', {}).get(user_location, default_cdn_url)
 
         log.info(self.runtime.service(self, 'user').get_current_user())
+        log.info(self)
 
         # If we have an edx_video_id, we prefer its values over what we store
         # internally for download links (source, html5_sources) and the youtube
