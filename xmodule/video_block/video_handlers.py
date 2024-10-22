@@ -80,7 +80,7 @@ class VideoStudentViewHandlers:
             'bumper_last_view_date': to_boolean,
             'bumper_do_not_show_again': to_boolean,
         }
-
+        
         if dispatch == 'save_user_state':
             for key in data:
                 if key in accepted_keys:
@@ -321,7 +321,7 @@ class VideoStudentViewHandlers:
 
             except Exception as err:
                 return Response(status=404)
-
+        
         is_bumper = request.GET.get('is_bumper', False)
         transcripts = self.get_transcripts_info(is_bumper)
 
@@ -407,6 +407,7 @@ class VideoStudentViewHandlers:
         without rendering the full student_view HTML. This is similar to student_view_state,
         but that one cannot contain user-specific info.
         """
+        log.info("Here")
         view_state = self.student_view_data()
         view_state.update({
             "saved_video_position": self.saved_video_position.total_seconds(),

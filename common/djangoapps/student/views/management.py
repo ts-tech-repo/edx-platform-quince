@@ -115,6 +115,7 @@ from django.http import JsonResponse
 from common.djangoapps.student.models import CourseEnrollment, SocialLink
 from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
+from jwcrypto import jwt, jwk
 
 log = logging.getLogger("edx.student")
 
@@ -1127,9 +1128,9 @@ def _get_zoom_auth_token():
     cache.set(session_key, "{0} {1}".format(r_data["token_type"], r_data["access_token"]), 3300)
     return cache.get(session_key, "")
 
-def get_zoom_link(meeting_id, webinar_id, data):
+def get_zoom_link(meeting_id, webinar_id, data, useLens = False):
     user = User.objects.get(email = data["email"]) 
-    session_key = str(meeting_id) + "-" + str(user.id)
+    session_key = str(meeting_id) + "-" + str(user.id) + "Lens" if useLens else "Zoom"
     MEMCACHE_TIMEOUT = 28800
     join_url = cache.get(session_key, None)
     space_unicode = u'\u0020'
@@ -1142,7 +1143,7 @@ def get_zoom_link(meeting_id, webinar_id, data):
         zoom_data = {"email" : data["email"]}
         if meeting_id != "0":
             delimiter = _get_delimiter(int(meeting_id[-1]))
-            zoom_url = "https://api.zoom.us/v2/meetings/" + meeting_id +"/registrants"
+            zoom_url = "https://api.zoom.us/v2/meetings/" if not useLens else "https://meeting-service.wiseapp.live/proxy/v2/meetings/" + meeting_id +"/registrants"
         elif webinar_id != "0":
             delimiter = _get_delimiter(int(webinar_id[-1]))
             zoom_url = "https://api.zoom.us/v2/webinars/" + webinar_id +"/registrants"
@@ -1174,7 +1175,10 @@ def get_zoom_link(meeting_id, webinar_id, data):
         zoom_data = {"email" : data["email"], "first_name" : first_name, "last_name" : last_name}
         log.error(zoom_data)
         
-        zoom_token = _get_zoom_auth_token()
+        
+        zoom_token = _get_zoom_auth_token() if not useLens else "Basic {0}".format(str(base64.b64encode("ts_c83ae02c3213115a:f7cdfc2017ebdd4c19a45702db789632".encode("UTF-8")).decode()))
+        log.info(zoom_token)
+        log.info(zoom_url)
         if zoom_token:
             headers = {"Authorization" : zoom_token, "Content-Type" : "application/json"}
             response = requests.post(zoom_url, data=json.dumps(zoom_data), headers=headers)
@@ -1195,7 +1199,7 @@ def extras_join_zoom(request, course_id):
 		log.error(r_data)
 		meeting_id = r_data["meeting_id"]
 		data = {"email" : request.user.email, "username" : request.user.username, "first_name" : request.user.first_name, "last_name" : request.user.last_name}
-		zoom_data = get_zoom_link(meeting_id, "0", data)
+		zoom_data = get_zoom_link(meeting_id, "0", data, False)
 		log.error(zoom_data)
 		return redirect(zoom_data["join_url"])
 	except Exception as err:
@@ -1209,7 +1213,7 @@ def join_zoom_meeting(request):
 		meeting_id = request.GET["meeting_id"]
 		data = {"email" : request.user.email, "username" : request.user.username, "first_name" : request.user.first_name, "last_name" : request.user.last_name} 
 
-		r_data = get_zoom_link(meeting_id, "0", data)
+		r_data = get_zoom_link(meeting_id, "0", data, False)
 		log.error(r_data)
 		return redirect(r_data["join_url"])
 	except Exception as err:
@@ -1323,7 +1327,8 @@ def extras_reset_password_link(request):
             return HttpResponse("")
     uid = int_to_base36(user.id)
     token = PasswordResetTokenGenerator().make_token(user)
-    url = "https://{0}/password_reset_confirm/{1}-{2}".format(domain, uid, token)
+    mfe_url_addon = "/authn" if should_redirect_to_authn_microfrontend() else ""
+    url = "https://{0}{1}/password_reset_confirm/{2}-{3}".format(domain, mfe_url_addon, uid, token)
     return HttpResponse(url)
 
 
@@ -1735,8 +1740,6 @@ def extras_update_lti_grades(request):
     course_id = request.POST.get("course_id", "")
     block_data = get_course_blocks(User.objects.get(id = user_id), modulestore().make_course_usage_key(CourseKey.from_string(str(course_id))), allow_start_dates_in_future=True, include_completion=True)
 
-    # try:
-        #Fetch Grades based on userid and block id
     try:
         studentmodule = StudentModule.objects.get(student_id = user_id, module_state_key = usage_id)
         
@@ -1760,7 +1763,7 @@ def extras_update_lti_grades(request):
             score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
         )
     except StudentModule.DoesNotExist:
-        studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}), max_grade= block_data.get_xblock_field(studentmodule.module_state_key, 'weight'))
+        studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}), max_grade= block_data.get_xblock_field(usage_id, 'weight'))
 
         log.info("Student module created {0}".format(studentmodule))
         
@@ -1785,13 +1788,9 @@ def extras_update_lti_grades(request):
             score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module
         )
 
-        
-    
-    # except Exception as err:
-    #     log.info({"Status" : "Error", "message" : "Something went wrong {0}".format(err)})
-    #     return JsonResponse({"Status" : "Error", "message" : "Something went wrong"})
 
     return JsonResponse({"Status" : "Success", "message" : "Grades updated successfully"})
+
 
 @csrf_exempt
 def extras_get_peer_profiles(request):
@@ -1828,7 +1827,59 @@ def extras_get_peer_profiles(request):
                 "has_profile_image": has_image, "profile_image_urls": profile_image_urls
             })
 
-        return JsonResponse(profiles, safe=False)
+        #return JsonResponse(profiles, safe=False)
+        return render(request, 'peer_profiles.html', {'profiles': profiles})
     except Exception as e:
         return JsonResponse({'Failed to fetch peer profiles details': str(e)}, status=500)
+
+@csrf_exempt
+@login_required
+def join_lens_meeting(request):
+    try:
+        meeting_id = request.GET["meeting_id"]
+        data = {"email" : request.user.email, "username" : request.user.username, "first_name" : request.user.first_name, "last_name" : request.user.last_name} 
+
+        r_data = get_zoom_link(meeting_id, "0", data, True)
+        log.error(r_data)
+        return redirect(r_data["join_url"])
+    except Exception as err:
+        log.error("ZOOM Error: " + str(err))
+        return HttpResponse("Please contact support")
+
+@csrf_exempt
+@login_required
+def extras_join_lens(request, course_id):
+	try:
+		course_key = CourseKey.from_string(course_id)
+		cdn_data = {"org" : [str(course_key.org)], "course_id" : course_id}
+		r = requests.post("https://cdn.exec.talentsprint.com/app/getMeetingRooms", headers = {'content-type': 'application/json'}, data = json.dumps(cdn_data))
+		r_data = json.loads(r.text)
+		log.error(r_data)
+		meeting_id = r_data["meeting_id"]
+		data = {"email" : request.user.email, "username" : request.user.username, "first_name" : request.user.first_name, "last_name" : request.user.last_name}
+		zoom_data = get_zoom_link(meeting_id, "0", data, True)
+		log.error(zoom_data)
+		return redirect(zoom_data["join_url"])
+	except Exception as err:
+		log.error("ZOOM Error: " + str(err))
+		return HttpResponse("Please contact support")
+
+@csrf_exempt
+@login_required
+def cyberstruct_sso(request):
+    with open("/openedx/edx-platform/idp/saml2_config/{0}/private_key.pem".format(configuration_helpers.get_value("course_org_filter")), "rb") as pemfile: 
+        key = jwk.JWK.from_pem(pemfile.read())
+
+    payload = { "name": request.user.first_name, "email": request.user.email, "iss": "https://cyberstruct.us.auth0.com/", "aud": "5v8UTnNByIQhTuLaGLaJiu5ZTegZCG5w", "iat": datetime.datetime.now(datetime.timezone.utc).timestamp(),  "exp": (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=100)).timestamp(), "sub": "oidc|talentsprint|{0}{1}".format(request.user.username, datetime.datetime.now(datetime.timezone.utc).timestamp()), }
+    log.info(datetime.datetime.now().timestamp())
+    jwt_header = {"type": "JWT", "alg": "RS256", "kid": key.thumbprint()}
+    jwt_object = jwt.JWT(header=jwt_header, claims=payload)
+    jwt_object.make_signed_token(key)
+    token = jwt_object.serialize()
+    return redirect(f"https://app.cyberstruct.io/api/login?organization=org_46qMyHyZqajmxIIZ&id_token={token}")
+
+@csrf_exempt
+@login_required
+def extras_sync_moodle_attendance(request):
+    usage_id = request.POST.get("unit_id")
 

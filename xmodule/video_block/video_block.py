@@ -389,6 +389,7 @@ class VideoBlock(
             completion_enabled = completion_service.completion_tracking_enabled()
         else:
             completion_enabled = False
+        
 
         # This is the setting that controls whether the autoadvance button will be visible, not whether the
         # video will autoadvance or not.
@@ -689,7 +690,6 @@ class VideoBlock(
             'translation'
         ).rstrip('/?')
         editable_fields['handout']['type'] = 'FileUploader'
-        log.info(editable_fields)
         return editable_fields
 
     @classmethod
@@ -877,6 +877,8 @@ class VideoBlock(
         video_id = metadata_fields['edx_video_id']
         youtube_id_1_0 = metadata_fields['youtube_id_1_0']
         transcript_url = metadata_fields['transcript_url']
+        session_id = metadata_fields["session_id"]
+        transcript_download_role = metadata_fields['transcript_download_role']
         def get_youtube_link(video_id):
             """
             Returns the fully-qualified YouTube URL for the given video identifier
@@ -933,7 +935,9 @@ class VideoBlock(
             'display_name': display_name,
             'video_url': video_url,
             'edx_video_id': video_id,
-            'transcript_url': transcript_url
+            'transcript_url': transcript_url,
+            'session_id' : session_id,
+            'transcript_download_role': transcript_download_role,
         }
 
         _context.update({'transcripts_basic_tab_metadata': metadata})
@@ -1149,6 +1153,7 @@ class VideoBlock(
         Returns a JSON representation of the student_view of this XModule.
         The contract of the JSON content is between the caller and the particular XModule.
         """
+        log.info("Here")
         context = context or {}
 
         # If the "only_on_web" field is set on this video, do not return the rest of the video's data

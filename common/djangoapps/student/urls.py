@@ -12,6 +12,8 @@ from . import views
 urlpatterns = [
 
     re_path(r'^extras/join_zoom_meeting$', views.join_zoom_meeting, name = "join_zoom_meeting"),
+    re_path(r'^extras/join_lens_meeting$', views.join_lens_meeting, name = "join_lens_meeting"),
+    re_path(r'^extras/join_lens$', views.extras_join_lens, name = "join_lens"),
     re_path(r'^extras/{}/join_zoom'.format(settings.COURSE_ID_PATTERN), views.extras_join_zoom, name = 'extras_join_zoom'),
 
     re_path(r'^extras/course_enroll_user/', csrf_exempt(views.extras_course_enroll_user), name = 'extras_course_enroll_user'),
@@ -21,7 +23,7 @@ urlpatterns = [
     re_path(r'^extras/get_almaConnect_link/$', views.extras_get_almaConnect_link, name = "extras_get_almaConnect_link"),
     re_path(r'^extras/user_details$', views.extras_userdetails, name = 'extras_userdetails'),
     re_path(r'^notebook_submissions', views.extras_notebook_submissions, name = 'extras_notebook_submissions'),
-
+    re_path(r'^cyberstruct_sso$', views.cyberstruct_sso, name = "cyberstruct_sso"),
     re_path(r'^extras/reset_password_link', views.extras_reset_password_link, name = "extras_reset_password_link"),
 
     re_path(r'^extras/start_mettl_test', views.extras_start_mettl_test, name = "extras_start_mettl_test"),
@@ -39,6 +41,7 @@ urlpatterns = [
     re_path(r'^extras/update_lti_grades', views.extras_update_lti_grades, name = "extras_update_lti_grades"),
     re_path(r'^extras/get_peer_profiles', views.extras_get_peer_profiles, name = "extras_get_peer_profiles"),
     re_path(r'^email_confirm/(?P<key>[^/]*)$', views.confirm_email_change, name='confirm_email_change'),
+    re_path(r'^extras/sync_moodle_attendance$', views.extras_sync_moodle_attendance, name='extras_sync_moodle_attendance'),
 
     re_path(r'^activate/(?P<key>[^/]*)$', views.activate_account, name="activate"),
 

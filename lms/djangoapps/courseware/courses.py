@@ -534,10 +534,7 @@ def get_course_assignment_date_blocks(course, user, request, num_return=None,
     if num_return is None in date increasing order.
     """
     date_blocks = []
-    user_local_timezone = user_timezone_locale_prefs(request)
-    user_timezone = user_local_timezone["user_timezone"] or str("UTC")
     for assignment in get_course_assignments(course.id, user, include_access=include_access):
-        log.info(assignment.past_due)
         date_block = CourseAssignmentDate(course, user)
         date_block.date = assignment.date
         date_block.contains_gated_content = assignment.contains_gated_content
@@ -612,9 +609,6 @@ def get_course_assignments(course_key, user, include_access=False, customAPI=Fal
         for subsection_key in block_data.get_children(section_key):
             due = block_data.get_xblock_field(subsection_key, 'due')
             graded = block_data.get_xblock_field(subsection_key, 'graded', False)
-            log.info(block_data.get_xblock_field(subsection_key, 'display_name'))
-            log.info(due)
-            log.info(graded)
             if (due and graded) or (customAPI and graded):
                 first_component_block_id = get_first_component_of_block(subsection_key, block_data)
                 contains_gated_content = include_access and block_data.get_xblock_field(

@@ -1658,6 +1658,7 @@ def render_xblock(request, usage_key_string, check_if_enrolled=True, disable_sta
 
             **optimization_flags,
         }
+        log.info(context)
         return render_to_response('courseware/courseware-chromeless.html', context)
 
 
