@@ -148,22 +148,24 @@
           {% for profile in profiles %}
           <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">
             <div class="profile-section d-flex align-items-center">
-              <img class="profile-img" id="profile_image" src="{{ profile.profile_image_urls.fullprofile_image }}"
-                alt="">
-              <p class="ml-4 font-weight-bold" id="name" style="font-size: 24px;">{{ profile.first_name }} {{
-                profile.last_name }}</p>
+              <img class="profile-img" id="profile_image" src="{{ profile.profile_image_urls.full }}" alt="">
+              <p class="ml-4 font-weight-bold" id="name" style="font-size: 24px;">
+                {{ profile.first_name }} {{ profile.last_name }}
+              </p>
             </div>
             <div class="ed-section mt-3">
               <p style="height:50px;color: rgba(0,0,0,0.5);font-size: 17px; overflow: hidden;display: -webkit-box;
 -webkit-line-clamp: 2;  
 -webkit-box-orient: vertical;" id="level_of_education">{{ profile.level_of_education }}</p>
-              DegreeBachelor of
               </p>
               <p id="bio" style="display: none;">{{ profile.bio }}</p>
               <div id="social-links" style="display: none;">
                 {% for link in profile.social_links %}
-                <div>{{ link.platform }} : <a id="{{ link.platform }}" href="{{ link.url }}" target="_blank">{{ link.url
-                    }}</a></div>
+                <div>{{ link.platform }} :
+                  <a id="{{ link.platform }}" href="{{ link.url }}" target="_blank">
+                    {{ link.url }}
+                  </a>
+                </div>
                 {% endfor %}
               </div>
             </div>
