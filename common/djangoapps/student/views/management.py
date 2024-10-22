@@ -1890,6 +1890,7 @@ def extras_sync_moodle_attendance(request):
 
     if attendance == "Absent":
         return JsonResponse({"Status" : "Success", "Response" : "User marked absent to the class"})
+    
     BlockCompletion.objects.submit_completion(
             user=user,
             block_key=block_key,
