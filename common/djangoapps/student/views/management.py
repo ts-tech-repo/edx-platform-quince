@@ -1887,7 +1887,7 @@ def extras_sync_moodle_attendance(request):
     attendance = request.POST.get("attendance")
     user = User.objects.get(email = user_email)
     block_key = UsageKey.from_string(usage_id)
-
+    log.info(attendance)
     if attendance == "Absent":
         return JsonResponse({"Status" : "Success", "Response" : "User marked absent to the class"})
     
