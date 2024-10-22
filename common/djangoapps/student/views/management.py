@@ -1885,7 +1885,7 @@ def extras_sync_moodle_attendance(request):
     isAttended = request.POST.get("isAttended")
     user = User.objects.get(email = user_email)
     block_key = UsageKey.from_string(usage_id)
-    log.info(isAttended)
+    log.info(str(isAttended))
     if not isAttended:
         return JsonResponse({"Status" : "Success", "Response" : "User marked absent to the class"})
     handlers.scorable_block_completion(
