@@ -1828,7 +1828,8 @@ def extras_get_peer_profiles(request):
                 "has_profile_image": has_image, "profile_image_urls": profile_image_urls
             })
 
-        return JsonResponse(profiles, safe=False)
+        #return JsonResponse(profiles, safe=False)
+        return render(request, 'peer_profiles.html', {'profiles': profiles})
     except Exception as e:
         return JsonResponse({'Failed to fetch peer profiles details': str(e)}, status=500)
 
