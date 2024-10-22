@@ -116,6 +116,8 @@ from common.djangoapps.student.models import CourseEnrollment, SocialLink
 from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
 from jwcrypto import jwt, jwk
+from completion.models import BlockCompletion
+
 
 log = logging.getLogger("edx.student")
 
@@ -1888,12 +1890,11 @@ def extras_sync_moodle_attendance(request):
 
     if attendance == "Absent":
         return JsonResponse({"Status" : "Success", "Response" : "User marked absent to the class"})
-    handlers.scorable_block_completion(
-            sender="",
-            user_id=user.id,
-            course_id=block_key.course_key,
-            usage_id=usage_id,
-            modified=datetime.datetime.now().replace(tzinfo=pytz.UTC)
+    BlockCompletion.objects.submit_completion(
+            user=user,
+            block_key=block_key,
+            completion=1,
         )
+
     return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 
