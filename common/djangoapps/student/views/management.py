@@ -1880,7 +1880,6 @@ def cyberstruct_sso(request):
     return redirect(f"https://app.cyberstruct.io/api/login?organization=org_46qMyHyZqajmxIIZ&id_token={token}")
 
 @csrf_exempt
-@login_required
 def extras_sync_moodle_attendance(request):
     usage_id = request.POST.get("unit_id")
     user_email = request.POST.get("user_email")
