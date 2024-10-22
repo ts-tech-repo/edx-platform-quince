@@ -142,4 +142,5 @@ class DjangoXBlockUserService(UserService):
             xblock_user.opt_attrs[ATTR_KEY_IS_AUTHENTICATED] = False
             xblock_user.opt_attrs[ATTR_KEY_REQUEST_COUNTRY_CODE] = self._request_country_code
 
+        log.info(xblock_user)
         return xblock_user
