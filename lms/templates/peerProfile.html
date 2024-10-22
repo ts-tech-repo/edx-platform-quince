@@ -149,17 +149,24 @@
           <div class="row gap" id="row"></div>
         </div>
       </div>
-      <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">        
+      {% for profile in profiles %}
+      <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">
         <div class="profile-section d-flex align-items-center">
-            <img class="profile-img" src="https://staging.quince02.talentsprint.com/static/images/profiles/default_500.4215dbe8010f.png" alt="">
-            <p class="ml-4 font-weight-bold" style="font-size: 24px;">prasanna 2308972</p>
+            <img class="profile-img" src="https://staging.quince02.talentsprint.com/static/images/profiles/default_500.4215dbe8010f.png" alt="{{ profile.username }}">
+            <p class="ml-4 font-weight-bold" style="font-size: 24px;">{{ profile.first_name }} {{ profile.last_name }}</p>
         </div>
         <div class="ed-section mt-3">
             <p style="height:50px;color: rgba(0,0,0,0.5);font-size: 17px; overflow: hidden;display: -webkit-box;
 -webkit-line-clamp: 2; /* number of lines to show */
--webkit-box-orient: vertical;">description</p>
+-webkit-box-orient: vertical;">{{ profile.level_of_education}}</p>
         </div>
+        <div>{{ profile.bio }}</div>
+        {% for link in profile.social_links %}
+            <div>{{ link.platform }} : <a href="{{ link.url }}" target="_blank">{{ link.url }}</a></div>
+        {% endfor %}
+
         <img src="https://staging.quince02.talentsprint.com/static/imagesimages/arrow.png" style="height: 35px; width: 35px">
+        {% endfor %}
 </div>
       <div
         class="modal"
