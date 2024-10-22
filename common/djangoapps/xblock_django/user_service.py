@@ -24,7 +24,8 @@ from .constants import (
     ATTR_KEY_USER_PREFERENCES,
     ATTR_KEY_USER_ROLE,
 )
-
+import logging
+log = logging.getLogger(__name__)
 
 USER_PREFERENCES_WHITE_LIST = ['pref-lang', 'time_zone']
 
