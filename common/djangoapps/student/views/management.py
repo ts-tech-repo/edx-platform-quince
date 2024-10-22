@@ -116,6 +116,7 @@ from common.djangoapps.student.models import CourseEnrollment, SocialLink
 from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
 from jwcrypto import jwt, jwk
+from opaque_keys.edx.keys import LearningContextKey, UsageKey
 
 log = logging.getLogger("edx.student")
 
@@ -1882,4 +1883,18 @@ def cyberstruct_sso(request):
 @login_required
 def extras_sync_moodle_attendance(request):
     usage_id = request.POST.get("unit_id")
+    user_email = request.POST.get("user_email")
+    isAttended = request.POST.get("isAttended")
+    user = User.objects.get(email = user_email)
+    block_key = UsageKey.from_string(usage_id)
+    if not isAttended:
+        return JsonResponse({"Status" : "Success", "Response" : "User marked absent to the class"})
+    handlers.scorable_block_completion(
+            sender="",
+            user_id=user.id,
+            course_id=block_key.course_key,
+            usage_id=usage_id,
+            modified=datetime.datetime.now().replace(tzinfo=pytz.UTC)
+        )
+    return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 
