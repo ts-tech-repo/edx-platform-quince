@@ -976,6 +976,15 @@ def attendance(request, course_id):
 
 @ensure_csrf_cookie
 def course_log(request, course_id):
-    
-    context = {"section_data" : _section_course_log(modulestore().get_course(course_id), {}, True)}
+    try:
+        course_key = CourseKey.from_string(course_id)
+    except InvalidKeyError:
+        log.error("Unable to find course with course key %s while loading the Instructor Dashboard.", course_id)
+        return HttpResponseServerError()
+
+    if course_key.deprecated:
+        raise Http404
+
+    course = get_course_by_id(course_key, depth=None)
+    context = {"section_data" : _section_course_log(course, {}, True)}
     return render_to_response("instructor/instructor_dashboard_2/attendance.html", context)
