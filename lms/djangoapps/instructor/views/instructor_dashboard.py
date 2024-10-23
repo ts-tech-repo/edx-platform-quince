@@ -971,6 +971,7 @@ def get_attendance(course_id, category):
 
 @ensure_csrf_cookie
 def load_tab(request, course_id, loadTab):
+    log.info(course_id)
     try:
         course_key = CourseKey.from_string(course_id)
     except InvalidKeyError:
