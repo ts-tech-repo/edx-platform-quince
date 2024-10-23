@@ -33,10 +33,15 @@ define(["jquery", "backbone", "underscore"], function($, Backbone) {
                         }else {
                             ui.item.value = "https://" + ui.item.domain + "/content/" + Crypto.MD5(ui.item.value + "dingdong") + "/" + ui.item.value;
                         }
-                        $(this).val(ui.item.value);
-                        $(this).trigger("input");
+                        $(this).val(ui.item.value).trigger('change');
+                        return false;
+                    },
+                    focus: function(event, ui) {
                         event.preventDefault();
                     }
+                });
+                $('.list-input.settings-list li:nth-child(5) .wrapper-comp-setting input').on('input', function() {
+                    $(this).data('manuallyEdited', true);
                 });
             };
 
