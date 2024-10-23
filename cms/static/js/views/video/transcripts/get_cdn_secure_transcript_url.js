@@ -1,7 +1,7 @@
 define(["jquery", "backbone", "underscore"], function($, Backbone) {
     return (function() {
             var cdnLinks_autoComplete_srt = function() {
-                $('.list-input.settings-list li:nth-child(3) .wrapper-comp-setting input').autocomplete({
+                $('.list-input.settings-list li:nth-child(5) .wrapper-comp-setting input').autocomplete({
                     source: function(request, response) {
                         api_url = window.location.hostname.includes("learn-cmu.talentsprint.com") ? "https://cdn-intl.talentsprint.com/findFilePaths" : "https://cdn.exec.talentsprint.com/app/findFilePaths";
                         $.ajax({
@@ -33,10 +33,15 @@ define(["jquery", "backbone", "underscore"], function($, Backbone) {
                         }else {
                             ui.item.value = "https://" + ui.item.domain + "/content/" + Crypto.MD5(ui.item.value + "dingdong") + "/" + ui.item.value;
                         }
-                        $(this).val(ui.item.value);
-                        $(this).trigger("input");
+                        $(this).val(ui.item.value).trigger('change');
+                        return false;
+                    },
+                    focus: function(event, ui) {
                         event.preventDefault();
                     }
+                });
+                $('.list-input.settings-list li:nth-child(5) .wrapper-comp-setting input').on('input', function() {
+                    $(this).data('manuallyEdited', true);
                 });
             };
 
