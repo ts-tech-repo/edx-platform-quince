@@ -265,6 +265,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
         'xqa_server': settings.FEATURES.get('XQA_SERVER', "http://your_xqa_server.com"),
     }
 
+    log.info(sections)
     context_from_plugins = get_plugins_view_context(
         ProjectType.LMS,
         INSTRUCTOR_DASHBOARD_PLUGIN_VIEW_NAME,
