@@ -747,7 +747,8 @@ def _section_analytics(course, access, loadOnTabClick):
     section_data = {
         'section_key': 'instructor_analytics',
         'section_display_name': _('Analytics'),
-        'access': access
+        'access': access,
+        "loadOnTabClick" : loadOnTabClick
         # 'course_id': str(course.id),
     }
     if loadOnTabClick:
@@ -816,7 +817,8 @@ def _section_course_log(course, access, loadOnTabClick):
         'section_key': 'course_log',
         'section_display_name': _('Course Log'),
         'access': access,
-        'course_id': str(course.id)
+        'course_id': str(course.id),
+        "loadOnTabClick" : loadOnTabClick
         # 'course_logs' : get_course_unit_log(str(course.id))
     }
     if loadOnTabClick:
@@ -869,7 +871,8 @@ def _section_gradebook(course, access, course_id, loadOnTabClick):
         'section_key': 'gradebook',
         'section_display_name': _('Gradebook'),
         'access': access,
-        'course_id': str(course.id)
+        'course_id': str(course.id),
+        "loadOnTabClick" : loadOnTabClick
         # 'grade_log' : get_gradebook(course_id)
     }
     if loadOnTabClick:
@@ -919,7 +922,8 @@ def _section_attendance(course, access, course_id, loadOnTabClick):
         'section_key': 'attendance',
         'section_display_name': _('Attendance'),
         'access': access,
-        'course_id': str(course.id)
+        'course_id': str(course.id),
+        "loadOnTabClick" : loadOnTabClick
         # 'attendance_link' : get_attendance(str(course.id), "attendance_view")
     }
     if loadOnTabClick:
