@@ -973,4 +973,4 @@ def get_attendance(course_id, category):
 def attendance(request, course_id):
     attendance_link = get_attendance(course_id, "attendance_view")
     context = {"section_data" : attendance_link}
-    return render_to_response(attendance_link, context)
+    return render_to_response("instructor/instructor_dashboard_2/attendance.html", context)
