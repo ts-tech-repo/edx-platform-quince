@@ -981,7 +981,7 @@ def load_tab(request, course_id, loadTab):
     if course_key.deprecated:
         raise Http404
     
-    course = get_course_by_id(course_id, depth=None)
+    course = get_course_by_id(course_key, depth=None)
     if loadTab == "attendance":
         context = {"section_data" : _section_attendance("", {}, course_id, True)}
     elif loadTab == "course_log":
