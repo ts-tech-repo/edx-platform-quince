@@ -137,7 +137,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
 
     sections = [
             _section_enrolled_students(course, access),
-            _section_gradebook(course, access, course_id, False),
+            # _section_gradebook(course, access, course_id, False),
             _section_attendance(course, access, course_id, False),
             _section_student_admin(course, access)
     ]
