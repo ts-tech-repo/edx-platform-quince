@@ -544,17 +544,10 @@ urlpatterns += [
         name='instructor_dashboard',
     ),
     re_path(
-        r'^courses/{}/instructor/attendance$'.format(
+        r'^courses/{}/instructor/(?P<loadTab>.*?)$'.format(
             settings.COURSE_ID_PATTERN,
         ),
-        instructor_dashboard_views.attendance,
-        name='instructor_dashboard',
-    ),
-    re_path(
-        r'^courses/{}/instructor/course_log$'.format(
-            settings.COURSE_ID_PATTERN,
-        ),
-        instructor_dashboard_views.course_log,
+        instructor_dashboard_views.load_tab,
         name='instructor_dashboard',
     ),
     re_path(

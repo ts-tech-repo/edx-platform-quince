@@ -970,12 +970,7 @@ def get_attendance(course_id, category):
         return ""
 
 @ensure_csrf_cookie
-def attendance(request, course_id):
-    context = {"section_data" : _section_attendance("", {}, course_id, True)}
-    return render_to_response("instructor/instructor_dashboard_2/attendance.html", context)
-
-@ensure_csrf_cookie
-def course_log(request, course_id):
+def load_tab(request, course_id, loadTab):
     try:
         course_key = CourseKey.from_string(course_id)
     except InvalidKeyError:
@@ -984,7 +979,10 @@ def course_log(request, course_id):
 
     if course_key.deprecated:
         raise Http404
-
-    course = get_course_by_id(course_key, depth=None)
-    context = {"section_data" : _section_course_log(course, {}, True)}
-    return render_to_response("instructor/instructor_dashboard_2/course_log.html", context)
+    
+    course = get_course_by_id(course_id, depth=None)
+    if loadTab == "attendance":
+        context = {"section_data" : _section_attendance("", {}, course_id, True)}
+    elif loadTab == "course_log":
+        context = {"section_data" : _section_course_log(course, {}, True)}
+    return render_to_response("instructor/instructor_dashboard_2/{0}.html".format(loadTab), context)
