@@ -923,12 +923,12 @@ def _section_attendance(course, access, course_id, loadOnTabClick):
         'section_key': 'attendance',
         'section_display_name': _('Attendance'),
         'access': access,
-        'course_id': str(course.id),
+        'course_id': course_id,
         "loadOnTabClick" : loadOnTabClick
         # 'attendance_link' : get_attendance(str(course.id), "attendance_view")
     }
     if loadOnTabClick:
-        section_data["attendance_link"] = get_attendance(str(course.id), "attendance_view")
+        section_data["attendance_link"] = get_attendance(course_id, "attendance_view")
     return section_data
 
 
@@ -971,6 +971,5 @@ def get_attendance(course_id, category):
 
 @ensure_csrf_cookie
 def attendance(request, course_id):
-    attendance_link = get_attendance(course_id, "attendance_view")
-    context = {"section_data" : attendance_link}
+    context = {"section_data" : _section_attendance("", {}, course_id, True)}
     return render_to_response("instructor/instructor_dashboard_2/attendance.html", context)
