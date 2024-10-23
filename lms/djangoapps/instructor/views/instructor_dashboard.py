@@ -456,6 +456,7 @@ def _section_course_info(course, access, loadTabOnClick):
         'start_date': course.start,
         'end_date': course.end,
         'num_sections': len(course.children),
+        'loadTabOnClick' : loadTabOnClick,
         'list_instructor_tasks_url': reverse('list_instructor_tasks', kwargs={'course_id': str(course_key)}),
     }
 
