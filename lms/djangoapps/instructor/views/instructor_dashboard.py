@@ -829,8 +829,8 @@ def _section_enrolled_students(course, access):
         'section_key': "student_info",
         'section_display_name': _("Student Info"),
         'access': access,
-        'course_id': str(course.id)
-        # 'students_data' : enrolled_students_features(course_key, query_features, True)
+        'course_id': str(course.id),
+        'students_data' : enrolled_students_features(course_key, query_features, True)
     }
     if site_name == "EMIITK":
         section_data["students_data"] = get_students_data_from_cdn(section_data)
