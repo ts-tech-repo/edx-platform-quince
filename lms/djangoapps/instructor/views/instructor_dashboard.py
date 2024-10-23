@@ -747,8 +747,8 @@ def _section_analytics(course, access):
     section_data = {
         'section_key': 'instructor_analytics',
         'section_display_name': _('Analytics'),
-        'access': access,
-        'course_id': str(course.id),
+        'access': access
+        # 'course_id': str(course.id),
     }
     return section_data
 
@@ -814,8 +814,8 @@ def _section_course_log(course, access):
         'section_key': 'course_log',
         'section_display_name': _('Course Log'),
         'access': access,
-        'course_id': str(course.id),
-        'course_logs' : get_course_unit_log(str(course.id))
+        'course_id': str(course.id)
+        # 'course_logs' : get_course_unit_log(str(course.id))
     }
     return section_data
 
@@ -829,8 +829,8 @@ def _section_enrolled_students(course, access):
         'section_key': "student_info",
         'section_display_name': _("Student Info"),
         'access': access,
-        'course_id': str(course.id),
-        'students_data' : enrolled_students_features(course_key, query_features, True)
+        'course_id': str(course.id)
+        # 'students_data' : enrolled_students_features(course_key, query_features, True)
     }
     if site_name == "EMIITK":
         section_data["students_data"] = get_students_data_from_cdn(section_data)
@@ -865,8 +865,8 @@ def _section_gradebook(course, access, course_id):
         'section_key': 'gradebook',
         'section_display_name': _('Gradebook'),
         'access': access,
-        'course_id': str(course.id),
-        'grade_log' : get_gradebook(course_id)
+        'course_id': str(course.id)
+        # 'grade_log' : get_gradebook(course_id)
     }
     return section_data
 
@@ -913,8 +913,8 @@ def _section_attendance(course, access, course_id):
         'section_key': 'attendance',
         'section_display_name': _('Attendance'),
         'access': access,
-        'course_id': str(course.id),
-        'attendance_link' : get_attendance(str(course.id), "attendance_view")
+        'course_id': str(course.id)
+        # 'attendance_link' : get_attendance(str(course.id), "attendance_view")
     }
     return section_data
 
