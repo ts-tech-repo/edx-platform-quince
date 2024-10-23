@@ -968,3 +968,9 @@ def get_attendance(course_id, category):
     except Exception as e:
         log.info(e)
         return ""
+
+@ensure_csrf_cookie
+def attendance(request, course_id):
+    attendance_link = get_attendance(course_id, "attendance_view")
+    context = {"section_data" : attendance_link}
+    return render_to_response(attendance_link, context)
