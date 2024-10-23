@@ -551,6 +551,13 @@ urlpatterns += [
         name='instructor_dashboard',
     ),
     re_path(
+        r'^courses/{}/instructor/course_log$'.format(
+            settings.COURSE_ID_PATTERN,
+        ),
+        instructor_dashboard_views.course_log,
+        name='instructor_dashboard',
+    ),
+    re_path(
         r'^courses/{}/set_course_mode_price$'.format(
             settings.COURSE_ID_PATTERN,
         ),

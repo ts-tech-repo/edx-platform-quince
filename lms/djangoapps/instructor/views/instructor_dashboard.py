@@ -973,3 +973,9 @@ def get_attendance(course_id, category):
 def attendance(request, course_id):
     context = {"section_data" : _section_attendance("", {}, course_id, True)}
     return render_to_response("instructor/instructor_dashboard_2/attendance.html", context)
+
+@ensure_csrf_cookie
+def course_log(request, course_id):
+    
+    context = {"section_data" : _section_course_log(modulestore().get_course(course_id), {}, True)}
+    return render_to_response("instructor/instructor_dashboard_2/attendance.html", context)
