@@ -144,13 +144,6 @@ class VideoFields:
             for role_name in REGISTERED_ACCESS_ROLES.keys()
         ], key=lambda item: item.get('display_name'))
 
-    transcript_download_role = String(
-        display_name=_("Transcript Download Role"),
-        help=_('Choose a role to be able to download transcripts.'),
-        default="*",
-        values=_get_registered_roles(),
-        scope=Scope.settings,
-    )
 
     show_captions = Boolean(
         help=_("Specify whether the transcripts appear with the video by default."),
@@ -229,6 +222,13 @@ class VideoFields:
         scope=Scope.settings,
         default="",
     )
+    transcript_download_role = String(
+        display_name=_("Transcript Download Role"),
+        help=_('Choose a role to be able to download transcripts.'),
+        default="*",
+        values=_get_registered_roles(),
+        scope=Scope.settings,
+    )
     bumper_last_view_date = DateTime(
         display_name=_("Date of the last view of the bumper"),
         scope=Scope.preferences,
@@ -252,3 +252,5 @@ class VideoFields:
         scope=Scope.settings,
         default="",
     )
+
+    

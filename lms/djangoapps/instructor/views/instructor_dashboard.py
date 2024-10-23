@@ -137,8 +137,8 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
 
     sections = [
             _section_enrolled_students(course, access),
-            #_section_gradebook(course, access, course_id),
-            _section_attendance(course, access, course_id),
+            # _section_gradebook(course, access, course_id, False),
+            _section_attendance(course, access, course_id, False),
             _section_student_admin(course, access)
     ]
     if access['staff'] and "talentsprint.com" in request.user.email:
@@ -168,7 +168,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
             link_start=link_start, link_end=HTML("</a>"), analytics_dashboard_name=settings.ANALYTICS_DASHBOARD_NAME)
 
         # Temporarily show the "Analytics" section until we have a better way of linking to Insights
-        sections.append(_section_analytics(course, access))
+        sections.append(_section_analytics(course, access, False))
 
     # Check if there is corresponding entry in the CourseMode Table related to the Instructor Dashboard course
     course_mode_has_price = False  # lint-amnesty, pylint: disable=unused-variable
@@ -248,7 +248,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
 
     certificate_invalidations = CertificateInvalidation.get_certificate_invalidations(course_key)
 
-    sections.append(_section_course_log(course, access))
+    sections.append(_section_course_log(course, access, False))
 
     context = {
         'course': course,
@@ -265,6 +265,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
         'xqa_server': settings.FEATURES.get('XQA_SERVER', "http://your_xqa_server.com"),
     }
 
+    log.info(sections)
     context_from_plugins = get_plugins_view_context(
         ProjectType.LMS,
         INSTRUCTOR_DASHBOARD_PLUGIN_VIEW_NAME,
@@ -742,14 +743,17 @@ def _get_dashboard_link(course_key):
     return link
 
 
-def _section_analytics(course, access):
+def _section_analytics(course, access, loadOnTabClick):
     """ Provide data for the corresponding dashboard section """
     section_data = {
         'section_key': 'instructor_analytics',
         'section_display_name': _('Analytics'),
         'access': access,
-        'course_id': str(course.id),
+        "loadOnTabClick" : loadOnTabClick
+        # 'course_id': str(course.id),
     }
+    if loadOnTabClick:
+        section_data["course_id"] = str(course.id)
     return section_data
 
 
@@ -809,14 +813,17 @@ def is_ecommerce_course(course_key):
     sku_count = len([mode.sku for mode in CourseMode.modes_for_course(course_key) if mode.sku])
     return sku_count > 0
 
-def _section_course_log(course, access):
+def _section_course_log(course, access, loadOnTabClick):
     section_data = {
         'section_key': 'course_log',
         'section_display_name': _('Course Log'),
         'access': access,
         'course_id': str(course.id),
-        'course_logs' : get_course_unit_log(str(course.id))
+        "loadOnTabClick" : loadOnTabClick
+        # 'course_logs' : get_course_unit_log(str(course.id))
     }
+    if loadOnTabClick:
+        section_data["course_logs"] = get_course_unit_log(str(course.id))
     return section_data
 
 
@@ -860,14 +867,17 @@ def get_students_data_from_cdn(section_data):
 
 
 # For student gradebook
-def _section_gradebook(course, access, course_id):
+def _section_gradebook(course, access, course_id, loadOnTabClick):
     section_data = {
         'section_key': 'gradebook',
         'section_display_name': _('Gradebook'),
         'access': access,
         'course_id': str(course.id),
-        'grade_log' : get_gradebook(course_id)
+        "loadOnTabClick" : loadOnTabClick
+        # 'grade_log' : get_gradebook(course_id)
     }
+    if loadOnTabClick:
+        section_data["grade_log"] = get_gradebook(course_id)
     return section_data
 
 
@@ -908,14 +918,17 @@ def get_gradebook(course_id):
 
 
 # For student attendace
-def _section_attendance(course, access, course_id):
+def _section_attendance(course, access, course_id, loadOnTabClick):
     section_data = {
         'section_key': 'attendance',
         'section_display_name': _('Attendance'),
         'access': access,
-        'course_id': str(course.id),
-        'attendance_link' : get_attendance(str(course.id), "attendance_view")
+        'course_id': course_id,
+        "loadOnTabClick" : loadOnTabClick
+        # 'attendance_link' : get_attendance(str(course.id), "attendance_view")
     }
+    if loadOnTabClick:
+        section_data["attendance_link"] = get_attendance(course_id, "attendance_view")
     return section_data
 
 
@@ -955,3 +968,8 @@ def get_attendance(course_id, category):
     except Exception as e:
         log.info(e)
         return ""
+
+@ensure_csrf_cookie
+def attendance(request, course_id):
+    context = {"section_data" : _section_attendance("", {}, course_id, True)}
+    return render_to_response("instructor/instructor_dashboard_2/attendance.html", context)

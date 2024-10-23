@@ -59,7 +59,7 @@ from edx_rest_framework_extensions.auth.session.authentication import SessionAut
 from eventtracking import tracker
 # Note that this lives in LMS, so this dependency should be refactored.
 from opaque_keys import InvalidKeyError
-from opaque_keys.edx.keys import CourseKey
+from opaque_keys.edx.keys import CourseKey, UsageKey
 from pytz import UTC
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -116,6 +116,8 @@ from common.djangoapps.student.models import CourseEnrollment, SocialLink
 from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
 from jwcrypto import jwt, jwk
+from completion.models import BlockCompletion
+
 
 log = logging.getLogger("edx.student")
 
@@ -1828,7 +1830,7 @@ def extras_get_peer_profiles(request):
             })
 
         #return JsonResponse(profiles, safe=False)
-        return render(request, 'peer_profiles.html', {'profiles': profiles})
+        return render(request, 'peerProfile.html', {'profiles': profiles})
     except Exception as e:
         return JsonResponse({'Failed to fetch peer profiles details': str(e)}, status=500)
 
@@ -1879,7 +1881,21 @@ def cyberstruct_sso(request):
     return redirect(f"https://app.cyberstruct.io/api/login?organization=org_46qMyHyZqajmxIIZ&id_token={token}")
 
 @csrf_exempt
-@login_required
 def extras_sync_moodle_attendance(request):
     usage_id = request.POST.get("unit_id")
+    user_email = request.POST.get("user_email")
+    attendance = request.POST.get("attendance")
+    user = User.objects.get(email = user_email)
+    block_key = UsageKey.from_string(usage_id)
+    log.info(attendance)
+    if attendance == "Absent":
+        return JsonResponse({"Status" : "Success", "Response" : "User marked absent to the class"})
+    
+    BlockCompletion.objects.submit_completion(
+            user=user,
+            block_key=block_key,
+            completion=1,
+        )
+
+    return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 

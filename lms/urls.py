@@ -544,6 +544,13 @@ urlpatterns += [
         name='instructor_dashboard',
     ),
     re_path(
+        r'^courses/{}/instructor/attendance$'.format(
+            settings.COURSE_ID_PATTERN,
+        ),
+        instructor_dashboard_views.attendance,
+        name='instructor_dashboard',
+    ),
+    re_path(
         r'^courses/{}/set_course_mode_price$'.format(
             settings.COURSE_ID_PATTERN,
         ),

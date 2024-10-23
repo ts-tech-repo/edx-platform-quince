@@ -120,10 +120,10 @@ from openedx.core.djangolib.js_utils import (
                 % endif
             </div>
         % endif
-        % if track:
+        % if track and showTranscriptDownload:
         <div class="wrapper-download-transcripts">
             <h4 class="hd hd-5">${_('Transcripts')}</h4>
-            % if transcript_download_format:
+            % if transcript_download_format :
             <ul class="list-download-transcripts">
                 % for item in transcript_download_formats_list:
                     <li class="transcript-option">
