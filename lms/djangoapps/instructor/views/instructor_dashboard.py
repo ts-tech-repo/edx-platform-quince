@@ -987,4 +987,4 @@ def course_log(request, course_id):
 
     course = get_course_by_id(course_key, depth=None)
     context = {"section_data" : _section_course_log(course, {}, True)}
-    return render_to_response("instructor/instructor_dashboard_2/attendance.html", context)
+    return render_to_response("instructor/instructor_dashboard_2/course_log.html", context)
