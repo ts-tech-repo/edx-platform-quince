@@ -27,6 +27,7 @@ define(["jquery", "backbone", "underscore"], function($, Backbone) {
                     minLength: 2,
                     scroll: true,
                     autoFocus: true,
+                    delay: 0,
                     select: function(event, ui) {
                     if(ui.item.domain == "cdn.exec.talentsprint.com" || ui.item.domain == "cdn.chn.talentsprint.com" || ui.item.domain == "cdn-intl.talentsprint.com") {
                             ui.item.value = "https://" + ui.item.domain + "/content/" + ui.item.value;
@@ -40,9 +41,13 @@ define(["jquery", "backbone", "underscore"], function($, Backbone) {
                         event.preventDefault();
                     }
                 });
-                $('.list-input.settings-list li:nth-child(5) .wrapper-comp-setting input').on('input', function() {
-                    $(this).data('manuallyEdited', true);
-                });
+                $('.list-input.settings-list li:nth-child(5) .wrapper-comp-setting input')
+                    .on('input', function() {
+                        $(this).data('manuallyEdited', true);
+                    })
+                    .on('keyup', function() {
+                        $(this).autocomplete("search");
+                    });
             };
 
         return {

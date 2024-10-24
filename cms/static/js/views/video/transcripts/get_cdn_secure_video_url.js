@@ -27,6 +27,10 @@ define(["jquery", "backbone", "underscore"], function($, Backbone) {
                     minLength: 2,
                     scroll: true,
                     autoFocus: true,
+                    delay: 0,
+                    open: function() {
+                        $(this).data('uiAutocomplete').menu.element.addClass('video-url-autocomplete');
+                    },
                     select: function(event, ui) {
                        	if(ui.item.domain == "cdn.exec.talentsprint.com" || ui.item.domain == "cdn.chn.talentsprint.com" || ui.item.domain == "cdn-intl.talentsprint.com") {
                             ui.item.value = "https://" + ui.item.domain + "/e_content/" + ui.item.value;
@@ -38,6 +42,11 @@ define(["jquery", "backbone", "underscore"], function($, Backbone) {
                         $(this).trigger("input");
                         event.preventDefault();
                     }
+                }).on('input', function() {
+                    var self = this;
+                    setTimeout(function() {
+                        $(self).autocomplete("search");
+                    }, 0);
                 });
             };
 
