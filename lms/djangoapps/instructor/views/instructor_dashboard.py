@@ -143,7 +143,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
     ]
     if access['staff'] and "talentsprint.com" in request.user.email:
         sections_content = [
-            _section_course_info(course, access),
+            _section_course_info(course, access, False),
             _section_membership(course, access),
             _section_cohort_management(course, access), 
         ]
@@ -223,7 +223,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
         block for block in openassessment_blocks if block.parent is not None
     ]
     if len(openassessment_blocks) > 0 and access['staff']:
-        sections.append(_section_open_response_assessment(request, course, openassessment_blocks, access))
+        sections.append(_section_open_response_assessment(request, course, openassessment_blocks, access, False))
 
     disable_buttons = not CourseEnrollment.objects.is_small_course(course_key)
 
@@ -439,7 +439,7 @@ def set_course_mode_price(request, course_id):
     return JsonResponse({'message': _("CourseMode price updated successfully")})
 
 
-def _section_course_info(course, access):
+def _section_course_info(course, access, loadTabOnClick):
     """ Provide data for the corresponding dashboard section """
     course_key = course.id
 
@@ -456,9 +456,12 @@ def _section_course_info(course, access):
         'start_date': course.start,
         'end_date': course.end,
         'num_sections': len(course.children),
+        'loadOnTabClick' : loadTabOnClick,
         'list_instructor_tasks_url': reverse('list_instructor_tasks', kwargs={'course_id': str(course_key)}),
     }
 
+    if not loadTabOnClick:
+        return section_data
     if settings.FEATURES.get('DISPLAY_ANALYTICS_ENROLLMENTS'):
         section_data['enrollment_count'] = CourseEnrollment.objects.enrollment_counts(course_key)
 
@@ -757,10 +760,20 @@ def _section_analytics(course, access, loadOnTabClick):
     return section_data
 
 
-def _section_open_response_assessment(request, course, openassessment_blocks, access):
+def _section_open_response_assessment(request, course, openassessment_blocks, access, loadOnTabClick):
     """Provide data for the corresponding dashboard section """
     course_key = course.id
+    section_data = {
+            'section_key': 'open_response_assessment',
+            'section_display_name': _('Open Responses'),
+            'access': access,
+            'course_id': str(course_key),
+            'loadOnTabClick' : loadOnTabClick,
+        }
+    if not loadOnTabClick:
+        return section_data
 
+        
     ora_items = []
     parents = {}
 
@@ -792,16 +805,12 @@ def _section_open_response_assessment(request, course, openassessment_blocks, ac
         request, str(course_key), str(openassessment_block.location),
         disable_staff_debug_info=True, course=course
     )
-    section_data = {
+    section_data.update({
         'fragment': block.render('ora_blocks_listing_view', context={
             'ora_items': ora_items,
             'ora_item_view_enabled': settings.FEATURES.get('ENABLE_XBLOCK_VIEW_ENDPOINT', False)
         }),
-        'section_key': 'open_response_assessment',
-        'section_display_name': _('Open Responses'),
-        'access': access,
-        'course_id': str(course_key),
-    }
+    })
     return section_data
 
 
@@ -986,4 +995,14 @@ def load_tab(request, course_id, loadTab):
         context = {"section_data" : _section_attendance("", {}, course_id, True)}
     elif loadTab == "course_log":
         context = {"section_data" : _section_course_log(course, {}, True)}
+    elif loadTab == "course_info":
+        context = {"course": course, "section_data" : _section_course_info(course, {}, True)}
+    elif loadTab == "open_response_assessment":
+        openassessment_blocks = modulestore().get_items(
+        course_key, qualifiers={'category': 'openassessment'}
+        )
+        openassessment_blocks = [
+            block for block in openassessment_blocks if block.parent is not None
+        ]
+        context = {"course": course, "section_data" : _section_open_response_assessment(request, course, openassessment_blocks, {}, True)}
     return render_to_response("instructor/instructor_dashboard_2/{0}.html".format(loadTab), context)
