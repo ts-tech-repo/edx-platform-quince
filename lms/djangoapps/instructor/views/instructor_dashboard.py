@@ -768,6 +768,7 @@ def _section_open_response_assessment(request, course, openassessment_blocks, ac
             'section_display_name': _('Open Responses'),
             'access': access,
             'course_id': str(course_key),
+            'loadOnTabClick' : loadOnTabClick,
         }
     if not loadOnTabClick:
         return section_data
