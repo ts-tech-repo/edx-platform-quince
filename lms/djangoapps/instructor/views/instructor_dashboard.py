@@ -990,5 +990,5 @@ def load_tab(request, course_id, loadTab):
     elif loadTab == "course_log":
         context = {"section_data" : _section_course_log(course, {}, True)}
     elif loadTab == "course_info":
-        context = {"section_data" : _section_course_info(course, {}, True)}
+        context = {"course": course, "section_data" : _section_course_info(course, {}, True)}
     return render_to_response("instructor/instructor_dashboard_2/{0}.html".format(loadTab), context)
