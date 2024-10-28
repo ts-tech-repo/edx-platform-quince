@@ -23,6 +23,7 @@ from .constants import (
     ATTR_KEY_USER_IS_STAFF,
     ATTR_KEY_USER_PREFERENCES,
     ATTR_KEY_USER_ROLE,
+    ATTR_KEY_EMAIL,
 )
 import logging
 log = logging.getLogger(__name__)
@@ -129,6 +130,7 @@ class DjangoXBlockUserService(UserService):
             xblock_user.opt_attrs[ATTR_KEY_REQUEST_COUNTRY_CODE] = self._request_country_code
             xblock_user.opt_attrs[ATTR_KEY_USER_ID] = django_user.id
             xblock_user.opt_attrs[ATTR_KEY_USERNAME] = django_user.username
+            xblock_user.opt_attrs[ATTR_KEY_EMAIL] = django_user.email
             xblock_user.opt_attrs[ATTR_KEY_USER_IS_BETA_TESTER] = self._user_is_beta_tester
             xblock_user.opt_attrs[ATTR_KEY_USER_IS_GLOBAL_STAFF] = self._user_is_global_staff
             xblock_user.opt_attrs[ATTR_KEY_USER_IS_STAFF] = self._user_is_staff
