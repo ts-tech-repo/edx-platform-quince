@@ -734,7 +734,7 @@ def _section_send_email(course, access):
         section_data[
             "communications_mfe_url"
         ] = f"{settings.COMMUNICATIONS_MICROFRONTEND_URL}/courses/{str(course_key)}/bulk_email"
-    log.info(section_data)
+    log.info(configuration_helpers.get_value("ENABLE_NEW_BULK_EMAIL_EXPERIENCE", False))
     return section_data
 
 
