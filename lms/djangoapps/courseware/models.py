@@ -122,7 +122,7 @@ class StudentModule(models.Model):
     modified = models.DateTimeField(auto_now=True, db_index=True)
 
     #SA || added new field for letter grade
-    letter_grade = models.TextField(null=True, blank=True)
+    #letter_grade = models.TextField(null=True, blank=True)
 
     #KC pass student id
     @classmethod
