@@ -218,8 +218,6 @@ def get_course_authoring_url(course_locator):
     Gets course authoring microfrontend URL
     """
     mfe_config = configuration_helpers.get_value('MFE_CONFIG', {})
-    log.info("Here")
-    log.info(mfe_config)
     course_authoring_url = mfe_config["COURSE_AUTHORING_MICROFRONTEND_URL"] if "COURSE_AUTHORING_MICROFRONTEND_URL" in mfe_config else settings.COURSE_AUTHORING_MICROFRONTEND_URL
     return configuration_helpers.get_value_for_org(
         course_locator.org,
