@@ -579,6 +579,7 @@ def process_scheduled_instructor_tasks():
     instructor tasks that are in the `SCHEDULED` state. Then submits these tasks for processing by Celery.
     """
     now = datetime.datetime.now(pytz.utc)
+    log.info("Here {0}".format(now))
     due_schedules = InstructorTaskSchedule.objects.filter(task__task_state=SCHEDULED).filter(task_due__lte=now)
     log.info(f"Retrieved {due_schedules.count()} scheduled instructor tasks due for execution")
     for schedule in due_schedules:
