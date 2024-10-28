@@ -143,7 +143,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
     ]
     if access['staff'] and "talentsprint.com" in request.user.email:
         sections_content = [
-            _section_course_info(course, access, False),
+            _section_course_info(course, access, True),
             _section_membership(course, access),
             _section_cohort_management(course, access), 
         ]
