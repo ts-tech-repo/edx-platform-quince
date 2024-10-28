@@ -141,6 +141,9 @@ from openedx.core.djangolib.js_utils import (
                 </svg>
             </a>
             % endif
+            % if "@talentsprint.com" in loggedin_useremail:
+                ${block_id}
+            % endif
         </div>
         % endif
         % if handout:
