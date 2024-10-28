@@ -9,6 +9,10 @@ from openedx.core.djangolib.js_utils import (
 % if display_name is not UNDEFINED and display_name is not None and not is_embed:
     <h3 class="hd hd-2">${display_name}</h3>
 % endif
+
+% if "@talentsprint.com" in loggedin_useremail:
+    ${block_id}
+% endif
 <link href="https://static.talentsprint.com/edx_styles/staging_edx_player_quince.css"  type="text/css" rel="stylesheet">
 <div
     id="video_${id}"
@@ -144,9 +148,6 @@ from openedx.core.djangolib.js_utils import (
         </div>
         % endif
 
-        % if "@talentsprint.com" in loggedin_useremail:
-            ${block_id}
-        % endif
         % if handout:
         <div class="wrapper-handouts">
             <h4 class="hd hd-5">${_('Handouts')}</h4>
