@@ -30,7 +30,7 @@ from xblock.core import XBlock
 from xblock.fields import ScopeIds
 from xblock.runtime import KvsFieldData
 
-from common.djangoapps.xblock_django.constants import ATTR_KEY_REQUEST_COUNTRY_CODE, ATTR_KEY_USER_ROLE
+from common.djangoapps.xblock_django.constants import ATTR_KEY_REQUEST_COUNTRY_CODE, ATTR_KEY_USER_ROLE, ATTR_KEY_EMAIL
 from openedx.core.djangoapps.video_config.models import HLSPlaybackEnabledFlag, CourseYoutubeBlockedFlag
 from openedx.core.djangoapps.video_config.toggles import PUBLIC_VIDEO_SHARE
 from openedx.core.djangoapps.video_pipeline.config.waffle import DEPRECATE_YOUTUBE
@@ -304,7 +304,7 @@ class VideoBlock(
         user_location = loggedin_user.opt_attrs[ATTR_KEY_REQUEST_COUNTRY_CODE]
         cdn_url = getattr(settings, 'VIDEO_CDN_URL', {}).get(user_location, default_cdn_url)
 
-        log.info(loggedin_user.opt_attrs[ATTR_KEY_USER_ROLE])
+        log.info(loggedin_user.opt_attrs[ATTR_KEY_EMAIL])
         log.info(getattr(self, 'transcript_download_role', True))
 
         # If we have an edx_video_id, we prefer its values over what we store
