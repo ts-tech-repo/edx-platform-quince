@@ -686,6 +686,7 @@ def null_applicable_aside_types(block):  # pylint: disable=unused-argument
 
 def _section_send_email(course, access):
     """ Provide data for the corresponding bulk email section """
+    log.info("Here")
     course_key = course.id
 
     # Render an HTML editor, using the same template as the HTML XBlock's visual
