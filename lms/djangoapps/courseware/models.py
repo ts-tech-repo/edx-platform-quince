@@ -121,6 +121,9 @@ class StudentModule(models.Model):
     created = models.DateTimeField(auto_now_add=True, db_index=True)
     modified = models.DateTimeField(auto_now=True, db_index=True)
 
+    #SA || added new field for letter grade
+    letter_grade = models.TextField(null=True, blank=True)
+
     #KC pass student id
     @classmethod
     def all_submitted_problems_read_only(cls, course_id, module_state_keys = [], student_id=None):
