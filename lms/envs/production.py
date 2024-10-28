@@ -35,6 +35,7 @@ from xmodule.modulestore.modulestore_settings import convert_module_store_settin
 from .common import *
 
 
+
 def get_env_setting(setting):
     """ Get the environment setting or return exception """
     try:
@@ -686,6 +687,11 @@ if FEATURES.get('ENABLE_THIRD_PARTY_AUTH'):
         CELERYBEAT_SCHEDULE['refresh-saml-metadata'] = {
             'task': 'common.djangoapps.third_party_auth.fetch_saml_metadata',
             'schedule': datetime.timedelta(hours=ENV_TOKENS.get('THIRD_PARTY_AUTH_SAML_FETCH_PERIOD_HOURS', 24)),
+        }
+
+    CELERYBEAT_SCHEDULE['schedule-emails'] = {
+            'task': 'lms.djangoapps.instructor_task.api.process_scheduled_instructor_tasks',
+            'schedule': 60,
         }
 
     # The following can be used to integrate a custom login form with third_party_auth.
