@@ -1257,7 +1257,11 @@ zipp==3.17.0
     # via
     #   importlib-metadata
     #   importlib-resources
-pip install --default-timeout=100 future django-saml-idp python3-saml pysaml2==6.4.0 xmlsec djangosaml2idp==0.5.0
+django-saml-idp
+python3-saml
+pysaml2==6.4.0
+xmlsec
+djangosaml2idp==0.5.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
