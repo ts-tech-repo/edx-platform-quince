@@ -11,11 +11,7 @@ from openedx.core.djangoapps.signals.signals import (
 )
 from .course_data import CourseData
 from .course_grade import CourseGrade, ZeroCourseGrade
-from .models import (
-    PersistentCourseGrade,
-    PersistentSubsectionGradeOverride
-)
-from lms.djangoapps.grades.api import constants as grades_constants
+from .models import PersistentCourseGrade
 from .models_api import prefetch_grade_overrides_and_visible_blocks
 
 log = getLogger(__name__)
@@ -183,21 +179,6 @@ class CourseGradeFactory:
                 letter_grade=course_grade.letter_grade or "",
                 passed=course_grade.passed,
             )
-
-            try:
-                override_data = {
-                    "system": grades_constants.GradeOverrideFeatureEnum.gradebook,
-                    "comment": "to test the flow"
-                }
-                override = PersistentSubsectionGradeOverride.update_or_create_override(
-                    requesting_user=user,
-                    subsection_grade_model=subsection_grade_model,
-                    **override_data
-                )
-            except PersistentSubsectionGradeOverride.DoesNotExist:
-                log.exception("PersistentSubsectionGradeOverride.DoesNotExist")
-            except Exception as e:
-                log.exception(e)
 
         COURSE_GRADE_CHANGED.send_robust(
             sender=None,
