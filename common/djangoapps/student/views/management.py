@@ -1816,7 +1816,7 @@ def extras_get_peer_profiles(request):
             .select_related('user')
             .prefetch_related(Prefetch('social_links'))
             .only('id', 'bio', 'level_of_education', 'profile_image_uploaded_at', 
-                   'user__id', 'user__username', 'user__email', 'user__first_name', 'user__last_name', 'user__is_staff')
+                   'user__id', 'user__username', 'user__email', 'user__first_name', 'user__last_name', 'user__is_staff', 'user__is_superuser')
         )
 
         profiles = []
@@ -1829,7 +1829,7 @@ def extras_get_peer_profiles(request):
 
             profiles.append({
                 "user_id": profile.user.id, "username": profile.user.username, "email": profile.user.email,
-                "first_name": profile.user.first_name, "last_name": profile.user.last_name, "is_staff": profile.user.is_staff, "level_of_education": level_of_education.get(profile.level_of_education, ""),
+                "first_name": profile.user.first_name, "last_name": profile.user.last_name,"is_superuser" : profile.user.is_superuser, "is_staff": profile.user.is_staff, "level_of_education": level_of_education.get(profile.level_of_education, ""),
                 "bio": profile.bio, "social_links": [{'platform': link.platform, 'url': link.social_link} for link in profile.social_links.all()],
                 "has_profile_image": has_image, "profile_image_urls": profile_image_urls
             })
