@@ -1893,13 +1893,14 @@ def extras_sync_moodle_attendance(request):
     user = User.objects.get(email = user_email)
     block_key = UsageKey.from_string(usage_id)
     log.info(attendance)
+    completion = 1
     if attendance == "Absent":
-        return JsonResponse({"Status" : "Success", "Response" : "User marked absent to the class"})
+        completion = 0
     
     BlockCompletion.objects.submit_completion(
             user=user,
             block_key=block_key,
-            completion=1,
+            completion=completion,
         )
 
     return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
