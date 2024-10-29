@@ -150,6 +150,7 @@
       <div class="" style="padding: 0 6rem">
         <div class="row gap" id="row">
           {% for profile in profiles %}
+           {% if not profile.is_staff %}
           <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">
             <div class="profile-section d-flex align-items-center">
               <img class="profile-img" id="profile_image" src="{{ profile.profile_image_urls.full }}" alt="">
@@ -175,6 +176,7 @@
             </div>
             <img src="https://static.talentsprint.com/lms_maple/images/arrow.png" style="height: 35px; width: 35px">
           </div>
+          {% endif %}
           {% endfor %}
         </div>
       </div>
