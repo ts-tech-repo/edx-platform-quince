@@ -100,7 +100,8 @@ from common.djangoapps.student.models import (  # lint-amnesty, pylint: disable=
     UserSignupSource,
     UserStanding,
     create_comments_service_user,
-    email_exists_or_retired
+    email_exists_or_retired,
+    CourseAccessRole
 )
 from common.djangoapps.student.signals import REFUND_ORDER
 from common.djangoapps.util.db import outer_atomic
@@ -1815,8 +1816,13 @@ def extras_get_peer_profiles(request):
             course__id=course_key, is_active=True
             ).values_list('user__username', flat=True).distinct()
         
+        user_ids_with_roles = CourseAccessRole.objects.filter(
+            course_id=course_key
+            ).values_list('user__id', flat=True).distinct()
+        
         user_profiles = (
             UserProfile.objects.filter(user__username__in=user_names)
+            .exclude(user__id__in=user_ids_with_roles)
             .select_related('user')
             .prefetch_related(Prefetch('social_links'))
             .only('id', 'bio', 'level_of_education', 'profile_image_uploaded_at', 
