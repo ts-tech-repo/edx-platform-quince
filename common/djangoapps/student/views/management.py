@@ -1740,6 +1740,9 @@ def extras_update_lti_grades(request):
     user_id = user_object.id
     grade = request.POST.get("user_grade", "")
 
+    #AK || added new field for comment
+    comment = request.POST.get("comment", "")
+
     #SA || added new field for letter grade
     letter_grade = request.POST.get("letter_grade", "")
     course_id = request.POST.get("course_id", "")
@@ -1768,6 +1771,7 @@ def extras_update_lti_grades(request):
             only_if_higher=False,
             modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
             score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
+            comment=comment,
         )
     except StudentModule.DoesNotExist:
         studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}), max_grade= block_data.get_xblock_field(usage_id, 'weight'), letter_grade=letter_grade)
