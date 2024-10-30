@@ -13,7 +13,7 @@
 <%namespace name='static' file='static_content.html'/>
 
 % if uses_bootstrap:
-  <div class="container-fluid footer-sticky wrapper-footer">
+  <div class="container-fluid wrapper-footer">
     <footer>
       <div class="row">
         <div class="col-md-9">
@@ -58,9 +58,6 @@
                   <a class="nav-link" href="${link['url']}">${link['title']}</a>
                 </li>
               % endfor
-              <li class="nav-item">
-                <a class="nav-link" href="${footer['edx_org_link']['url']}">${footer['edx_org_link']['text']}</a>
-              </li>
             </ul>
           </nav>
         </div>
