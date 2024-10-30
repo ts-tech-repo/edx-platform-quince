@@ -1740,12 +1740,6 @@ def extras_update_lti_grades(request):
     user_object = User.objects.get(email = user_email)
     user_id = user_object.id
     grade = request.POST.get("user_grade", "")
-
-    #AK || added new field for comment
-    comment = request.POST.get("comment", "")
-
-    #SA || added new field for letter grade
-    letter_grade = request.POST.get("letter_grade", "")
     course_id = request.POST.get("course_id", "")
     block_data = get_course_blocks(User.objects.get(id = user_id), modulestore().make_course_usage_key(CourseKey.from_string(str(course_id))), allow_start_dates_in_future=True, include_completion=True)
 
@@ -1754,7 +1748,6 @@ def extras_update_lti_grades(request):
         
         #Update Grades
         studentmodule.grade = grade
-        studentmodule.letter_grade = letter_grade
         student_state = json.loads(studentmodule.state)
         student_state["module_score"] = grade
         studentmodule.state = json.dumps(student_state)
@@ -1762,7 +1755,6 @@ def extras_update_lti_grades(request):
         grades_signals.PROBLEM_RAW_SCORE_CHANGED.send(
             sender=None,
             raw_earned=grade,
-            letter_grade=letter_grade,
             raw_possible=studentmodule.max_grade,
             weight=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
             user_id=user_id,
@@ -1772,10 +1764,9 @@ def extras_update_lti_grades(request):
             only_if_higher=False,
             modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
             score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
-            comment=comment,
         )
     except StudentModule.DoesNotExist:
-        studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}), max_grade= block_data.get_xblock_field(usage_id, 'weight'), letter_grade=letter_grade)
+        studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}), max_grade= block_data.get_xblock_field(usage_id, 'weight'))
 
         log.info("Student module created {0}".format(studentmodule))
         

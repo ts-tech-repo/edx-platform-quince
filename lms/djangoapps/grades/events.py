@@ -44,7 +44,6 @@ def grade_updated(**kwargs):
     an outer event type (such as problem.rescored or score_overridden).
     """
     root_type = get_event_transaction_type()
-    log.info('#sabidA root_type: %s', root_type)
 
     if not root_type:
         root_id = get_event_transaction_id()
@@ -61,7 +60,6 @@ def grade_updated(**kwargs):
                 'event_transaction_type': str(PROBLEM_SUBMITTED_EVENT_TYPE),
                 'weighted_earned': kwargs.get('weighted_earned'),
                 'weighted_possible': kwargs.get('weighted_possible'),
-                'letter_grade': kwargs.get('letter_grade'),
             }
         )
 
