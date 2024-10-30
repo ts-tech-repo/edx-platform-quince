@@ -1770,7 +1770,7 @@ def extras_update_lti_grades(request):
             score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
         )
     except StudentModule.DoesNotExist:
-        studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}), max_grade= block_data.get_xblock_field(usage_id, 'weight'))
+        studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}), max_grade= block_data.get_xblock_field(usage_id, 'weight'), letter_grade=letter_grade)
 
         log.info("Student module created {0}".format(studentmodule))
         
