@@ -184,7 +184,7 @@
           {% for profile in profiles %}
            {% if not profile.is_superuser or not profile.is_staff %}
           <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">
-            <div class="profile-section d-flex align-items-center flex-wrap text-center text-lg-left">
+            <div class="profile-section d-flex flex-column flex-lg-row align-items-center flex-wrap flex-lg-nowrap text-center text-lg-left">
               <img class="profile-img" id="profile_image" src="{{ profile.profile_image_urls.full }}" alt="">
               <p class="ml-lg-4 font-weight-bold" id="name" style="font-size: 24px;">
                 {{ profile.first_name }} {{ profile.last_name }}
@@ -271,7 +271,7 @@
 position: absolute;
 right: 38px;
 ">X</span>
-<div class="d-flex flex-column flex-lg-row align-content-center modal-content-container" style="margin-bottom: 60px; padding: 75px;">
+<div class="d-flex flex-column flex-lg-row align-content-center modal-content-container" style="margin-bottom: 60px;">
 <div class="peer-img d-fex flex-column align-items-center" style="max-width: 235px;">
 <div class="gradient-border"> 
 <img class="content profile-img-modal"  src="${peer?.profile_image_urls}" style="border-radius: 50%;" alt="${peer?.name}" />
