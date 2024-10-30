@@ -761,6 +761,7 @@ class PersistentSubsectionGradeOverride(models.Model):
     @classmethod
     def get_override(cls, user_id, usage_key):  # lint-amnesty, pylint: disable=missing-function-docstring
         prefetch_values = get_cache(cls._CACHE_NAMESPACE).get((user_id, str(usage_key.course_key)), None)
+        log.info("#sabidA Prefetch values: %s", prefetch_values)
         if prefetch_values is not None:
             return prefetch_values.get(usage_key)
         try:
