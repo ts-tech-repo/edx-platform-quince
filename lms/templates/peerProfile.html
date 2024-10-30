@@ -245,17 +245,17 @@ right: 38px;
 <img class="content"  src="${peer?.profile_image_urls}" style="width: 200px; height: 200px; border-radius: 50%;" alt="${peer?.name}" />
 </div>
   <div class="social-media d-flex justify-content-center mt-3">
-  <a href=${peer?.social_links?.linkedin} target="_blank"> 
+  ${peer?.social_links?.linkedin ? `<a href=${peer?.social_links?.linkedin} target="_blank"> 
   <img src="https://static.talentsprint.com/lms_maple/images/linkedin.svg" alt="LinkedIn" class="social-media-icons" />   
-  </a>
+  </a>` : ""}
 
-  <a href=${peer?.social_links?.twitter} target="_blank"> 
+  ${peer?.social_links?.twitter ? `<a href=${peer?.social_links?.twitter} target="_blank"> 
   <img src="https://static.talentsprint.com/lms_maple/images/twitter.svg" alt="Twitter" class="social-media-icons" />   
-  </a>
+  </a>` : ""}
 
-  <a href=${peer?.social_links?.facebook} target="_blank"> 
+  ${peer?.social_links?.facebook ? `<a href=${peer?.social_links?.facebook} target="_blank"> 
   <img src="https://static.talentsprint.com/lms_maple/images/facebook.svg" alt="LinkedIn" class="social-media-icons" />   
-  </a>
+  </a>` : ""}
    
   </div>
 </div>
