@@ -422,7 +422,6 @@ class AccountViewSet(ViewSet):
         try:
             account_settings = get_account_settings(
                 request, [username], view=request.query_params.get('view'))
-            log.info(account_settings)
         except UserNotFound:
             return Response(status=status.HTTP_404_NOT_FOUND)
 

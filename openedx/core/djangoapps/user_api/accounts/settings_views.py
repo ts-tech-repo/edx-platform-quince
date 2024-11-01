@@ -59,7 +59,6 @@ def account_settings(request):
         GET /account/settings
 
     """
-    log.info(should_redirect_to_account_microfrontend())
     if should_redirect_to_account_microfrontend():
         url = settings.ACCOUNT_MICROFRONTEND_URL
 
