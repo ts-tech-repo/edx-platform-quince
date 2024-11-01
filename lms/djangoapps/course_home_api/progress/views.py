@@ -40,6 +40,8 @@ from openedx.features.enterprise_support.utils import get_enterprise_learner_gen
 
 User = get_user_model()
 
+from logging import getLogger
+log = getLogger(__name__)
 
 class ProgressTabView(RetrieveAPIView):
     """
@@ -245,6 +247,7 @@ class ProgressTabView(RetrieveAPIView):
 
         access_expiration = get_access_expiration_data(request.user, course_overview)
 
+        log.info('#sabidA #v1 course_grade: %s', course_grade)
         data = {
             'access_expiration': access_expiration,
             'certificate_data': get_cert_data(student, course, enrollment_mode, course_grade),
