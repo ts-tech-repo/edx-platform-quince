@@ -109,7 +109,8 @@ class SubsectionGradeFactory:
             grade_model = calculated_grade.update_or_create_model(
                 self.student,
                 score_deleted,
-                force_update_subsections
+                force_update_subsections,
+                letter_grade=calculated_grade.letter_grade
             )
             log.info("#sabidA #8 Grade model: %s", grade_model)
             self._update_saved_subsection_grade(subsection.location, grade_model)
