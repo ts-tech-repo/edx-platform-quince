@@ -319,7 +319,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
 
         super().__init__(subsection, all_total, graded_total)
 
-    def update_or_create_model(self, student, score_deleted=False, force_update_subsections=False, letter_grade=''):
+    def update_or_create_model(self, student, score_deleted=False, force_update_subsections=False):
         """
         Saves or updates the subsection grade in a persisted model.
         """
@@ -328,12 +328,12 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
             if str(self.location.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
                 log.info('Updating PersistentSubsectionGrade for student ***{}*** in'
                          ' subsection ***{}*** with params ***{}***.'
-                         .format(student.id, self.location, self._persisted_model_params(student, letter_grade)))
+                         .format(student.id, self.location, self._persisted_model_params(student)))
             
             log.info('#sabidA #9 Updating PersistentSubsectionGrade for student ***{}*** in'
                          ' subsection ***{}*** with params ***{}***.'
-                         .format(student.id, self.location, self._persisted_model_params(student, letter_grade)))
-            model = PersistentSubsectionGrade.update_or_create_grade(**self._persisted_model_params(student, letter_grade))
+                         .format(student.id, self.location, self._persisted_model_params(student)))
+            model = PersistentSubsectionGrade.update_or_create_grade(**self._persisted_model_params(student))
 
             if hasattr(model, 'override'):
                 # When we're doing an update operation, the PersistentSubsectionGrade model
@@ -377,7 +377,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
             force_update_subsections
         )
 
-    def _persisted_model_params(self, student, letter_grade=''):
+    def _persisted_model_params(self, student):
         """
         Returns the parameters for creating/updating the
         persisted model for this subsection grade.
@@ -396,7 +396,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
             possible_graded=self.graded_total.possible,
             visible_blocks=self._get_visible_blocks,
             first_attempted=self.all_total.first_attempted,
-            letter_grade=letter_grade,
+            letter_grade=self.problem_scores.get('letter_grade', ''),
         )
 
     @property
