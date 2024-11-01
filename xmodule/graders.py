@@ -25,7 +25,7 @@ class ScoreBase(metaclass=abc.ABCMeta):
     Abstract base class for encapsulating fields of values scores.
     """
 
-    def __init__(self, graded, first_attempted):
+    def __init__(self, graded, first_attempted, letter_grade=None):
         """
         Fields common to all scores include:
 
@@ -37,6 +37,7 @@ class ScoreBase(metaclass=abc.ABCMeta):
         """
         self.graded = graded
         self.first_attempted = first_attempted
+        self.letter_grade = letter_grade
 
     def __eq__(self, other):
         if type(other) is type(self):
