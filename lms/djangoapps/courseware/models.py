@@ -152,6 +152,7 @@ class StudentModule(models.Model):
                 'student_id': self.student_id,
                 'module_state_key': self.module_state_key,
                 'state': str(self.state)[:20],
+                'letter_grade': self.letter_grade,
             })
 
     def __str__(self):
