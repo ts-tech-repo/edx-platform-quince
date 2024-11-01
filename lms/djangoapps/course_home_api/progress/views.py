@@ -272,6 +272,8 @@ class ProgressTabView(RetrieveAPIView):
         # course_overview and enrollment will be used by VerifiedModeSerializer
         context['course_overview'] = course_overview
         context['enrollment'] = enrollment
+
+        log.info('#sabidA #v2 data: %s', data)
         serializer = self.get_serializer_class()(data, context=context)
 
         return Response(serializer.data)
