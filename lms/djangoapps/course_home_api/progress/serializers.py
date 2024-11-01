@@ -37,6 +37,8 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
     show_grades = serializers.SerializerMethodField()
     url = serializers.SerializerMethodField()
 
+    letter_grade = serializers.CharField(source='letter_grade')
+
     def get_override(self, subsection):
         """Proctoring or grading score override"""
         if subsection.override is None:
