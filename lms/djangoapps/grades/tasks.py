@@ -233,11 +233,12 @@ def _recalculate_subsection_grade(self, **kwargs):
         # created. This race condition occurs if the transaction in the task
         # creator's process hasn't committed before the task initiates in the worker
         # process.
-    has_database_updated = _has_db_updated_with_new_score(self, scored_block_usage_key, **kwargs)
+        has_database_updated = _has_db_updated_with_new_score(self, scored_block_usage_key, **kwargs)
 
         if not has_database_updated:
             raise DatabaseNotReadyError
 
+        #AK || added new field for comment
         _update_subsection_grades(
             course_key,
             scored_block_usage_key,
@@ -245,6 +246,7 @@ def _recalculate_subsection_grade(self, **kwargs):
             kwargs['user_id'],
             kwargs['score_deleted'],
             kwargs.get('force_update_subsections', False),
+            kwargs.get('comment', ""),
         )
     except Exception as exc:
         if not isinstance(exc, KNOWN_RETRY_ERRORS):
