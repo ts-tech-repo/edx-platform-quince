@@ -383,8 +383,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
         persisted model for this subsection grade.
         """
         log.info('#sabidA #28 self.problem_scores: %s', self.problem_scores)
-
-        log.info('#sabidA #28 self.problem_scores with location: %s', self.problem_scores[self.location])
+        
 
         return dict(
             user_id=student.id,
