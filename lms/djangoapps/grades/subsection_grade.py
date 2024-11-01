@@ -386,6 +386,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
         """
         log.info('#sabidA #28 self.problem_scores: %s', self.problem_scores)
         log.info('#sabidA #29 self.ps: %s', self.ps)
+        log.info('#sabidA #30 self.ps_lg: %s', self.ps.letter_grade if self.ps else '')
         
 
         return dict(
