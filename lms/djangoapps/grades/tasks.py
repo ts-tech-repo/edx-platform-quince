@@ -327,6 +327,7 @@ def _update_subsection_grades(
         subsection_grade_factory = SubsectionGradeFactory(student, course, course_structure)
 
         for subsection_usage_key in subsections_to_update:
+            log.info("#sabidA Updating subsection grade for %s", subsection_usage_key)
             if subsection_usage_key in course_structure:
                 subsection_grade = subsection_grade_factory.update(
                     course_structure[subsection_usage_key],

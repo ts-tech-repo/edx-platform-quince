@@ -342,6 +342,9 @@ class PersistentSubsectionGrade(TimeStampedModel):
     earned_graded = models.FloatField(blank=False)
     possible_graded = models.FloatField(blank=False)
 
+    #SA || added new field for letter grade
+    letter_grade = models.CharField(max_length=255, blank=True, null=True)
+
     # timestamp for the learner's first attempt at content in
     # this subsection. If null, indicates no attempt
     # has yet been made.
@@ -381,6 +384,7 @@ class PersistentSubsectionGrade(TimeStampedModel):
             self.earned_all,
             self.possible_all,
             self.first_attempted,
+            self.letter_grade,
         )
 
     @classmethod
