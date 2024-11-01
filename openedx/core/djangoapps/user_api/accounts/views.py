@@ -420,6 +420,7 @@ class AccountViewSet(ViewSet):
         GET /api/user/v1/accounts/{username}/
         """
         try:
+            log.info("Here")
             account_settings = get_account_settings(
                 request, [username], view=request.query_params.get('view'))
         except UserNotFound:
