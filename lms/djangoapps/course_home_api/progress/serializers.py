@@ -31,6 +31,7 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
     learner_has_access = serializers.SerializerMethodField()
     num_points_earned = serializers.FloatField(source='graded_total.earned')
     num_points_possible = serializers.FloatField(source='graded_total.possible')
+    letter_grade = serializers.CharField()
     percent_graded = serializers.FloatField()
     problem_scores = serializers.SerializerMethodField()
     show_correctness = serializers.CharField()
