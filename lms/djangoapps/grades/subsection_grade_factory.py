@@ -80,7 +80,8 @@ class SubsectionGradeFactory:
             subsection, self.course_data.structure, self._submissions_scores, self._csm_scores,
         )
 
-        log.info("#sabidA #2 Calculated grade: %s", calculated_grade)
+        log.info("sabidA #2 subsection: %s, course_structure: %s, submissions_scores: %s, csm_scores: %s", subsection, self.course_data.structure, self._submissions_scores, self._csm_scores)
+        log.info("#sabidA #2.1 Calculated grade: %s", calculated_grade)
 
         if persist_grade:
             log.info("#sabidA #3 Persisting grade: %s", calculated_grade)
