@@ -176,6 +176,10 @@ class NonZeroSubsectionGrade(SubsectionGradeBase, metaclass=ABCMeta):
                 str(block_key),
                 str(block_key.course_key),
             ))
+        log.info('#sabidA #13 Computing block score for block: ***{}*** in course: ***{}***.'.format(
+                str(block_key),
+                str(block_key.course_key),
+            ))
         try:
             block = course_structure[block_key]
         except KeyError:
@@ -186,12 +190,18 @@ class NonZeroSubsectionGrade(SubsectionGradeBase, metaclass=ABCMeta):
             # It's possible that the user's access to that
             # block has changed since the subsection grade
             # was last persisted.
+            log.info('#sabidA #14 User\'s access to block: ***{}*** in course: ***{}*** has changed. '
+                         'No block score calculated.'.format(str(block_key), str(block_key.course_key)))
         else:
             if getattr(block, 'has_score', False):
                 # TODO: Remove as part of EDUCATOR-4602.
                 if str(block_key.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
                     log.info('Block: ***{}*** in course: ***{}*** HAS has_score attribute. Continuing.'
                              .format(str(block_key), str(block_key.course_key)))
+                
+                log.info('#sabidA #15Block: ***{}*** in course: ***{}*** HAS has_score attribute. Continuing.'
+                             .format(str(block_key), str(block_key.course_key)))
+                
                 return get_score(
                     submissions_scores,
                     csm_scores,
