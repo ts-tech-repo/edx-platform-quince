@@ -934,6 +934,7 @@ class ScoresClient:
             course_id=self.course_key,
             module_state_key__in=set(locations),
         )
+        log.info("#sabidA #25 scores_qset: %s", scores_qset)
         # Locations in StudentModule don't necessarily have course key info
         # attached to them (since old mongo identifiers don't include runs).
         # So we have to add that info back in before we put it into our lookup.
@@ -943,6 +944,7 @@ class ScoresClient:
             in scores_qset.values_list('module_state_key', 'grade', 'max_grade', 'created')
         })
         self._has_fetched = True
+        log.info("#sabidA #26 self._locations_to_scores: %s", self._locations_to_scores)
 
     def get(self, location):
         """
