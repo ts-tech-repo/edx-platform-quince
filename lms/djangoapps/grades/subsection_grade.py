@@ -288,7 +288,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
     """
     def __init__(self, subsection, course_structure, submissions_scores, csm_scores):
         self.problem_scores = OrderedDict()
-        self.problem_score = None
+        self.letter_grade = ''
         for block_key in course_structure.post_order_traversal(
                 filter_func=possibly_scored,
                 start_node=subsection.location,
@@ -305,7 +305,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
                          .format(problem_score, block_key, subsection.location))
             if problem_score:
                 self.problem_scores[block_key] = problem_score
-                self.problem_score = problem_score
+                self.letter_grade = problem_score.letter_grade
 
         all_total, graded_total = graders.aggregate_scores(list(self.problem_scores.values()))
 
@@ -400,7 +400,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
             possible_graded=self.graded_total.possible,
             visible_blocks=self._get_visible_blocks,
             first_attempted=self.all_total.first_attempted,
-            letter_grade=self.problem_score.letter_grade if self.problem_score else '',
+            letter_grade=self.letter_grade,
         )
 
     @property
