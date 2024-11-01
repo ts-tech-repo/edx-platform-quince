@@ -384,6 +384,8 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
         """
         log.info('#sabidA #28 self.problem_scores: %s', self.problem_scores)
 
+        log.info('#sabidA #28 self.problem_scores with location: %s', self.problem_scores[self.location])
+
         return dict(
             user_id=student.id,
             usage_key=self.location,
