@@ -180,8 +180,12 @@ def _get_score_from_submissions(submissions_scores, block):
     """
     Returns the score values from the submissions API if found.
     """
+    log.info('#sabidA #21 submissions_scores: {}'.format(submissions_scores))
+
     if submissions_scores:
         submission_value = submissions_scores.get(str(block.location))
+        log.info('#sabidA #22 submission_value: {}'.format(submission_value))
+
         if submission_value:
             first_attempted = submission_value['created_at']
             weighted_earned = submission_value['points_earned']
@@ -206,7 +210,12 @@ def _get_score_from_csm(csm_scores, block, weight):
     # attempted. Even though the CSM persistence for this value is now
     # superfluous, for backward compatibility, we continue to use its value for
     # raw_possible, giving it precedence over the one in the grades data model.
+
+    log.info('#sabidA #23 csm_scores: {}'.format(csm_scores))
+
     score = csm_scores.get(block.location)
+    log.info('#sabidA #24 score: {}'.format(score))
+    
     has_valid_score = score and score.total is not None
     if has_valid_score:
         if score.correct is not None:
@@ -249,7 +258,7 @@ def _get_score_from_persisted_or_latest_block(persisted_block, block, weight):
             log.info(f'weight for block: ***{str(block.location)}*** is {raw_possible}.')
         
         log.info('#sabidA #19 Using latest block content to calculate score for block: ***{}***.')
-        log.info(f'#sabidA #20weight for block: ***{str(block.location)}*** is {raw_possible}.')
+        log.info(f'#sabidA #20 weight for block: ***{str(block.location)}*** is {raw_possible}.')
 
     # TODO TNL-5982 remove defensive code for scorables without max_score
     if raw_possible is None:

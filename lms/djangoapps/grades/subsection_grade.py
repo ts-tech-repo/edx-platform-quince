@@ -199,7 +199,7 @@ class NonZeroSubsectionGrade(SubsectionGradeBase, metaclass=ABCMeta):
                     log.info('Block: ***{}*** in course: ***{}*** HAS has_score attribute. Continuing.'
                              .format(str(block_key), str(block_key.course_key)))
                 
-                log.info('#sabidA #15Block: ***{}*** in course: ***{}*** HAS has_score attribute. Continuing.'
+                log.info('#sabidA #15 Block: ***{}*** in course: ***{}*** HAS has_score attribute. Continuing.'
                              .format(str(block_key), str(block_key.course_key)))
                 
                 return get_score(
