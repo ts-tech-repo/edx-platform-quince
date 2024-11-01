@@ -40,7 +40,7 @@ class SubsectionGradeBase(metaclass=ABCMeta):
         self.course_version = getattr(subsection, 'course_version', None)
         self.subtree_edited_timestamp = getattr(subsection, 'subtree_edited_on', None)
 
-        letter_grade = getattr(subsection, 'letter_grade', "#sabidA #vTest")
+        self.letter_grade = getattr(subsection, 'letter_grade', "#sabidA #vTest")
         self.override = None
 
     @property
