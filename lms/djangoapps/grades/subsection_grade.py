@@ -288,6 +288,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
     """
     def __init__(self, subsection, course_structure, submissions_scores, csm_scores):
         self.problem_scores = OrderedDict()
+        self.ps = None
         for block_key in course_structure.post_order_traversal(
                 filter_func=possibly_scored,
                 start_node=subsection.location,
@@ -304,6 +305,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
                          .format(problem_score, block_key, subsection.location))
             if problem_score:
                 self.problem_scores[block_key] = problem_score
+                self.ps = problem_score
 
         all_total, graded_total = graders.aggregate_scores(list(self.problem_scores.values()))
 
@@ -383,6 +385,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
         persisted model for this subsection grade.
         """
         log.info('#sabidA #28 self.problem_scores: %s', self.problem_scores)
+        log.info('#sabidA #29 self.ps: %s', self.ps)
         
 
         return dict(
