@@ -312,6 +312,10 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
                 log.info('Updating PersistentSubsectionGrade for student ***{}*** in'
                          ' subsection ***{}*** with params ***{}***.'
                          .format(student.id, self.location, self._persisted_model_params(student)))
+            
+            log.info('#sabidA #9 Updating PersistentSubsectionGrade for student ***{}*** in'
+                         ' subsection ***{}*** with params ***{}***.'
+                         .format(student.id, self.location, self._persisted_model_params(student)))
             model = PersistentSubsectionGrade.update_or_create_grade(**self._persisted_model_params(student))
 
             if hasattr(model, 'override'):
