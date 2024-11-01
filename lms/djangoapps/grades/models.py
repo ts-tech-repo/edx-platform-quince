@@ -476,6 +476,10 @@ class PersistentSubsectionGrade(TimeStampedModel):
             log.info('Created/updated grade ***{}*** for user ***{}*** in course ***{}***'
                      'for subsection ***{}*** with default params ***{}***'
                      .format(grade, user_id, usage_key.course_key, usage_key, params))
+        
+        log.info('#sabidA #27 Created/updated grade ***{}*** for user ***{}*** in course ***{}***'
+                     'for subsection ***{}*** with default params ***{}***'
+                     .format(grade, user_id, usage_key.course_key, usage_key, params))
 
         grade.override = PersistentSubsectionGradeOverride.get_override(user_id, usage_key)
         if first_attempted is not None and grade.first_attempted is None:
