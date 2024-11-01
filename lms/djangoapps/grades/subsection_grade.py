@@ -303,7 +303,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
                      ' and grade_total ***{}*** for subsection ***{}***'
                      .format(all_total, graded_total, subsection.location))
         
-        log.info('#sabidA #11Calculated aggregate all_total ***{}***'
+        log.info('#sabidA #11 Calculated aggregate all_total ***{}***'
                      ' and grade_total ***{}*** for subsection ***{}***'
                      .format(all_total, graded_total, subsection.location))
 

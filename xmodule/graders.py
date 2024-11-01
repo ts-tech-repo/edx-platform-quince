@@ -114,6 +114,9 @@ def aggregate_scores(scores):
         all_total: An AggregatedScore representing the total score summed over all input scores
         graded_total: An AggregatedScore representing the score summed over all graded input scores
     """
+
+    log.info("#sabidA #12 scores: %s", scores)
+    
     total_correct_graded = float_sum(score.earned for score in _iter_graded(scores))
     total_possible_graded = float_sum(score.possible for score in _iter_graded(scores))
     first_attempted_graded = _min_or_none(
