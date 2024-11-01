@@ -97,18 +97,6 @@
       margin: 0 15px;
     }
 
-    nav {
-      color: white;
-      position: fixed;
-      /* Sticky position */
-      top: 0;
-      /* Sticks to the top */
-      width: 100%;
-      z-index: 1000;
-      /* Ensures it stays above other content */
-      /* background-color: #f6f8f9; */
-    }
-
     .gradient-border {
       background: linear-gradient(90deg, #d0f1ff, #fff1e4);
       padding: 15px;
@@ -116,6 +104,7 @@
       border-radius: 50%;
       background-origin: border-box;
       background-clip: padding-box, border-box;
+      width: fit-content;
     }
 
     .content {
@@ -126,6 +115,41 @@
 
     p#name {
       word-break: break-all;
+    }
+
+    @media (max-width: 991.98px) {
+      .profile-img-modal {
+        width: 115px;
+        height: 115px;
+      }
+      .modal-content-container {
+        padding: 45px;
+        margin-bottom: 0px;
+      }
+      .peer-about {
+        word-break: break-all;
+        white-space: break-spaces;
+        font-size: 20px;
+      }
+      .peer-name-modal{
+        font-size: 26px;
+        line-height: 1;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .profile-img-modal {
+        width: 200px;
+        height: 200px;
+      }
+      .modal-content-container {
+        padding: 75px;
+        margin-bottom: 60px;
+      }
+      .peer-name-modal {
+        font-size: 35px;
+        line-height: 1;
+      }
     }
   </style>
 </head>
@@ -138,7 +162,7 @@
     <img src="https://static.talentsprint.com/lms_maple/images/logo.png" class="my-2"
       style="height: 62px; margin-left: 70px; width: 250px" />
   </nav>
-  <header class="mb-5" style="margin-top: 130px">
+  <header class="mb-5" style="margin-top: 40px">
     <div class="text-center">
       <h1>Know Your Peers</h1>
       <h5>Build Connections Beyond Boundaries</h5>
@@ -152,9 +176,9 @@
           {% for profile in profiles %}
            {% if not profile.is_superuser or not profile.is_staff %}
           <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">
-            <div class="profile-section d-flex align-items-center">
+            <div class="profile-section d-flex flex-column flex-lg-row align-items-center flex-wrap flex-lg-nowrap text-center text-lg-left">
               <img class="profile-img" id="profile_image" src="{{ profile.profile_image_urls.full }}" alt="">
-              <p class="ml-4 font-weight-bold" id="name" style="font-size: 24px;">
+              <p class="ml-lg-4 font-weight-bold" id="name" style="font-size: 24px;">
                 {{ profile.first_name }} {{ profile.last_name }}
               </p>
             </div>
@@ -239,10 +263,10 @@
 position: absolute;
 right: 38px;
 ">X</span>
-<div class="d-flex flex-column flex-lg-row align-content-center" style="margin-bottom: 60px; padding: 75px;">
+<div class="d-flex flex-column flex-lg-row align-content-center modal-content-container">
 <div class="peer-img d-fex flex-column align-items-center" style="max-width: 235px;">
 <div class="gradient-border"> 
-<img class="content"  src="${peer?.profile_image_urls}" style="width: 200px; height: 200px; border-radius: 50%;" alt="${peer?.name}" />
+<img class="content profile-img-modal"  src="${peer?.profile_image_urls}" style="border-radius: 50%;" alt="${peer?.name}" />
 </div>
   <div class="social-media d-flex justify-content-center mt-3">
   ${peer?.social_links?.linkedin ? `<a href=${peer?.social_links?.linkedin} target="_blank"> 
@@ -259,10 +283,10 @@ right: 38px;
    
   </div>
 </div>
-<div class="info-section ml-5">
+<div class="info-section ml-lg-5 text-center text-lg-left">
 <div class="peer-name">
-<p style="font-size: 35px;">${peer?.name || ""}</p>       
-<p style= "font-size: 18px;color: rgba(0,0,0,0.5);">${peer?.level_of_education || ""
+<p class="peer-name-modal">${peer?.name || ""}</p>       
+<p class="peer-level-modal" style= "font-size: 18px;color: rgba(0,0,0,0.5);">${peer?.level_of_education || ""
         }</p>
 </div>
 <div class="my-3" style="height: 1px; background-color: rgba(0,0,0,0.1)"> </div>
