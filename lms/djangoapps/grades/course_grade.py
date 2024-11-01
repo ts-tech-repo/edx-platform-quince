@@ -17,6 +17,8 @@ from .scores import compute_percent
 from .subsection_grade import ZeroSubsectionGrade
 from .subsection_grade_factory import SubsectionGradeFactory
 
+from logging import getLogger
+log = getLogger(__name__)
 
 class CourseGradeBase:
     """
@@ -117,9 +119,13 @@ class CourseGradeBase:
         subsection grades, display name, and url name.
         """
         course_structure = self.course_data.structure
+        log.info("#sabidA #v3 course_structure: %s", course_structure)
+
         grades = OrderedDict()
         for chapter_key in course_structure.get_children(self.course_data.location):
+            log.info("#sabidA #v4 chapter_key: %s", chapter_key)
             grades[chapter_key] = self._get_chapter_grade_info(course_structure[chapter_key], course_structure)
+            log.info("#sabidA #v5 grades: %s", grades)
         return grades
 
     @lazy
