@@ -915,7 +915,7 @@ class ScoresClient:
     Eventually, this should read and write scores, but at the moment it only
     handles the read side of things.
     """
-    Score = namedtuple('Score', 'correct total created')
+    Score = namedtuple('Score', 'correct total created letter_grade')
 
     def __init__(self, course_key, user_id):
         self.course_key = course_key
