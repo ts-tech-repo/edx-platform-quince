@@ -943,6 +943,12 @@ class ScoresClient:
             for location, correct, total, created
             in scores_qset.values_list('module_state_key', 'grade', 'max_grade', 'created')
         })
+        try:
+            for location, correct, total, created, letter_grade in scores_qset.values_list('module_state_key', 'grade', 'max_grade', 'created', 'letter_grade'):
+                log.info("#sabidA #25.1 location: %s, correct: %s, total: %s, created: %s, letter_grade: %s", location, correct, total, created, letter_grade)
+        except Exception as e:
+            log.info("#sabidA #25.1 exception: %s", e)
+        
         self._has_fetched = True
         log.info("#sabidA #26 self._locations_to_scores: %s", self._locations_to_scores)
 
