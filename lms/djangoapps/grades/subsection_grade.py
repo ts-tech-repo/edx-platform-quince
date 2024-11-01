@@ -382,6 +382,8 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
         Returns the parameters for creating/updating the
         persisted model for this subsection grade.
         """
+        log.info('#sabidA #28 self.problem_scores: %s', self.problem_scores)
+        
         return dict(
             user_id=student.id,
             usage_key=self.location,
@@ -393,7 +395,6 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
             possible_graded=self.graded_total.possible,
             visible_blocks=self._get_visible_blocks,
             first_attempted=self.all_total.first_attempted,
-            letter_grade=self.letter_grade,
         )
 
     @property
