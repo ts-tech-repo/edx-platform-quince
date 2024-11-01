@@ -289,6 +289,9 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
                 log.info('Calculated problem score ***{}*** for block ***{!s}***'
                          ' in subsection ***{}***.'
                          .format(problem_score, block_key, subsection.location))
+            log.info('#sabidA #10 Calculated problem score ***{}*** for block ***{!s}***'
+                         ' in subsection ***{}***.'
+                         .format(problem_score, block_key, subsection.location))
             if problem_score:
                 self.problem_scores[block_key] = problem_score
 
@@ -297,6 +300,10 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
         # TODO: Remove as part of EDUCATOR-4602.
         if str(subsection.location.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
             log.info('Calculated aggregate all_total ***{}***'
+                     ' and grade_total ***{}*** for subsection ***{}***'
+                     .format(all_total, graded_total, subsection.location))
+        
+        log.info('#sabidA #11Calculated aggregate all_total ***{}***'
                      ' and grade_total ***{}*** for subsection ***{}***'
                      .format(all_total, graded_total, subsection.location))
 
