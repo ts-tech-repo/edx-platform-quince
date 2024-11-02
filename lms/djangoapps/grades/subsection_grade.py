@@ -43,8 +43,13 @@ class SubsectionGradeBase(metaclass=ABCMeta):
         self.override = None
 
         log.info("#sabidA #v7 subsection: %s", subsection)
-        self.letter_grade = getattr(subsection, 'letter_grade', None)
+        log.info("#sabidA #v7.1 subsection: %s", str(subsection))
+        self.letter_grade = subsection.get('letter_grade', 'TEST')
 
+    @property
+    def letter_grade(self):
+        return 'SABID_SG'
+    
     @property
     def attempted(self):
         """
