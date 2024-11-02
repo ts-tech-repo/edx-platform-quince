@@ -9,6 +9,8 @@ from pytz import UTC
 
 from lms.djangoapps.course_home_api.serializers import ReadOnlySerializer, VerifiedModeSerializer
 
+from logging import getLogger
+log = getLogger(__name__)
 
 class CourseGradeSerializer(ReadOnlySerializer):
     """
@@ -40,7 +42,8 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
     letter_grade = serializers.CharField(source='letter_grade')
 
     def get_letter_grade(self, subsection):
-        return subsection.letter_grade or 'SABID'
+        log.info("#sabidA #v6 subsection: %s", subsection)
+        return 'SABID'
 
     def get_override(self, subsection):
         """Proctoring or grading score override"""
