@@ -42,6 +42,7 @@ class SubsectionGradeBase(metaclass=ABCMeta):
 
         self.override = None
 
+        log.info("#sabidA #v7 subsection: %s", subsection)
         self.letter_grade = getattr(subsection, 'letter_grade', None)
 
     @property
