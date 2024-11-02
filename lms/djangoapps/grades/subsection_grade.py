@@ -44,7 +44,7 @@ class SubsectionGradeBase(metaclass=ABCMeta):
 
         log.info("#sabidA #v7 subsection: %s", subsection)
         log.info("#sabidA #v7.1 subsection: %s", str(subsection))
-        self.letter_grade = getattr(subsection, 'letter_grade', 'TEST')
+        self.letter_grade = getattr(subsection, 'letter_grade', None)
 
     @property
     def letter_grade(self):
