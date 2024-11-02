@@ -39,7 +39,7 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
     show_grades = serializers.SerializerMethodField()
     url = serializers.SerializerMethodField()
 
-    letter_grade = serializers.CharField(source='letter_grade')
+    letter_grade = serializers.CharField()
 
     def get_letter_grade(self, subsection):
         log.info("#sabidA #v6 subsection: %s", subsection)
