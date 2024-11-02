@@ -42,6 +42,8 @@ class SubsectionGradeBase(metaclass=ABCMeta):
 
         self.override = None
 
+        self.letter_grade = getattr(subsection, 'letter_grade', None)
+
     @property
     def attempted(self):
         """
