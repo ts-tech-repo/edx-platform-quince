@@ -246,6 +246,7 @@ class CourseGradeBase:
         Helper that returns a dictionary of chapter grade information.
         """
         chapter_subsection_grades = self._get_subsection_grades(course_structure, chapter.location)
+        log.info("#sabidA #v8 chapter_subsection_grades: %s", chapter_subsection_grades)
         return {
             'display_name': block_metadata_utils.display_name_with_default(chapter),
             'url_name': block_metadata_utils.url_name_for_block(chapter),
