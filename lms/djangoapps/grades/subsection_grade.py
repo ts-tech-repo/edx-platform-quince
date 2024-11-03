@@ -22,7 +22,7 @@ class SubsectionGradeBase(metaclass=ABCMeta):
     Abstract base class for Subsection Grades.
     """
 
-    def __init__(self, subsection):
+    def __init__(self, subsection, letter_grade = ''):
         self.location = subsection.location
         self.display_name = block_metadata_utils.display_name_with_default(subsection)
         self.url_name = block_metadata_utils.url_name_for_block(subsection)
@@ -44,7 +44,7 @@ class SubsectionGradeBase(metaclass=ABCMeta):
 
         log.info("#sabidA #v7 subsection: %s", subsection)
         log.info("#sabidA #v7.1 subsection: %s", str(subsection))
-        self.letter_grade = getattr(subsection, 'letter_grade', 'TEST')
+        self.letter_grade = letter_grade
 
     @property
     def attempted(self):
@@ -152,8 +152,8 @@ class NonZeroSubsectionGrade(SubsectionGradeBase, metaclass=ABCMeta):
     possibly NonZero values.
     """
 
-    def __init__(self, subsection, all_total, graded_total, override=None):
-        super().__init__(subsection)
+    def __init__(self, subsection, all_total, graded_total, override=None, letter_grade=''):
+        super().__init__(subsection, letter_grade)
         self.all_total = all_total
         self.graded_total = graded_total
         self.override = override
@@ -260,6 +260,8 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
         # save these for later since we compute problem_scores lazily
         self.model = model
         self.factory = factory
+
+        self.letter_grade = model.letter_grade
 
         super().__init__(subsection, all_total, graded_total, override)
 
