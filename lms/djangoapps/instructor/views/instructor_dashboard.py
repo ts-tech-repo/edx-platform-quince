@@ -994,7 +994,7 @@ def load_tab(request, course_id, loadTab):
     
     course = get_course_by_id(course_key, depth=None)
     if loadTab == "attendance":
-        context = {"section_data" : _section_attendance("", {}, course_id, True)}
+        context = {"section_data" : _section_attendance(course, {}, course_id, True)}
     elif loadTab == "course_log":
         context = {"section_data" : _section_course_log(course, {}, True)}
     elif loadTab == "course_info":
