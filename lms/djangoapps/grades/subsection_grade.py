@@ -326,7 +326,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
         log.info('#sabidA #11 Calculated aggregate all_total ***{}***'
                      ' and grade_total ***{}*** for subsection ***{}***'
                      .format(all_total, graded_total, subsection.location))
-        super().__init__(subsection, all_total, graded_total, comment)
+        super().__init__(subsection, all_total, graded_total)
 
     def update_or_create_model(self, student, score_deleted=False, force_update_subsections=False):
         """
