@@ -372,7 +372,7 @@ class PersistentSubsectionGrade(TimeStampedModel):
         Returns a string representation of this model.
         """
         return (
-            "{} user: {}, course version: {}, subsection: {} ({}). {}/{} graded, {}/{} all, first_attempted: {}"
+            "{} user: {}, course version: {}, subsection: {} ({}). {}/{} graded, {}/{} all, first_attempted: {}, letter_grade: {}"
         ).format(
             type(self).__name__,
             self.user_id,
