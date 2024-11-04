@@ -293,8 +293,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
     """
     Class for Subsection grades that are newly created or updated.
     """
-    #AK || added new field for comment
-    def __init__(self, subsection, course_structure, submissions_scores, csm_scores, comment=None):
+    def __init__(self, subsection, course_structure, submissions_scores, csm_scores):
         self.problem_scores = OrderedDict()
         self.letter_grade = ''
         for block_key in course_structure.post_order_traversal(

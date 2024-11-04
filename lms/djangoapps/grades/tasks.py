@@ -238,15 +238,13 @@ def _recalculate_subsection_grade(self, **kwargs):
         if not has_database_updated:
             raise DatabaseNotReadyError
         
-        #AK || added new field for comment
         _update_subsection_grades(
             course_key,
             scored_block_usage_key,
             kwargs['only_if_higher'],
             kwargs['user_id'],
             kwargs['score_deleted'],
-            kwargs.get('force_update_subsections', False),
-            kwargs.get('comment', None),
+            kwargs.get('force_update_subsections', False)
         )
     except Exception as exc:
         if not isinstance(exc, KNOWN_RETRY_ERRORS):
