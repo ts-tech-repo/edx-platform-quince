@@ -38,6 +38,7 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
     show_correctness = serializers.CharField()
     show_grades = serializers.SerializerMethodField()
     url = serializers.SerializerMethodField()
+    comment = serializers.CharField()
 
     letter_grade = serializers.CharField()
 

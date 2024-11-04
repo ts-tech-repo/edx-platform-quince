@@ -342,6 +342,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
     def __init__(self, subsection, course_structure, submissions_scores, csm_scores, comment=None):
         self.problem_scores = OrderedDict()
         self.letter_grade = ''
+        self.comment = comment
         for block_key in course_structure.post_order_traversal(
                 filter_func=possibly_scored,
                 start_node=subsection.location,
@@ -371,7 +372,7 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
         log.info('#sabidA #11 Calculated aggregate all_total ***{}***'
                      ' and grade_total ***{}*** for subsection ***{}***'
                      .format(all_total, graded_total, subsection.location))
-        super().__init__(subsection, all_total, graded_total, comment)
+        super().__init__(subsection, all_total, graded_total)
 
     def update_or_create_model(self, student, score_deleted=False, force_update_subsections=False):
         """
