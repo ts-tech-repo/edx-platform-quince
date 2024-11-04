@@ -221,7 +221,7 @@ def problem_raw_score_changed_handler(sender, **kwargs):  # pylint: disable=unus
         score_db_table=kwargs['score_db_table'],
         grader_response=kwargs.get('grader_response', False),
         letter_grade=kwargs.get('letter_grade', ''),
-        # comment=kwargs.get('comment', ''),
+        comment=kwargs.get('comment', ''),
     )
 
 
@@ -252,7 +252,7 @@ def enqueue_subsection_update(sender, **kwargs):  # pylint: disable=unused-argum
             score_db_table=kwargs['score_db_table'],
             force_update_subsections=kwargs.get('force_update_subsections', False),
             letter_grade=kwargs.get('letter_grade', ''),
-            # comment=kwargs.get('comment', ''),
+            comment=kwargs.get('comment', ''),
         ),
         countdown=RECALCULATE_GRADE_DELAY_SECONDS,
     )
