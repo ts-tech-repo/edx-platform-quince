@@ -264,7 +264,7 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
         log.info('#sabidA #v9 model: %s', model)
         self.letter_grade = model.letter_grade
 
-        super().__init__(subsection, all_total, graded_total, override)
+        super().__init__(subsection, all_total, graded_total, override, letter_grade=self.letter_grade)
 
     @lazy
     def problem_scores(self):
