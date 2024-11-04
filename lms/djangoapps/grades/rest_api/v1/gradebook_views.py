@@ -485,6 +485,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 'score_possible': score_possible,
                 'subsection_name': subsection_grade.display_name,
                 'letter_grade': subsection_grade.letter_grade,
+                'comment': subsection_grade.comment,
             })
             log.info("#sabidA #g1 subsection: %s", {
                 'attempted': attempted,
@@ -496,6 +497,8 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 'score_possible': score_possible,
                 'subsection_name': subsection_grade.display_name,
                 'letter_grade': subsection_grade.letter_grade,
+                'comment': subsection_grade.comment,
+                
             })
         return breakdown
 
