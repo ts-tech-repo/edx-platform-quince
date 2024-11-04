@@ -44,7 +44,6 @@ class SubsectionGradeBase(metaclass=ABCMeta):
 
         log.info("#sabidA #v7 subsection: %s", subsection)
         log.info("#sabidA #v7.1 subsection: %s", str(subsection))
-        self.letter_grade = self.letter_grade
 
     @property
     def attempted(self):
