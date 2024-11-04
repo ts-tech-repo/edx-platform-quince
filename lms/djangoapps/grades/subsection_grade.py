@@ -88,6 +88,7 @@ class ZeroSubsectionGrade(SubsectionGradeBase):
     def __init__(self, subsection, course_data):
         super().__init__(subsection)
         self.course_data = course_data
+        self.letter_grade = self.get_letter_grades()
 
     @property
     def attempted_graded(self):
@@ -144,6 +145,32 @@ class ZeroSubsectionGrade(SubsectionGradeBase):
                 if problem_score is not None:
                     locations[block_key] = problem_score
         return locations
+    
+    @lazy
+    def get_letter_grades(self):
+        """
+        Overrides the problem_scores member variable in order
+        to return empty scores for all scorable problems in the
+        course.
+        NOTE: The use of `course_data.structure` here is very intentional.
+        It means we look through the user-specific subtree of this subsection,
+        taking into account which problems are visible to the user.
+        """
+        letter_grades = OrderedDict()  # dict of problem locations to ProblemScore
+        letter_grade = ''
+        for block_key in self.course_data.structure.post_order_traversal(
+                filter_func=possibly_scored,
+                start_node=self.location,
+        ):
+            block = self.course_data.structure[block_key]
+            if getattr(block, 'has_score', False):
+                problem_score = get_score(
+                    submissions_scores={}, csm_scores={}, persisted_block=None, block=block,
+                )
+                if problem_score is not None:
+                    letter_grades[block_key] = problem_score.letter_grade
+                    letter_grade = problem_score.letter_grade
+        return letter_grade
 
 
 class NonZeroSubsectionGrade(SubsectionGradeBase, metaclass=ABCMeta):
@@ -262,8 +289,8 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
         self.factory = factory
 
         log.info('#sabidA #v9 model: %s', model)
-        self.letter_grade = self._get_letter_grade()
-        log.info('#sabidA #v10 self.letter_grade: %s', self.letter_grade)
+        #self.letter_grade = self._get_letter_grade()
+        #log.info('#sabidA #v10 self.letter_grade: %s', self.letter_grade)
 
         super().__init__(subsection, all_total, graded_total, override)
 
@@ -289,7 +316,8 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
                 problem_scores[block.locator] = problem_score
         return problem_scores
     
-    def _get_letter_grade(self):
+    '''
+    def get_letter_grade(self):
         """
         Returns the letter grade from model
         """
@@ -306,6 +334,7 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
             if problem_score:
                 letter_grade = problem_score.letter_grade
         return letter_grade
+    '''
 
 
 class CreateSubsectionGrade(NonZeroSubsectionGrade):
