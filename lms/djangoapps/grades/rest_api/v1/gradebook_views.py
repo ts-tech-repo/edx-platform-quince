@@ -486,7 +486,17 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 'subsection_name': subsection_grade.display_name,
                 'letter_grade': subsection_grade.letter_grade,
             })
-            log.info("#sabidA #g1 subsection: %s", subsection_grade)
+            log.info("#sabidA #g1 subsection: %s", {
+                'attempted': attempted,
+                'category': subsection_grade.format,
+                'label': short_label,
+                'module_id': str(subsection_grade.location),
+                'percent': subsection_grade.percent_graded,
+                'score_earned': score_earned,
+                'score_possible': score_possible,
+                'subsection_name': subsection_grade.display_name,
+                'letter_grade': subsection_grade.letter_grade,
+            })
         return breakdown
 
     def _gradebook_entry(self, user, course, graded_subsections, course_grade):
