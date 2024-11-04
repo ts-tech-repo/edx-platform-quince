@@ -263,7 +263,7 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
 
         log.info('#sabidA #v9 model: %s', model)
 
-        super().__init__(subsection, all_total, graded_total, override, letter_grade=self.get_letter_grade())
+        super().__init__(subsection, all_total, graded_total, override, letter_grade=self._get_letter_grade())
 
     @lazy
     def problem_scores(self):
@@ -287,13 +287,9 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
                 problem_scores[block.locator] = problem_score
         return problem_scores
     
-    @lazy
-    def get_letter_grade(self):
+    def _get_letter_grade(self):
         """
-        Returns the scores of the problem blocks that compose this subsection.
-        NOTE: The use of `course_data.structure` here is very intentional.
-        It means we look through the user-specific subtree of this subsection,
-        taking into account which problems are visible to the user.
+        Returns the letter grade from model
         """
         # pylint: disable=protected-access
         letter_grade = ''
