@@ -314,8 +314,8 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
                 problem_scores[block.locator] = problem_score
         return problem_scores
     
-    '''
-    def get_letter_grade(self):
+    @property
+    def letter_grade(self):
         """
         Returns the letter grade from model
         """
@@ -332,7 +332,7 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
             if problem_score:
                 letter_grade = problem_score.letter_grade
         return letter_grade
-    '''
+    
 
 
 class CreateSubsectionGrade(NonZeroSubsectionGrade):
