@@ -237,7 +237,8 @@ def _recalculate_subsection_grade(self, **kwargs):
 
         if not has_database_updated:
             raise DatabaseNotReadyError
-
+        
+        #AK || added new field for comment
         _update_subsection_grades(
             course_key,
             scored_block_usage_key,
@@ -245,6 +246,7 @@ def _recalculate_subsection_grade(self, **kwargs):
             kwargs['user_id'],
             kwargs['score_deleted'],
             kwargs.get('force_update_subsections', False),
+            kwargs.get('comment', None),
         )
     except Exception as exc:
         if not isinstance(exc, KNOWN_RETRY_ERRORS):
@@ -303,9 +305,10 @@ def _has_db_updated_with_new_score(self, scored_block_usage_key, **kwargs):
 
     return db_is_updated
 
-
+#AK || added new field for comment
 def _update_subsection_grades(
-        course_key, scored_block_usage_key, only_if_higher, user_id, score_deleted, force_update_subsections=False
+        course_key, scored_block_usage_key, only_if_higher, user_id, score_deleted, force_update_subsections=False,
+        comment=None
 ):
     """
     A helper function to update subsection grades in the database
@@ -329,11 +332,13 @@ def _update_subsection_grades(
         for subsection_usage_key in subsections_to_update:
             log.info("#sabidA #1 Updating subsection grade for %s", subsection_usage_key)
             if subsection_usage_key in course_structure:
+                #AK || added new field for comment
                 subsection_grade = subsection_grade_factory.update(
                     course_structure[subsection_usage_key],
                     only_if_higher,
                     score_deleted,
                     force_update_subsections,
+                    comment
                 )
                 SUBSECTION_SCORE_CHANGED.send(
                     sender=None,
