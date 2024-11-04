@@ -135,7 +135,7 @@ from openedx.core.djangolib.markup import HTML
         ## links which are tied to idash-sections below.
         ## the links are activated and handled in instructor_dashboard.js
         ## when the javascript loads, it clicks on the first section
-        <ul class="instructor-nav">
+        <ul class="instructor-nav debugging">
           % for section_data in sections:
             <% is_hidden = section_data.get('is_hidden', False) %>
             ## This is necessary so we don't scrape 'section_display_name' as a string.
