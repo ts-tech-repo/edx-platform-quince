@@ -261,6 +261,7 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
         self.model = model
         self.factory = factory
 
+        log.info('#sabidA #v9 model: %s', model)
         self.letter_grade = model.letter_grade
 
         super().__init__(subsection, all_total, graded_total, override)
