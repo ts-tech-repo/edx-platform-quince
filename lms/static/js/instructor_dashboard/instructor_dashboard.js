@@ -107,6 +107,7 @@ such that the value can be defined later than this assignment (file load order).
         $links = idashContent.find('.' + CSS_INSTRUCTOR_NAV).find('.btn-link');
         $links.each(function(i, linkItem) {
             return $(linkItem).click(function(e) {
+                console.log(e, linkItem, "debugging")
                 var $section, itemSectionName, ref;
                 e.preventDefault();
                 idashContent.find('.' + CSS_INSTRUCTOR_NAV + ' li').children().removeClass(CSS_ACTIVE_SECTION);
