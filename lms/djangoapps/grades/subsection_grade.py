@@ -44,7 +44,7 @@ class SubsectionGradeBase(metaclass=ABCMeta):
 
         log.info("#sabidA #v7 subsection: %s", subsection)
         log.info("#sabidA #v7.1 subsection: %s", str(subsection))
-        #self.letter_grade = letter_grade
+        self.letter_grade = self.letter_grade
 
     @property
     def attempted(self):
@@ -88,7 +88,6 @@ class ZeroSubsectionGrade(SubsectionGradeBase):
     def __init__(self, subsection, course_data):
         super().__init__(subsection)
         self.course_data = course_data
-        self.letter_grade = self.get_letter_grades()
 
     @property
     def attempted_graded(self):
@@ -146,8 +145,8 @@ class ZeroSubsectionGrade(SubsectionGradeBase):
                     locations[block_key] = problem_score
         return locations
     
-    @lazy
-    def get_letter_grades(self):
+    @property
+    def letter_grade(self):
         """
         Overrides the problem_scores member variable in order
         to return empty scores for all scorable problems in the
