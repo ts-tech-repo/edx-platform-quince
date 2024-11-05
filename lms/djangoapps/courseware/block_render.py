@@ -954,6 +954,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
                         and getattr(instance, 'in_entrance_exam', False):
                     ee_data = {'entrance_exam_passed': user_has_passed_entrance_exam(request.user, course)}
                     resp = append_data_to_webob_response(resp, ee_data)
+                    log.info("#sabidA #lti3 resp data: %s", resp.data)
 
         except NoSuchHandlerError:
             log.exception("XBlock %s attempted to access missing handler %r", instance, handler)
