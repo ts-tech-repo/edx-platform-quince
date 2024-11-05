@@ -724,6 +724,7 @@ def handle_xblock_callback_noauth(request, course_id, usage_id, handler, suffix=
     Entry point for unauthenticated XBlock handlers.
     """
     request.user.known = False
+    log.info("#sabidA #lti0 request body: %s", request.body)
     log.info("#sabidA #lti1 handle_xblock_callback_noauth: %s %s %s %s", course_id, usage_id, handler, suffix)
 
     course_key = CourseKey.from_string(course_id)
