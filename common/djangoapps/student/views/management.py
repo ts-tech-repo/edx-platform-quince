@@ -1735,13 +1735,7 @@ def extras_get_assessment_details(request):
 
 @csrf_exempt
 def extras_update_lti_grades(request):
-    '''
-    url = request.build_absolute_uri().replace("quince02", "quince")
-    response = requests.request("POST", url, data=request.POST)
-    return JsonResponse(json.loads(response.text))
-
-    #SA redirect to staging.quince.talentsprint.com
-    '''
+    log.info("#sabidA 0 request received:  {}".format(request.POST))
     user_email = request.POST.get("user_email", "")
     usage_id = request.POST.get("usage_id", "")
     user_object = User.objects.get(email = user_email)
