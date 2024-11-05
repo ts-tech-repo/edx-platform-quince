@@ -724,6 +724,7 @@ def handle_xblock_callback_noauth(request, course_id, usage_id, handler, suffix=
     Entry point for unauthenticated XBlock handlers.
     """
     request.user.known = False
+    log.info("#sabidA #lti1 handle_xblock_callback_noauth: %s %s %s %s", course_id, usage_id, handler, suffix)
 
     course_key = CourseKey.from_string(course_id)
     with modulestore().bulk_operations(course_key):
@@ -905,6 +906,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
         raise Http404 from exc
 
     set_custom_attributes_for_course_key(course_key)
+    log.info("#sabidA #lti2 handle_xblock_callback: %s %s %s %s", course_id, usage_id, handler, suffix)
 
     with modulestore().bulk_operations(course_key):
         usage_key = _get_usage_key_for_course(course_key, usage_id)
