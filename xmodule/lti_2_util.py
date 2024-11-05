@@ -318,6 +318,7 @@ class LTI20BlockMixin:
         """
         try:
             json_obj = json.loads(json_str)
+            log.info("#sabidA #lti1 json_obj: %s", json_obj)
         except (ValueError, TypeError):
             msg = f"Supplied JSON string in request body could not be decoded: {json_str}"
             log.info(f"[LTI] {msg}")
@@ -355,7 +356,6 @@ class LTI20BlockMixin:
         if "resultScore" not in json_obj:
             return None, json_obj.get('comment', "")
 
-        log.info("#sabidA #lti1 json_obj: %s", json_obj)
         # if present, 'resultScore' must be a number between 0 and 1 inclusive
         try:
             score = float(json_obj.get('resultScore', "unconvertable"))  # Check if float is present and the right type
