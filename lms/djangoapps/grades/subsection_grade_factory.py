@@ -69,15 +69,14 @@ class SubsectionGradeFactory:
             self.student, list(self._unsaved_subsection_grades.values()), self.course_data.course_key
         )
         self._unsaved_subsection_grades.clear()
-    #AK || added new field for comment
-    def update(self, subsection, only_if_higher=None, score_deleted=False, force_update_subsections=False, comment=None, persist_grade=True):  # lint-amnesty, pylint: disable=line-too-long
+    def update(self, subsection, only_if_higher=None, score_deleted=False, force_update_subsections=False, persist_grade=True):  # lint-amnesty, pylint: disable=line-too-long
         """
         Updates the SubsectionGrade object for the student and subsection.
         """
         self._log_event(log.debug, f"update, subsection: {subsection.location}", subsection)
-        #AK || added new field for comment
+       
         calculated_grade = CreateSubsectionGrade(
-            subsection, self.course_data.structure, self._submissions_scores, self._csm_scores, comment
+            subsection, self.course_data.structure, self._submissions_scores, self._csm_scores
         )
 
         log.info("#sabidA #2 subsection: %s, course_structure: %s, submissions_scores: %s, csm_scores: %s", subsection, self.course_data.structure, self._submissions_scores, self._csm_scores)

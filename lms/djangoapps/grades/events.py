@@ -44,7 +44,7 @@ def grade_updated(**kwargs):
     an outer event type (such as problem.rescored or score_overridden).
     """
     root_type = get_event_transaction_type()
-
+    #AK || added new field for comment
     if not root_type:
         root_id = get_event_transaction_id()
         if not root_id:
@@ -61,6 +61,7 @@ def grade_updated(**kwargs):
                 'weighted_earned': kwargs.get('weighted_earned'),
                 'weighted_possible': kwargs.get('weighted_possible'),
                 'letter_grade': kwargs.get('letter_grade'),
+                'comment': kwargs.get('comment'),
             }
         )
 

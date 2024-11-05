@@ -344,6 +344,9 @@ class PersistentSubsectionGrade(TimeStampedModel):
 
     #SA || added new field for letter grade
     letter_grade = models.CharField(max_length=255, blank=True, null=True)
+    
+    #AK || added new field for comment
+    comment = models.TextField(max_length=255, blank=True, null=True)
 
     # timestamp for the learner's first attempt at content in
     # this subsection. If null, indicates no attempt
@@ -372,7 +375,7 @@ class PersistentSubsectionGrade(TimeStampedModel):
         Returns a string representation of this model.
         """
         return (
-            "{} user: {}, course version: {}, subsection: {} ({}). {}/{} graded, {}/{} all, first_attempted: {}, letter_grade: {}"
+            "{} user: {}, course version: {}, subsection: {} ({}). {}/{} graded, {}/{} all, first_attempted: {}, letter_grade: {}, comment: {}"
         ).format(
             type(self).__name__,
             self.user_id,
@@ -385,6 +388,7 @@ class PersistentSubsectionGrade(TimeStampedModel):
             self.possible_all,
             self.first_attempted,
             self.letter_grade,
+            self.comment
         )
 
     @classmethod

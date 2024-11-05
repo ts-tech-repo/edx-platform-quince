@@ -123,6 +123,9 @@ class StudentModule(models.Model):
 
     #SA || added new field for letter grade
     letter_grade = models.TextField(null=True, blank=True)
+    
+    #AK || added new field for comment
+    comment = models.TextField(null=True, blank=True)
 
     @classmethod
     def all_submitted_problems_read_only(cls, course_id):
@@ -153,6 +156,7 @@ class StudentModule(models.Model):
                 'module_state_key': self.module_state_key,
                 'state': str(self.state)[:20],
                 'letter_grade': self.letter_grade,
+                'comment': self.comment
             })
 
     def __str__(self):

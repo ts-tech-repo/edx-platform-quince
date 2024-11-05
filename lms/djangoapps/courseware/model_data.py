@@ -915,7 +915,8 @@ class ScoresClient:
     Eventually, this should read and write scores, but at the moment it only
     handles the read side of things.
     """
-    Score = namedtuple('Score', 'correct total created letter_grade')
+    #AK || added new field for comment
+    Score = namedtuple('Score', 'correct total created letter_grade comment')
 
     def __init__(self, course_key, user_id):
         self.course_key = course_key
@@ -939,12 +940,12 @@ class ScoresClient:
         # attached to them (since old mongo identifiers don't include runs).
         # So we have to add that info back in before we put it into our lookup.
         self._locations_to_scores.update({
-            location.map_into_course(self.course_key): self.Score(correct, total, created, letter_grade)
-            for location, correct, total, created, letter_grade
-            in scores_qset.values_list('module_state_key', 'grade', 'max_grade', 'created', 'letter_grade')
+            location.map_into_course(self.course_key): self.Score(correct, total, created, letter_grade, comment)
+            for location, correct, total, created, letter_grade, comment
+            in scores_qset.values_list('module_state_key', 'grade', 'max_grade', 'created', 'letter_grade', 'comment')
         })
         try:
-            for location, correct, total, created, letter_grade in scores_qset.values_list('module_state_key', 'grade', 'max_grade', 'created', 'letter_grade'):
+            for location, correct, total, created, letter_grade, comment in scores_qset.values_list('module_state_key', 'grade', 'max_grade', 'created', 'letter_grade', 'comment'):
                 log.info("#sabidA #25.1 location: %s, correct: %s, total: %s, created: %s, letter_grade: %s", location, correct, total, created, letter_grade)
         except Exception as e:
             log.info("#sabidA #25.1 exception: %s", e)
