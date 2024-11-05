@@ -929,6 +929,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
         instance, tracking_context = get_block_by_usage_id(
             request, course_id, str(block_usage_key), course=course, will_recheck_access=will_recheck_access,
         )
+        log.info("#sabidA #lti3 instance: %s, tracking_context: %s", instance, tracking_context)
         # Name the transaction so that we can view XBlock handlers separately in
         # New Relic. The suffix is necessary for XBlock handlers because the
         # "handler" in those cases is always just "xmodule_handler".
