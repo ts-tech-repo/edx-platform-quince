@@ -939,6 +939,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
 
         tracking_context_name = 'module_callback_handler'
         req = django_to_webob_request(request)
+        log.info("#sabidA #lti4 req: %s", req)
         try:
             with tracker.get_tracker().context(tracking_context_name, tracking_context):
                 if is_xblock_aside(usage_key):
