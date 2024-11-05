@@ -915,7 +915,8 @@ class ScoresClient:
     Eventually, this should read and write scores, but at the moment it only
     handles the read side of things.
     """
-    Score = namedtuple('Score', 'correct total created')
+    #AK || added new field for comment
+    Score = namedtuple('Score', 'correct total created letter_grade comment')
 
     def __init__(self, course_key, user_id):
         self.course_key = course_key
@@ -934,15 +935,23 @@ class ScoresClient:
             course_id=self.course_key,
             module_state_key__in=set(locations),
         )
+        log.info("#sabidA #25 scores_qset: %s", scores_qset)
         # Locations in StudentModule don't necessarily have course key info
         # attached to them (since old mongo identifiers don't include runs).
         # So we have to add that info back in before we put it into our lookup.
         self._locations_to_scores.update({
-            location.map_into_course(self.course_key): self.Score(correct, total, created)
-            for location, correct, total, created
-            in scores_qset.values_list('module_state_key', 'grade', 'max_grade', 'created')
+            location.map_into_course(self.course_key): self.Score(correct, total, created, letter_grade, comment)
+            for location, correct, total, created, letter_grade, comment
+            in scores_qset.values_list('module_state_key', 'grade', 'max_grade', 'created', 'letter_grade', 'comment')
         })
+        try:
+            for location, correct, total, created, letter_grade, comment in scores_qset.values_list('module_state_key', 'grade', 'max_grade', 'created', 'letter_grade', 'comment'):
+                log.info("#sabidA #25.1 location: %s, correct: %s, total: %s, created: %s, letter_grade: %s", location, correct, total, created, letter_grade)
+        except Exception as e:
+            log.info("#sabidA #25.1 exception: %s", e)
+        
         self._has_fetched = True
+        log.info("#sabidA #26 self._locations_to_scores: %s", self._locations_to_scores)
 
     def get(self, location):
         """

@@ -484,6 +484,21 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 'score_earned': score_earned,
                 'score_possible': score_possible,
                 'subsection_name': subsection_grade.display_name,
+                'letter_grade': subsection_grade.letter_grade,
+                #AK || added new field for comment
+                'comment': subsection_grade.comment,
+            })
+            log.info("#sabidA #g1 subsection: %s", {
+                'attempted': attempted,
+                'category': subsection_grade.format,
+                'label': short_label,
+                'module_id': str(subsection_grade.location),
+                'percent': subsection_grade.percent_graded,
+                'score_earned': score_earned,
+                'score_possible': score_possible,
+                'subsection_name': subsection_grade.display_name,
+                'letter_grade': subsection_grade.letter_grade,
+                'comment': subsection_grade.comment
             })
         return breakdown
 

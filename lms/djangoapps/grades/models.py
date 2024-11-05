@@ -341,6 +341,12 @@ class PersistentSubsectionGrade(TimeStampedModel):
     possible_all = models.FloatField(blank=False)
     earned_graded = models.FloatField(blank=False)
     possible_graded = models.FloatField(blank=False)
+    
+    #SA || added new field for letter grade
+    letter_grade = models.CharField(max_length=255, blank=True, null=True)
+
+    #AK || added new field for comment
+    comment = models.TextField(max_length=255, blank=True, null=True)
 
     # timestamp for the learner's first attempt at content in
     # this subsection. If null, indicates no attempt
@@ -369,7 +375,7 @@ class PersistentSubsectionGrade(TimeStampedModel):
         Returns a string representation of this model.
         """
         return (
-            "{} user: {}, course version: {}, subsection: {} ({}). {}/{} graded, {}/{} all, first_attempted: {}"
+            "{} user: {}, course version: {}, subsection: {} ({}). {}/{} graded, {}/{} all, first_attempted: {}, letter_grade: {}, comment: {}"
         ).format(
             type(self).__name__,
             self.user_id,
@@ -381,6 +387,8 @@ class PersistentSubsectionGrade(TimeStampedModel):
             self.earned_all,
             self.possible_all,
             self.first_attempted,
+            self.letter_grade,
+            self.comment
         )
 
     @classmethod
@@ -470,6 +478,10 @@ class PersistentSubsectionGrade(TimeStampedModel):
         # TODO: Remove as part of EDUCATOR-4602.
         if str(usage_key.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
             log.info('Created/updated grade ***{}*** for user ***{}*** in course ***{}***'
+                     'for subsection ***{}*** with default params ***{}***'
+                     .format(grade, user_id, usage_key.course_key, usage_key, params))
+            
+        log.info('#sabidA #27 Created/updated grade ***{}*** for user ***{}*** in course ***{}***'
                      'for subsection ***{}*** with default params ***{}***'
                      .format(grade, user_id, usage_key.course_key, usage_key, params))
 

@@ -106,10 +106,14 @@ def get_score(submissions_scores, csm_scores, persisted_block, block):
     if str(block.location.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
         log.info('Weight for block: ***{}*** is {}'
                  .format(str(block.location), weight))
+        
+    log.info('#sabidA #16 Weight for block: ***{}*** is {}'
+                 .format(str(block.location), weight))
 
     # Priority order for retrieving the scores:
     # submissions API -> CSM -> grades persisted block -> latest block content
-    raw_earned, raw_possible, weighted_earned, weighted_possible, first_attempted = (
+    #AK || added new field for comment
+    raw_earned, raw_possible, weighted_earned, weighted_possible, first_attempted, letter_grade, comment = (
         _get_score_from_submissions(submissions_scores, block) or
         _get_score_from_csm(csm_scores, block, weight) or
         _get_score_from_persisted_or_latest_block(persisted_block, block, weight)
@@ -118,6 +122,11 @@ def get_score(submissions_scores, csm_scores, persisted_block, block):
     # TODO: Remove as part of EDUCATOR-4602.
     if str(block.location.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
         log.info('Calculated raw-earned: {}, raw_possible: {}, weighted_earned: '
+                 '{}, weighted_possible: {}, first_attempted: {} for block: ***{}***.'
+                 .format(raw_earned, raw_possible, weighted_earned,
+                         weighted_possible, first_attempted, str(block.location)))
+        
+    log.info('#sabidA #17 Calculated raw-earned: {}, raw_possible: {}, weighted_earned: '
                  '{}, weighted_possible: {}, first_attempted: {} for block: ***{}***.'
                  .format(raw_earned, raw_possible, weighted_earned,
                          weighted_possible, first_attempted, str(block.location)))
@@ -137,6 +146,8 @@ def get_score(submissions_scores, csm_scores, persisted_block, block):
             weight,
             graded,
             first_attempted=first_attempted,
+            letter_grade=letter_grade,
+            comment=comment
         )
 
 
@@ -172,14 +183,20 @@ def _get_score_from_submissions(submissions_scores, block):
     """
     Returns the score values from the submissions API if found.
     """
+    log.info('#sabidA #21 submissions_scores: {}'.format(submissions_scores))
+
     if submissions_scores:
         submission_value = submissions_scores.get(str(block.location))
+        log.info('#sabidA #22 submission_value: {}'.format(submission_value))
+
         if submission_value:
             first_attempted = submission_value['created_at']
             weighted_earned = submission_value['points_earned']
             weighted_possible = submission_value['points_possible']
+            letter_grade = submission_value.get('letter_grade', '')
+            comment = submission_value.get('comment', '')
             assert weighted_earned >= 0.0 and weighted_possible > 0.0  # per contract from submissions API
-            return (None, None) + (weighted_earned, weighted_possible) + (first_attempted,)
+            return (None, None) + (weighted_earned, weighted_possible) + (first_attempted, letter_grade, comment,)
 
 
 def _get_score_from_csm(csm_scores, block, weight):
@@ -198,7 +215,12 @@ def _get_score_from_csm(csm_scores, block, weight):
     # attempted. Even though the CSM persistence for this value is now
     # superfluous, for backward compatibility, we continue to use its value for
     # raw_possible, giving it precedence over the one in the grades data model.
+    
+    log.info('#sabidA #23 csm_scores: {}'.format(csm_scores))
+
     score = csm_scores.get(block.location)
+    log.info('#sabidA #24 score: {}'.format(score))
+    
     has_valid_score = score and score.total is not None
     if has_valid_score:
         if score.correct is not None:
@@ -209,7 +231,7 @@ def _get_score_from_csm(csm_scores, block, weight):
             raw_earned = 0.0
 
         raw_possible = score.total
-        return (raw_earned, raw_possible) + weighted_score(raw_earned, raw_possible, weight) + (first_attempted,)
+        return (raw_earned, raw_possible) + weighted_score(raw_earned, raw_possible, weight) + (first_attempted, score.letter_grade, score.comment,)
 
 
 def _get_score_from_persisted_or_latest_block(persisted_block, block, weight):
@@ -224,8 +246,14 @@ def _get_score_from_persisted_or_latest_block(persisted_block, block, weight):
         log.info('Using _get_score_from_persisted_or_latest_block to calculate score for block: ***{}***.'.format(
             str(block.location)
         ))
+
+    log.info('#sabidA #18 Using _get_score_from_persisted_or_latest_block to calculate score for block: ***{}***.'.format(
+            str(block.location)
+        ))
     raw_earned = 0.0
     first_attempted = None
+    letter_grade = None
+    comment = None
 
     if persisted_block:
         raw_possible = persisted_block.raw_possible
@@ -235,6 +263,9 @@ def _get_score_from_persisted_or_latest_block(persisted_block, block, weight):
         if str(block.location.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
             log.info('Using latest block content to calculate score for block: ***{}***.')
             log.info(f'weight for block: ***{str(block.location)}*** is {raw_possible}.')
+            
+        log.info('#sabidA #19 Using latest block content to calculate score for block: ***{}***.')
+        log.info(f'#sabidA #20 weight for block: ***{str(block.location)}*** is {raw_possible}.')
 
     # TODO TNL-5982 remove defensive code for scorables without max_score
     if raw_possible is None:
@@ -242,7 +273,7 @@ def _get_score_from_persisted_or_latest_block(persisted_block, block, weight):
     else:
         weighted_scores = weighted_score(raw_earned, raw_possible, weight)
 
-    return (raw_earned, raw_possible) + weighted_scores + (first_attempted,)
+    return (raw_earned, raw_possible) + weighted_scores + (first_attempted, letter_grade, comment,)
 
 
 def _get_weight_from_block(persisted_block, block):

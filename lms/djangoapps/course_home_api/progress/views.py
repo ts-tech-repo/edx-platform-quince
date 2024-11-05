@@ -40,6 +40,9 @@ from openedx.features.enterprise_support.utils import get_enterprise_learner_gen
 
 User = get_user_model()
 
+from logging import getLogger
+log = getLogger(__name__)
+
 
 class ProgressTabView(RetrieveAPIView):
     """
@@ -244,6 +247,8 @@ class ProgressTabView(RetrieveAPIView):
         }
 
         access_expiration = get_access_expiration_data(request.user, course_overview)
+        
+        log.info('#sabidA #v1 course_grade: %s', course_grade.chapter_grades)
 
         data = {
             'access_expiration': access_expiration,
@@ -269,6 +274,8 @@ class ProgressTabView(RetrieveAPIView):
         # course_overview and enrollment will be used by VerifiedModeSerializer
         context['course_overview'] = course_overview
         context['enrollment'] = enrollment
+        
+        log.info('#sabidA #v2 data: %s', data)
         serializer = self.get_serializer_class()(data, context=context)
 
         return Response(serializer.data)

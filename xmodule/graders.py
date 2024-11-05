@@ -25,7 +25,8 @@ class ScoreBase(metaclass=abc.ABCMeta):
     Abstract base class for encapsulating fields of values scores.
     """
 
-    def __init__(self, graded, first_attempted):
+    #AK || added new field for comment
+    def __init__(self, graded, first_attempted, letter_grade=None, comment=None):
         """
         Fields common to all scores include:
 
@@ -37,6 +38,8 @@ class ScoreBase(metaclass=abc.ABCMeta):
         """
         self.graded = graded
         self.first_attempted = first_attempted
+        self.letter_grade = letter_grade
+        self.comment = comment
 
     def __eq__(self, other):
         if type(other) is type(self):
@@ -114,6 +117,9 @@ def aggregate_scores(scores):
         all_total: An AggregatedScore representing the total score summed over all input scores
         graded_total: An AggregatedScore representing the score summed over all graded input scores
     """
+
+    log.info("#sabidA #12 scores: %s", scores)
+    
     total_correct_graded = float_sum(score.earned for score in _iter_graded(scores))
     total_possible_graded = float_sum(score.possible for score in _iter_graded(scores))
     first_attempted_graded = _min_or_none(
