@@ -1235,6 +1235,7 @@ zipp==3.18.1
     # via
     #   importlib-metadata
     #   importlib-resources
+figures==2.0.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
