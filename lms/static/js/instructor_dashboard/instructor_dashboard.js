@@ -40,7 +40,7 @@ such that the value can be defined later than this assignment (file load order).
 
     CSS_INSTRUCTOR_CONTENT = 'instructor-dashboard-content-2';
 
-    CSS_ACTIVE_SECTION = 'active-section-debugging';
+    CSS_ACTIVE_SECTION = 'active-section';
 
     CSS_IDASH_SECTION = 'idash-section';
 
