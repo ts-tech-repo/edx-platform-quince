@@ -27,6 +27,10 @@ from .api import (
     update_user_preferences
 )
 
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+import requests, json
+import logging
+log = logging.getLogger(__name__)
 
 class PreferencesView(APIView):
     """
@@ -109,6 +113,9 @@ class PreferencesView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         return Response(user_preferences)
+    
+    def _api_request_to_moodle(self, payload):
+        return requests.request("POST", configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php", headers = {  'content-type': "text/plain" }, params = payload).text
 
     def patch(self, request, username):
         """
@@ -126,6 +133,22 @@ class PreferencesView(APIView):
         try:
             with transaction.atomic():
                 update_user_preferences(request.user, request.data, user=username)
+                
+                #SA || updateTimeZoneToMoodle
+                payload = request.data
+                if 'time_zone' in payload:
+                    time_zone = payload['time_zone'] if payload['time_zone'] else '99'  #default value 99 refers to local timezone in moodle
+                    payload = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_user_get_users_by_field", "moodlewsrestformat" : "json", "field" : 'email', "values[0]" : request.user.email}
+                    moodle_resp = self._api_request_to_moodle(payload)
+                    log.info(moodle_resp)
+                    
+                    r_moodle = json.loads(moodle_resp)
+                    if r_moodle and len(r_moodle):
+                        moodle_user_id = r_moodle[0]['id']
+                        payload = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_user_update_users", "moodlewsrestformat" : "json", "users[0][id]" : moodle_user_id, "users[0][timezone]" : time_zone}
+                        moodle_resp = self._api_request_to_moodle(payload)
+                        log.info(moodle_resp)
+
         except UserNotAuthorized:
             return Response(status=status.HTTP_403_FORBIDDEN)
         except UserNotFound:

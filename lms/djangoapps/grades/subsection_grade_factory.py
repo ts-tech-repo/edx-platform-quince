@@ -79,15 +79,23 @@ class SubsectionGradeFactory:
         calculated_grade = CreateSubsectionGrade(
             subsection, self.course_data.structure, self._submissions_scores, self._csm_scores,
         )
+        
+        log.info("#sabidA #2 subsection: %s, course_structure: %s, submissions_scores: %s, csm_scores: %s", subsection, self.course_data.structure, self._submissions_scores, self._csm_scores)
+        log.info("#sabidA #2.1 Calculated grade: %s", calculated_grade)
 
         if persist_grade:
+            log.info("#sabidA #3 Persisting grade: %s", calculated_grade)
             if only_if_higher:
+                log.info("#sabidA #4 Persisting grade: %s", calculated_grade)
                 try:
                     grade_model = PersistentSubsectionGrade.read_grade(self.student.id, subsection.location)
+                    log.info("#sabidA #5 Grade model: %s", grade_model)
                 except PersistentSubsectionGrade.DoesNotExist:
                     pass
                 else:
                     orig_subsection_grade = ReadSubsectionGrade(subsection, grade_model, self)
+                    log.info("#sabidA #6 Orig grade: %s", orig_subsection_grade)
+                    
                     if not is_score_higher_or_equal(
                         orig_subsection_grade.graded_total.earned,
                         orig_subsection_grade.graded_total.possible,
@@ -96,12 +104,14 @@ class SubsectionGradeFactory:
                         treat_undefined_as_zero=True,
                     ):
                         return orig_subsection_grade
-
+            
+            log.info("#sabidA #7 Persisting grade: %s", calculated_grade)        
             grade_model = calculated_grade.update_or_create_model(
                 self.student,
                 score_deleted,
                 force_update_subsections
             )
+            log.info("#sabidA #8 Grade model: %s", grade_model)
             self._update_saved_subsection_grade(subsection.location, grade_model)
 
             if settings.FEATURES.get('ENABLE_COURSE_ASSESSMENT_GRADE_CHANGE_SIGNAL'):

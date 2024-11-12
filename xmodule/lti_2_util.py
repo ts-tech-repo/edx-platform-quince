@@ -318,6 +318,7 @@ class LTI20BlockMixin:
         """
         try:
             json_obj = json.loads(json_str)
+            log.info("#sabidA #lti1 json_obj: %s", json_obj)
         except (ValueError, TypeError):
             msg = f"Supplied JSON string in request body could not be decoded: {json_str}"
             log.info(f"[LTI] {msg}")

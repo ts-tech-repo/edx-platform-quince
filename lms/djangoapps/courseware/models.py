@@ -120,7 +120,13 @@ class StudentModule(models.Model):
 
     created = models.DateTimeField(auto_now_add=True, db_index=True)
     modified = models.DateTimeField(auto_now=True, db_index=True)
+    
+    #SA || added new field for letter grade
+    letter_grade = models.TextField(null=True, blank=True)
 
+    #AK || added new field for comment
+    comment = models.TextField(null=True, blank=True)
+    
     #KC pass student id
     @classmethod
     def all_submitted_problems_read_only(cls, course_id, module_state_keys = [], student_id=None):
@@ -153,6 +159,8 @@ class StudentModule(models.Model):
                 'student_id': self.student_id,
                 'module_state_key': self.module_state_key,
                 'state': str(self.state)[:20],
+                'letter_grade': self.letter_grade,
+                'comment': self.comment
             })
 
     def __str__(self):

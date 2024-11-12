@@ -724,6 +724,8 @@ def handle_xblock_callback_noauth(request, course_id, usage_id, handler, suffix=
     Entry point for unauthenticated XBlock handlers.
     """
     request.user.known = False
+    log.info("#sabidA #lti0 request body: %s", request.body)
+    log.info("#sabidA #lti1 handle_xblock_callback_noauth: %s %s %s %s", course_id, usage_id, handler, suffix)
 
     course_key = CourseKey.from_string(course_id)
     with modulestore().bulk_operations(course_key):
@@ -905,6 +907,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
         raise Http404 from exc
 
     set_custom_attributes_for_course_key(course_key)
+    log.info("#sabidA #lti2 handle_xblock_callback: %s %s %s %s", course_id, usage_id, handler, suffix)
 
     with modulestore().bulk_operations(course_key):
         usage_key = _get_usage_key_for_course(course_key, usage_id)
@@ -927,6 +930,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
         instance, tracking_context = get_block_by_usage_id(
             request, course_id, str(block_usage_key), course=course, will_recheck_access=will_recheck_access,
         )
+        log.info("#sabidA #lti3 instance: %s, tracking_context: %s", instance, tracking_context)
         # Name the transaction so that we can view XBlock handlers separately in
         # New Relic. The suffix is necessary for XBlock handlers because the
         # "handler" in those cases is always just "xmodule_handler".
@@ -936,6 +940,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
 
         tracking_context_name = 'module_callback_handler'
         req = django_to_webob_request(request)
+        log.info("#sabidA #lti4 req: %s", req)
         try:
             with tracker.get_tracker().context(tracking_context_name, tracking_context):
                 if is_xblock_aside(usage_key):
@@ -946,6 +951,7 @@ def _invoke_xblock_handler(request, course_id, usage_id, handler, suffix, course
                 else:
                     handler_instance = instance
                 resp = handler_instance.handle(handler, req, suffix)
+                log.info("#sabidA #lti3 resp: %s", resp)
                 if suffix == 'problem_check' \
                         and course \
                         and getattr(course, 'entrance_exam_enabled', False) \

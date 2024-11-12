@@ -42,6 +42,9 @@ class SubsectionGradeBase(metaclass=ABCMeta):
 
         self.override = None
 
+        log.info("#sabidA #v7 subsection: %s", subsection)
+        log.info("#sabidA #v7.1 subsection: %s", str(subsection))
+
     @property
     def attempted(self):
         """
@@ -140,6 +143,57 @@ class ZeroSubsectionGrade(SubsectionGradeBase):
                 if problem_score is not None:
                     locations[block_key] = problem_score
         return locations
+    
+    @property
+    def letter_grade(self):
+        """
+        Overrides the problem_scores member variable in order
+        to return empty scores for all scorable problems in the
+        course.
+        NOTE: The use of `course_data.structure` here is very intentional.
+        It means we look through the user-specific subtree of this subsection,
+        taking into account which problems are visible to the user.
+        """
+        letter_grades = OrderedDict()  # dict of problem locations to ProblemScore
+        letter_grade = ''
+        for block_key in self.course_data.structure.post_order_traversal(
+                filter_func=possibly_scored,
+                start_node=self.location,
+        ):
+            block = self.course_data.structure[block_key]
+            if getattr(block, 'has_score', False):
+                problem_score = get_score(
+                    submissions_scores={}, csm_scores={}, persisted_block=None, block=block,
+                )
+                if problem_score is not None:
+                    letter_grades[block_key] = problem_score.letter_grade
+                    letter_grade = problem_score.letter_grade
+        return letter_grade
+    @property
+    def comment(self):
+        """
+        Overrides the problem_scores member variable in order
+        to return empty scores for all scorable problems in the
+        course.
+        NOTE: The use of `course_data.structure` here is very intentional.
+        It means we look through the user-specific subtree of this subsection,
+        taking into account which problems are visible to the user.
+        """
+        comments = OrderedDict()  # dict of problem locations to ProblemScore
+        comment = ''
+        for block_key in self.course_data.structure.post_order_traversal(
+                filter_func=possibly_scored,
+                start_node=self.location,
+        ):
+            block = self.course_data.structure[block_key]
+            if getattr(block, 'has_score', False):
+                problem_score = get_score(
+                    submissions_scores={}, csm_scores={}, persisted_block=None, block=block,
+                )
+                if problem_score is not None:
+                    comments[block_key] = problem_score.comment
+                    comment = problem_score.comment
+        return comment
 
 
 class NonZeroSubsectionGrade(SubsectionGradeBase, metaclass=ABCMeta):
@@ -176,6 +230,10 @@ class NonZeroSubsectionGrade(SubsectionGradeBase, metaclass=ABCMeta):
                 str(block_key),
                 str(block_key.course_key),
             ))
+        log.info('#sabidA #13 Computing block score for block: ***{}*** in course: ***{}***.'.format(
+                str(block_key),
+                str(block_key.course_key),
+            ))
         try:
             block = course_structure[block_key]
         except KeyError:
@@ -186,12 +244,18 @@ class NonZeroSubsectionGrade(SubsectionGradeBase, metaclass=ABCMeta):
             # It's possible that the user's access to that
             # block has changed since the subsection grade
             # was last persisted.
+            log.info('#sabidA #14 User\'s access to block: ***{}*** in course: ***{}*** has changed. '
+                         'No block score calculated.'.format(str(block_key), str(block_key.course_key)))
         else:
             if getattr(block, 'has_score', False):
                 # TODO: Remove as part of EDUCATOR-4602.
                 if str(block_key.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
                     log.info('Block: ***{}*** in course: ***{}*** HAS has_score attribute. Continuing.'
                              .format(str(block_key), str(block_key.course_key)))
+                
+                log.info('#sabidA #15 Block: ***{}*** in course: ***{}*** HAS has_score attribute. Continuing.'
+                             .format(str(block_key), str(block_key.course_key)))
+                
                 return get_score(
                     submissions_scores,
                     csm_scores,
@@ -246,6 +310,11 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
         # save these for later since we compute problem_scores lazily
         self.model = model
         self.factory = factory
+        
+        log.info('#sabidA #v9 model: %s', model)
+        #self.letter_grade = self._get_letter_grade()
+        #log.info('#sabidA #v10 self.letter_grade: %s', self.letter_grade)
+
 
         super().__init__(subsection, all_total, graded_total, override)
 
@@ -270,6 +339,44 @@ class ReadSubsectionGrade(NonZeroSubsectionGrade):
             if problem_score:
                 problem_scores[block.locator] = problem_score
         return problem_scores
+    
+    @property
+    def letter_grade(self):
+        """
+        Returns the letter grade from model
+        """
+        # pylint: disable=protected-access
+        letter_grade = ''
+        for block in self.model.visible_blocks.blocks:
+            problem_score = self._compute_block_score(
+                block.locator,
+                self.factory.course_data.structure,
+                self.factory._submissions_scores,
+                self.factory._csm_scores,
+                block,
+            )
+            if problem_score:
+                letter_grade = problem_score.letter_grade
+        return letter_grade
+
+    @property
+    def comment(self):
+        """
+        Returns the letter grade from model
+        """
+        # pylint: disable=protected-access
+        comment = ''
+        for block in self.model.visible_blocks.blocks:
+            problem_score = self._compute_block_score(
+                block.locator,
+                self.factory.course_data.structure,
+                self.factory._submissions_scores,
+                self.factory._csm_scores,
+                block,
+            )
+            if problem_score:
+                comment = problem_score.comment
+        return comment
 
 
 class CreateSubsectionGrade(NonZeroSubsectionGrade):
@@ -278,6 +385,8 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
     """
     def __init__(self, subsection, course_structure, submissions_scores, csm_scores):
         self.problem_scores = OrderedDict()
+        self.letter_grade = ''
+        self.comment = ''
         for block_key in course_structure.post_order_traversal(
                 filter_func=possibly_scored,
                 start_node=subsection.location,
@@ -289,14 +398,23 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
                 log.info('Calculated problem score ***{}*** for block ***{!s}***'
                          ' in subsection ***{}***.'
                          .format(problem_score, block_key, subsection.location))
+            log.info('#sabidA #10 Calculated problem score ***{}*** for block ***{!s}***'
+                         ' in subsection ***{}***.'
+                         .format(problem_score, block_key, subsection.location))
             if problem_score:
                 self.problem_scores[block_key] = problem_score
+                self.letter_grade = problem_score.letter_grade
+                self.comment = problem_score.comment
 
         all_total, graded_total = graders.aggregate_scores(list(self.problem_scores.values()))
 
         # TODO: Remove as part of EDUCATOR-4602.
         if str(subsection.location.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
             log.info('Calculated aggregate all_total ***{}***'
+                     ' and grade_total ***{}*** for subsection ***{}***'
+                     .format(all_total, graded_total, subsection.location))
+        
+        log.info('#sabidA #11 Calculated aggregate all_total ***{}***'
                      ' and grade_total ***{}*** for subsection ***{}***'
                      .format(all_total, graded_total, subsection.location))
 
@@ -310,6 +428,10 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
             # TODO: Remove as part of EDUCATOR-4602.
             if str(self.location.course_key) == 'course-v1:UQx+BUSLEAD5x+2T2019':
                 log.info('Updating PersistentSubsectionGrade for student ***{}*** in'
+                         ' subsection ***{}*** with params ***{}***.'
+                         .format(student.id, self.location, self._persisted_model_params(student)))
+                
+            log.info('#sabidA #9 Updating PersistentSubsectionGrade for student ***{}*** in'
                          ' subsection ***{}*** with params ***{}***.'
                          .format(student.id, self.location, self._persisted_model_params(student)))
             model = PersistentSubsectionGrade.update_or_create_grade(**self._persisted_model_params(student))
@@ -361,6 +483,9 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
         Returns the parameters for creating/updating the
         persisted model for this subsection grade.
         """
+        log.info('#sabidA #28 self.problem_scores: %s', self.problem_scores)
+        log.info('#sabidA #30 self.letter_grade: %s', self.letter_grade)
+        
         return dict(
             user_id=student.id,
             usage_key=self.location,
@@ -372,6 +497,8 @@ class CreateSubsectionGrade(NonZeroSubsectionGrade):
             possible_graded=self.graded_total.possible,
             visible_blocks=self._get_visible_blocks,
             first_attempted=self.all_total.first_attempted,
+            letter_grade=self.letter_grade,
+            comment=self.comment,
         )
 
     @property

@@ -44,6 +44,9 @@ class SectionBreakdownSerializer(serializers.Serializer):
     score_earned = serializers.FloatField()
     score_possible = serializers.FloatField()
     subsection_name = serializers.CharField()
+    letter_grade = serializers.CharField()
+    #AK || added new field for comment
+    comment = serializers.CharField()
 
 
 class StudentGradebookEntrySerializer(serializers.Serializer):

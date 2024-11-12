@@ -61,21 +61,6 @@
             </ul>
           </nav>
         </div>
-        <div class="col-md-3">
-          ## Please leave this link and use one of the logos provided
-          ## The OpenEdX link may be hidden when this view is served
-          ## through an API to partner sites (such as marketing sites or blogs),
-          ## which are not technically powered by Open edX.
-          % if not hide_openedx_link:
-            <div class="footer-about-openedx">
-              <p>
-                <a href="${footer['openedx_link']['url']}">
-                  <img src="${footer['openedx_link']['image']}" alt="${footer['openedx_link']['title']}" width="175" />
-                </a>
-              </p>
-            </div>
-          % endif
-        </div>
       </div>
     </footer>
   </div>
@@ -116,7 +101,7 @@
           </p>
         </div>
         ## Site operators: Please do not remove this paragraph! This attributes back to edX and makes your acknowledgement of edX's trademarks clear.
-          <p class="copyright">${footer['copyright']}
+         <p class="copyright">${footer['copyright']}
               % if icp_license_info.get('icp_license'):
                 ${u" | {text}".format(text=icp_license_info.get('text'))}
                 <a href="${icp_license_info.get('icp_license_link', '#')}">
@@ -124,7 +109,6 @@
                 </a>
               % endif
           </p>
-
         <nav class="nav-legal" aria-label="${_('Legal')}">
           <ul>
             % for item_num, link in enumerate(footer['legal_links'], start=1):
