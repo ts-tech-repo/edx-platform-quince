@@ -131,7 +131,8 @@ class PreferencesView(APIView):
                 
                 #SA || updateTimeZoneToMoodle
                 payload = request.data
-                if 'timezone' in payload:
+                log.info("#SA tz2 %s", payload)
+                if 'time_zone' in payload:
                     log.info("#SA tz1 %s", payload['timezone'])
         except UserNotAuthorized:
             return Response(status=status.HTTP_403_FORBIDDEN)
