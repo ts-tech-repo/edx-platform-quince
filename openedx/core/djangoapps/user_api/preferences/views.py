@@ -114,7 +114,7 @@ class PreferencesView(APIView):
 
         return Response(user_preferences)
     
-    def _api_request_to_moodle(payload):
+    def _api_request_to_moodle(self, payload):
         return requests.request("POST", configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php", headers = {  'content-type': "text/plain" }, params = payload).text
 
     def patch(self, request, username):
