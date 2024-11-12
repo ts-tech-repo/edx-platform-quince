@@ -133,7 +133,7 @@ class PreferencesView(APIView):
                 payload = request.data
                 log.info("#SA tz2 %s", payload)
                 if 'time_zone' in payload:
-                    log.info("#SA tz1 %s", payload['timezone'])
+                    log.info("#SA tz1 %s", payload['time_zone'])
         except UserNotAuthorized:
             return Response(status=status.HTTP_403_FORBIDDEN)
         except UserNotFound:
