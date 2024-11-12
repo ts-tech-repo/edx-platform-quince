@@ -27,6 +27,8 @@ from .api import (
     update_user_preferences
 )
 
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+import requests, json
 import logging
 log = logging.getLogger(__name__)
 
@@ -111,6 +113,9 @@ class PreferencesView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         return Response(user_preferences)
+    
+    def _api_request_to_moodle(payload):
+        return requests.request("POST", configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php", headers = {  'content-type': "text/plain" }, params = payload).text
 
     def patch(self, request, username):
         """
@@ -131,9 +136,15 @@ class PreferencesView(APIView):
                 
                 #SA || updateTimeZoneToMoodle
                 payload = request.data
-                log.info("#SA tz2 %s", payload)
                 if 'time_zone' in payload:
                     log.info("#SA tz1 %s", payload['time_zone'])
+                    payload = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_user_get_users_by_field", "moodlewsrestformat" : "json", "field" : 'email', "values[0]" : request.user.email}
+                    moodle_resp = self._api_request_to_moodle(payload)
+                    r_moodle = json.loads(moodle_resp)
+                    if r_moodle and len(r_moodle):
+                        moodle_user_id = r_moodle[0]['id']
+                        log.info("#SA tz2 %s", moodle_user_id)
+
         except UserNotAuthorized:
             return Response(status=status.HTTP_403_FORBIDDEN)
         except UserNotFound:
