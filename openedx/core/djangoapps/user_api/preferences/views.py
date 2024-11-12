@@ -27,6 +27,8 @@ from .api import (
     update_user_preferences
 )
 
+import logging
+log = logging.getLogger(__name__)
 
 class PreferencesView(APIView):
     """
@@ -126,6 +128,11 @@ class PreferencesView(APIView):
         try:
             with transaction.atomic():
                 update_user_preferences(request.user, request.data, user=username)
+                
+                #SA || updateTimeZoneToMoodle
+                payload = request.data
+                if 'timezone' in payload:
+                    log.info("#SA tz1 %s", payload['timezone'])
         except UserNotAuthorized:
             return Response(status=status.HTTP_403_FORBIDDEN)
         except UserNotFound:
