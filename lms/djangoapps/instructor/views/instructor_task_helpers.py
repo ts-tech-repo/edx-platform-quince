@@ -60,7 +60,7 @@ def extract_email_features(email_task):
 
     email = CourseEmail.objects.get(id=task_input_information['email_id'])
     email_feature_dict = {
-        'created': strftime_localized(email.created, "LONG_DATE"),
+        'created': strftime_localized(email.created, "DATE_TIME"),
         'sent_to': [target.long_display() for target in email.targets.all()],
         'requester': str(email_task.requester),
     }
