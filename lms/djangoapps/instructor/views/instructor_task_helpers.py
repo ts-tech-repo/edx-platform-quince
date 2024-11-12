@@ -59,6 +59,7 @@ def extract_email_features(email_task):
         return email_error_information()
 
     email = CourseEmail.objects.get(id=task_input_information['email_id'])
+    log.info(email.created)
     email_feature_dict = {
         'created': get_default_time_display(email.created),
         'sent_to': [target.long_display() for target in email.targets.all()],
