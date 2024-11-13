@@ -106,18 +106,21 @@ such that the value can be defined later than this assignment (file load order).
         var $links, clickFirstLink, link, rmatch, sectionName;
         $links = idashContent.find('.' + CSS_INSTRUCTOR_NAV).find('.btn-link');
         $links.each(function(i, linkItem) {
+            
             return $(linkItem).click(function(e) {
-                console.log(e, linkItem, "debugging")
                 var $section, itemSectionName, ref;
                 e.preventDefault();
+                itemSectionName = $(this).data('section');
+                if(["attendance", "course_info", "course_logs"].indexOf(itemSectionName) === -1) {
                 idashContent.find('.' + CSS_INSTRUCTOR_NAV + ' li').children().removeClass(CSS_ACTIVE_SECTION);
                 idashContent.find('.' + CSS_INSTRUCTOR_NAV + ' li').children().attr('aria-pressed', 'false');
                 idashContent.find('.' + CSS_IDASH_SECTION).removeClass(CSS_ACTIVE_SECTION);
-                itemSectionName = $(this).data('section');
+                
                 $section = idashContent.find('#' + itemSectionName);
                 $(this).addClass(CSS_ACTIVE_SECTION);
                 $(this).attr('aria-pressed', 'true');
                 $section.addClass(CSS_ACTIVE_SECTION);
+                
                 window.analytics.pageview('instructor_section:' + itemSectionName);
                 location.hash = '' + HASH_LINK_PREFIX + itemSectionName;
                 sectionsHaveLoaded.afterFor(function() {
@@ -135,6 +138,7 @@ such that the value can be defined later than this assignment (file load order).
                 }
                 $activeSection = $section;
                 return $activeSection;
+            }
             });
         });
         clickFirstLink = function() {
