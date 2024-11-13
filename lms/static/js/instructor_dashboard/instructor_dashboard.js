@@ -124,11 +124,11 @@ such that the value can be defined later than this assignment (file load order).
                     window.analytics.pageview('instructor_section:' + itemSectionName);
                 }else {
                     $.ajax({
-                        url : `/courses/${current_course_id}/instructor/extras/${tabname}`,
+                        url : "/courses/course-v1:QUINCE+TestingCourse+Proctor01/instructor/extras/attendance",
                         type : "GET",
                         success: function(result) { 
                             console.log(result)
-                            $(`#${tabname}`).html(result)
+                            $("#attendance").html(result)
                         }
                     });
                 }
