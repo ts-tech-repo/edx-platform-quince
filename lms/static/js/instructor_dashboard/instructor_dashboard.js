@@ -111,7 +111,7 @@ such that the value can be defined later than this assignment (file load order).
                 var $section, itemSectionName, ref;
                 e.preventDefault();
                 itemSectionName = $(this).data('section');
-                if(["attendance", "course_info", "course_logs"].indexOf(itemSectionName) === -1) {
+                
                 idashContent.find('.' + CSS_INSTRUCTOR_NAV + ' li').children().removeClass(CSS_ACTIVE_SECTION);
                 idashContent.find('.' + CSS_INSTRUCTOR_NAV + ' li').children().attr('aria-pressed', 'false');
                 idashContent.find('.' + CSS_IDASH_SECTION).removeClass(CSS_ACTIVE_SECTION);
@@ -120,8 +120,18 @@ such that the value can be defined later than this assignment (file load order).
                 $(this).addClass(CSS_ACTIVE_SECTION);
                 $(this).attr('aria-pressed', 'true');
                 $section.addClass(CSS_ACTIVE_SECTION);
-                
-                window.analytics.pageview('instructor_section:' + itemSectionName);
+                if(["attendance", "course_info", "course_logs"].indexOf(itemSectionName) === -1) {
+                    window.analytics.pageview('instructor_section:' + itemSectionName);
+                }else {
+                    $.ajax({
+                        url : `/courses/${current_course_id}/instructor/extras/${tabname}`,
+                        type : "GET",
+                        success: function(result) { 
+                            console.log(result)
+                            $(`#${tabname}`).html(result)
+                        }
+                    });
+                }
                 location.hash = '' + HASH_LINK_PREFIX + itemSectionName;
                 sectionsHaveLoaded.afterFor(function() {
                     return $section.data('wrapper').onClickTitle();
@@ -138,7 +148,6 @@ such that the value can be defined later than this assignment (file load order).
                 }
                 $activeSection = $section;
                 return $activeSection;
-            }
             });
         });
         clickFirstLink = function() {
