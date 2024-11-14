@@ -60,7 +60,7 @@ def extract_email_features(email_task):
 
     email = CourseEmail.objects.get(id=task_input_information['email_id'])
     email_feature_dict = {
-        'created': strftime_localized(email.created, "LONG_DATE"),
+        'created': strftime_localized(email.created, "DATE_TIME"),
         'sent_to': [target.long_display() for target in email.targets.all()],
         'requester': str(email_task.requester),
     }
@@ -115,7 +115,7 @@ def extract_task_features(task):
     features = ['task_type', 'task_input', 'task_id', 'requester', 'task_state']
     task_feature_dict = {feature: str(getattr(task, feature)) for feature in features}
     # Some information (created, duration, status, task message) require additional formatting
-    task_feature_dict['created'] = get_default_time_display(task.created)
+    task_feature_dict['created'] = strftime_localized(task.created, "DATE_TIME")
 
     # Get duration info, if known
     duration_sec = 'unknown'
