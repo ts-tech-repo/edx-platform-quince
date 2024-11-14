@@ -1259,7 +1259,9 @@ zipp==3.17.0
     #   importlib-resources
 
 swig==4.2.1.post0
-django-saml-idp
+djangosaml2idp==0.6.0
+
+
 
 
 # The following packages are considered to be unsafe in a requirements file:
