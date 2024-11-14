@@ -10,7 +10,7 @@ import logging
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 
-from common.djangoapps.util.date_utils import get_default_time_display, get_time_display, strftime_localized, strftime_localized_html
+from common.djangoapps.util.date_utils import get_default_time_display
 from lms.djangoapps.bulk_email.models import CourseEmail
 from lms.djangoapps.instructor_task.views import get_task_completion_info
 
@@ -60,7 +60,7 @@ def extract_email_features(email_task):
 
     email = CourseEmail.objects.get(id=task_input_information['email_id'])
     email_feature_dict = {
-        'created': get_time_display(email.created, coerce_tz="Asia/Kolkata"),
+        'created': get_default_time_display(email.created),
         'sent_to': [target.long_display() for target in email.targets.all()],
         'requester': str(email_task.requester),
     }
