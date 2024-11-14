@@ -115,7 +115,7 @@ def extract_task_features(task):
     features = ['task_type', 'task_input', 'task_id', 'requester', 'task_state']
     task_feature_dict = {feature: str(getattr(task, feature)) for feature in features}
     # Some information (created, duration, status, task message) require additional formatting
-    task_feature_dict['created'] = task.created.isoformat()
+    task_feature_dict['created'] = get_default_time_display(task.created)
 
     # Get duration info, if known
     duration_sec = 'unknown'
