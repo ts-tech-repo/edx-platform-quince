@@ -8,7 +8,7 @@ from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 
 from . import views
-import djangosaml2idp
+
 
 urlpatterns = [
 
@@ -62,7 +62,7 @@ urlpatterns = [
     ),
 ]
 
-urlpatterns += [re_path(r'^idp/', include('djangosaml2idp.urls')),]
+
 
 
 urlpatterns += [re_path(r'^assessment_tracker', views.user_tracker_link, name='user_tracker_link')]
