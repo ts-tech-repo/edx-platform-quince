@@ -1259,7 +1259,7 @@ zipp==3.17.0
     #   importlib-resources
 
 swig==4.2.1.post0
-djangosaml2idp==0.6.0
+djangosaml2idp==0.5.0
 
 
 
