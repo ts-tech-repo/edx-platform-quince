@@ -1925,3 +1925,15 @@ def extras_sync_moodle_attendance(request):
 
     return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 
+@csrf_exempt
+def extras_get_lti_tool_urls(request):
+    moodle_url = configuration_helpers.get_value("MOODLE_URL", "")
+    moodle_service_url = moodle_url + "/webservice/rest/server.php"
+    course_short_name = request.POST.get("course_shortName", "")
+    if course_short_name:
+        moodle_wstoken = configuration_helpers.get_value("MOODLE_TOKEN", "")
+        headers = { 'content-type': "text/plain" }
+        querystring = { "wstoken": moodle_wstoken, "wsfunction": "mod_lti_get_lti_tool_url", "moodlewsrestformat": "json", "course_shortname": course_short_name }
+        response = requests.request("POST", moodle_service_url, headers=headers, params=querystring)
+        return JsonResponse(response.json())
+    return JsonResponse({"error": "Please Provide course short name"})
