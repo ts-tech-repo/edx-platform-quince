@@ -1794,6 +1794,10 @@ def extras_update_lti_grades(request):
             score_deleted=False,
         )
     
+    except Exception as e:
+        log.error(e)
+        return JsonResponse({"Status" : "Failed", "message" : "Something went wrong! Unable to update Grades."})
+    
     handlers.scorable_block_completion(
             sender="",
             user_id=user_id,
