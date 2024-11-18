@@ -1751,60 +1751,64 @@ def extras_update_lti_grades(request):
     if letter_grade:
         grade = 0
     
-    block_data = get_course_blocks(User.objects.get(id = user_id), modulestore().make_course_usage_key(CourseKey.from_string(str(course_id))), allow_start_dates_in_future=True, include_completion=True)
-
     try:
-        studentmodule = StudentModule.objects.get(student_id = user_id, module_state_key = usage_id)
-        
-        #Update Grades
-        studentmodule.grade = grade
-        studentmodule.letter_grade = letter_grade
-        studentmodule.comment = comment
-        student_state = json.loads(studentmodule.state)
-        student_state["module_score"] = grade
-        studentmodule.state = json.dumps(student_state)
-        studentmodule.save()
-        grades_signals.PROBLEM_RAW_SCORE_CHANGED.send(
-            sender=None,
-            raw_earned=grade,
-            letter_grade=letter_grade,
-            raw_possible = 0 if letter_grade else studentmodule.max_grade,
-            weight=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
-            user_id=user_id,
-            course_id=str(studentmodule.course_id),
-            usage_id=str(usage_id),
-            score_deleted=True,
-            only_if_higher=False,
-            modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
-            score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
-            comment=comment
-        )
-    except StudentModule.DoesNotExist:
-        studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}), max_grade= 0 if letter_grade else block_data.get_xblock_field(usage_id, 'weight'), letter_grade=letter_grade, comment=comment)
+        block_data = get_course_blocks(User.objects.get(id = user_id), modulestore().make_course_usage_key(CourseKey.from_string(str(course_id))), allow_start_dates_in_future=True, include_completion=True)
 
-        log.info("Student module created {0}".format(studentmodule))
+        try:
+            studentmodule = StudentModule.objects.get(student_id = user_id, module_state_key = usage_id)
+            
+            #Update Grades
+            studentmodule.grade = grade
+            studentmodule.letter_grade = letter_grade
+            studentmodule.comment = comment
+            student_state = json.loads(studentmodule.state)
+            student_state["module_score"] = grade
+            studentmodule.state = json.dumps(student_state)
+            studentmodule.save()
+            grades_signals.PROBLEM_RAW_SCORE_CHANGED.send(
+                sender=None,
+                raw_earned=grade,
+                letter_grade=letter_grade,
+                raw_possible = 0 if letter_grade else studentmodule.max_grade,
+                weight=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
+                user_id=user_id,
+                course_id=str(studentmodule.course_id),
+                usage_id=str(usage_id),
+                score_deleted=True,
+                only_if_higher=False,
+                modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
+                score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module,
+                comment=comment
+            )
+        except StudentModule.DoesNotExist:
+            studentmodule = StudentModule.objects.create(student_id=user_id,course_id=request.POST.get("course_id"),module_state_key=usage_id,state=json.dumps({"module_score" : grade, "score_comment" : ""}), max_grade= 0 if letter_grade else block_data.get_xblock_field(usage_id, 'weight'), letter_grade=letter_grade, comment=comment)
+
+            log.info("Student module created {0}".format(studentmodule))
+            
+            grades_signals.SCORE_PUBLISHED.send(
+                sender=None,
+                block=modulestore().get_item(studentmodule.module_state_key),
+                user=user_object,
+                raw_earned=grade,
+                raw_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
+                only_if_higher=False,
+                score_deleted=False,
+            )
         
-        grades_signals.SCORE_PUBLISHED.send(
-            sender=None,
-            block=modulestore().get_item(studentmodule.module_state_key),
-            user=user_object,
-            raw_earned=grade,
-            raw_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
-            only_if_higher=False,
-            score_deleted=False,
-        )
+        handlers.scorable_block_completion(
+                sender="",
+                user_id=user_id,
+                course_id=course_id,
+                usage_id=usage_id,
+                weighted_earned=grade,
+                weighted_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
+                modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
+                score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module
+            )
     
-    handlers.scorable_block_completion(
-            sender="",
-            user_id=user_id,
-            course_id=course_id,
-            usage_id=usage_id,
-            weighted_earned=grade,
-            weighted_possible=block_data.get_xblock_field(studentmodule.module_state_key, 'weight'),
-            modified=datetime.datetime.now().replace(tzinfo=pytz.UTC),
-            score_db_table=grades_constants.ScoreDatabaseTableEnum.courseware_student_module
-        )
-
+    except Exception as e:
+        log.error(e)
+        return JsonResponse({"Status" : "Failed", "message" : "Something went wrong! Unable to update Grades."})
 
     return JsonResponse({"Status" : "Success", "message" : "Grades updated successfully"})
     
@@ -1921,3 +1925,15 @@ def extras_sync_moodle_attendance(request):
 
     return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 
+@csrf_exempt
+def extras_get_lti_tool_urls(request):
+    moodle_url = configuration_helpers.get_value("MOODLE_URL", "")
+    moodle_service_url = moodle_url + "/webservice/rest/server.php"
+    course_short_name = request.POST.get("course_shortName", "")
+    if course_short_name:
+        moodle_wstoken = configuration_helpers.get_value("MOODLE_TOKEN", "")
+        headers = { 'content-type': "text/plain" }
+        querystring = { "wstoken": moodle_wstoken, "wsfunction": "mod_lti_get_lti_tool_url", "moodlewsrestformat": "json", "course_shortname": course_short_name }
+        response = requests.request("POST", moodle_service_url, headers=headers, params=querystring)
+        return JsonResponse(response.json())
+    return JsonResponse({"error": "Please Provide course short name"})
