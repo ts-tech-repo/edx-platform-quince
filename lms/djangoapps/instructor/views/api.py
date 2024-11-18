@@ -2143,7 +2143,7 @@ def list_email_content(request, course_id):
     task_type = InstructorTaskTypes.BULK_COURSE_EMAIL
     # First get tasks list of bulk emails sent
     emails = task_api.get_instructor_task_history(course_id, task_type=task_type)
-
+    log.info(emails)
     response_payload = {
         'emails': list(map(extract_email_features, emails)),
     }

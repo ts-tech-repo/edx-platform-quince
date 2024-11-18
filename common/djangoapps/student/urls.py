@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from . import views
 import djangosaml2idp
+from djangosaml2idp import urls
 
 urlpatterns = [
 
