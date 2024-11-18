@@ -81,6 +81,7 @@ def get_instructor_task_history(course_id, usage_key=None, student=None, task_ty
     that optionally match a particular problem, a student, and/or a task type.
     """
     instructor_tasks = InstructorTask.objects.filter(course_id=course_id)
+    log.info(instructor_tasks)
     if usage_key is not None or student is not None:
         _, task_key = encode_problem_and_student_input(usage_key, student)
         instructor_tasks = instructor_tasks.filter(task_key=task_key)
