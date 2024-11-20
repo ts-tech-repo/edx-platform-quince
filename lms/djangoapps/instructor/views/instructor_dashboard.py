@@ -143,7 +143,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
     ]
     if access['staff'] and "talentsprint.com" in request.user.email:
         sections_content = [
-            _section_course_info(course, access, True),
+            _section_course_info(course, access),
             _section_membership(course, access),
             _section_cohort_management(course, access), 
         ]
@@ -439,7 +439,7 @@ def set_course_mode_price(request, course_id):
     return JsonResponse({'message': _("CourseMode price updated successfully")})
 
 
-def _section_course_info(course, access, loadTabOnClick):
+def _section_course_info(course, access):
     """ Provide data for the corresponding dashboard section """
     course_key = course.id
 
@@ -456,12 +456,9 @@ def _section_course_info(course, access, loadTabOnClick):
         'start_date': course.start,
         'end_date': course.end,
         'num_sections': len(course.children),
-        'loadOnTabClick' : loadTabOnClick,
         'list_instructor_tasks_url': reverse('list_instructor_tasks', kwargs={'course_id': str(course_key)}),
     }
 
-    if not loadTabOnClick:
-        return section_data
     if settings.FEATURES.get('DISPLAY_ANALYTICS_ENROLLMENTS'):
         section_data['enrollment_count'] = CourseEnrollment.objects.enrollment_counts(course_key)
 
@@ -999,8 +996,6 @@ def load_tab(request, course_id, loadTab):
         context = {"section_data" : _section_attendance(course, {}, course_id, True)}
     elif loadTab == "course_log":
         context = {"section_data" : _section_course_log(course, {}, True)}
-    elif loadTab == "course_info":
-        context = {"course": course, "section_data" : _section_course_info(course, {}, True)}
     elif loadTab == "open_response_assessment":
         openassessment_blocks = modulestore().get_items(
         course_key, qualifiers={'category': 'openassessment'}
