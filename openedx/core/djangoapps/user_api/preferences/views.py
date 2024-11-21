@@ -113,9 +113,6 @@ class PreferencesView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         return Response(user_preferences)
-    
-    def _api_request_to_moodle(self, payload):
-        return requests.request("POST", configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php", headers = {  'content-type': "text/plain" }, params = payload).text
 
     def patch(self, request, username):
         """
@@ -141,6 +138,7 @@ class PreferencesView(APIView):
                     if 'time_zone' in payload:
                         time_zone = payload['time_zone'] if payload['time_zone'] else '99'  #default value 99 refers to local timezone in moodle
                         log.info("#SA || time_zone ---------preparing payload for moodle")
+                        moodle_url = configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php"
                         payload = {
                             "wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""),
                             "wsfunction" : "core_user_update_users",
@@ -149,12 +147,12 @@ class PreferencesView(APIView):
                             "users[0][old_email]": request.user.email,
                             "users[0][timezone]" : time_zone
                         }
+                        log.info(moodle_url)
                         log.info(payload)
                         log.info("#SA || time_zone ---------preparing completed payload for moodle")
                         log.info("#SA || time_zone ---------calling moodle api")
-                        moodle_resp = self._api_request_to_moodle(payload)
+                        requests.request("POST", moodle_url, headers = {  'content-type': "text/plain" }, params = payload)
                         log.info("#SA || time_zone ---------executed moodle api")
-                        log.info(moodle_resp)
                 except Exception as e:
                     log.error(e)
                 log.info("#SA || time_zone ---------sync time_zone started")
