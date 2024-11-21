@@ -135,6 +135,7 @@ class PreferencesView(APIView):
                 update_user_preferences(request.user, request.data, user=username)
                 
                 #SA || updateTimeZoneToMoodle
+                log.info("#SA || time_zone ---------sync time_zone started")
                 try:
                     payload = request.data
                     if 'time_zone' in payload:
@@ -156,6 +157,7 @@ class PreferencesView(APIView):
                         log.info(moodle_resp)
                 except Exception as e:
                     log.error(e)
+                log.info("#SA || time_zone ---------sync time_zone started")
 
         except UserNotAuthorized:
             return Response(status=status.HTTP_403_FORBIDDEN)
