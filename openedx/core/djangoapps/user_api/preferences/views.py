@@ -151,7 +151,7 @@ class PreferencesView(APIView):
                         log.info(payload)
                         log.info("#SA || time_zone ---------preparing completed payload for moodle")
                         log.info("#SA || time_zone ---------calling moodle api")
-                        requests.request("POST", moodle_url, headers = {  'content-type': "text/plain" }, params = payload)
+                        requests.request("POST", moodle_url, params = payload)
                         log.info("#SA || time_zone ---------executed moodle api")
                 except Exception as e:
                     log.error(e)
