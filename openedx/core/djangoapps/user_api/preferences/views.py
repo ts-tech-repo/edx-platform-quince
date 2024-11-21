@@ -135,23 +135,22 @@ class PreferencesView(APIView):
                 update_user_preferences(request.user, request.data, user=username)
                 
                 #SA || updateTimeZoneToMoodle
-                payload = request.data
-                log.info("---------started updateTimeZoneToMoodle call---------")
-                log.info(payload)
-                if 'time_zone' in payload:
-                    time_zone = payload['time_zone'] if payload['time_zone'] else '99'  #default value 99 refers to local timezone in moodle
-                    payload = {
-                        "wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""),
-                        "wsfunction" : "core_user_update_users",
-                        "moodlewsrestformat" : "json",
-                        "users[0][id]" : -100,
-                        "users[0][old_email]": request.user.email,
-                        "users[0][timezone]" : time_zone
-                    }
-                    moodle_resp = self._api_request_to_moodle(payload)
-                    log.info(moodle_resp)
-
-                log.info("---------ended updateTimeZoneToMoodle call---------")
+                try:
+                    payload = request.data
+                    if 'time_zone' in payload:
+                        time_zone = payload['time_zone'] if payload['time_zone'] else '99'  #default value 99 refers to local timezone in moodle
+                        payload = {
+                            "wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""),
+                            "wsfunction" : "core_user_update_users",
+                            "moodlewsrestformat" : "json",
+                            "users[0][id]" : -100,
+                            "users[0][old_email]": request.user.email,
+                            "users[0][timezone]" : time_zone
+                        }
+                        moodle_resp = self._api_request_to_moodle(payload)
+                        log.info(moodle_resp)
+                except Exception as e:
+                    log.error(e)
 
         except UserNotAuthorized:
             return Response(status=status.HTTP_403_FORBIDDEN)
