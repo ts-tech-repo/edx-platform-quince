@@ -1052,6 +1052,8 @@ def _section_edx_analytics(course, access, loadOnTabClick):
 
         section_data["course_log"] = response.json()
 
+        log.info(section_data)
+
         return section_data
     except Exception as e:
         log.info(e)
