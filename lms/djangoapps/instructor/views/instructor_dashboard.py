@@ -249,7 +249,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
     certificate_invalidations = CertificateInvalidation.get_certificate_invalidations(course_key)
 
     sections.append(_section_course_log(course, access, False))
-    sections.append(_section_edx_analytics(course, access))
+    sections.append(_section_edx_analytics(course, access, False))
 
     context = {
         'course': course,
