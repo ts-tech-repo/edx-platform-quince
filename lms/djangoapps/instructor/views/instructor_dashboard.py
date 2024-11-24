@@ -1041,7 +1041,8 @@ def _section_edx_analytics(course, access, loadOnTabClick):
             'section_display_name': _('Analytics'),
             'access': access,
             'course_id': str(course.id),
-            'user_analytics' : 'user_analytics'
+            'user_analytics' : 'user_analytics',
+            'loadOnTabClick' : loadOnTabClick
         }
         if not loadOnTabClick:
             return section_data
