@@ -1048,7 +1048,7 @@ def _section_edx_analytics(course, access, loadOnTabClick):
             return section_data
         
 
-        response = requests.get("https://maple.talentsprint.com/extras/"+str(course.id)+"/get_course_log", params={"analytics": "video_report"})
+        response = requests.get("https://staging.quince02.talentsprint.com/extras/"+str(course.id)+"/get_course_log", params={"analytics": "video_report"})
 
         section_data["course_log"] = response.json()
 
