@@ -1007,7 +1007,7 @@ def load_tab(request, course_id, loadTab):
         ]
         context = {"course": course, "section_data" : _section_open_response_assessment(request, course, openassessment_blocks, {}, True)}
     elif loadTab == "analytics":
-        context = {"section_data" : _section_analytics(course, {}, True)}
+        context = {"section_data" : _section_edx_analytics(course, {}, True)}
     return render_to_response("instructor/instructor_dashboard_2/{0}.html".format(loadTab), context)
 
 
