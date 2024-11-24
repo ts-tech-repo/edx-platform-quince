@@ -113,9 +113,6 @@ class PreferencesView(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         return Response(user_preferences)
-    
-    def _api_request_to_moodle(self, payload):
-        return requests.request("POST", configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php", headers = {  'content-type': "text/plain" }, params = payload).text
 
     def patch(self, request, username):
         """
@@ -135,19 +132,30 @@ class PreferencesView(APIView):
                 update_user_preferences(request.user, request.data, user=username)
                 
                 #SA || updateTimeZoneToMoodle
-                payload = request.data
-                if 'time_zone' in payload:
-                    time_zone = payload['time_zone'] if payload['time_zone'] else '99'  #default value 99 refers to local timezone in moodle
-                    payload = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_user_get_users_by_field", "moodlewsrestformat" : "json", "field" : 'email', "values[0]" : request.user.email}
-                    moodle_resp = self._api_request_to_moodle(payload)
-                    log.info(moodle_resp)
-                    
-                    r_moodle = json.loads(moodle_resp)
-                    if r_moodle and len(r_moodle):
-                        moodle_user_id = r_moodle[0]['id']
-                        payload = {"wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction" : "core_user_update_users", "moodlewsrestformat" : "json", "users[0][id]" : moodle_user_id, "users[0][timezone]" : time_zone}
-                        moodle_resp = self._api_request_to_moodle(payload)
-                        log.info(moodle_resp)
+                log.info("#SA || time_zone ---------sync time_zone started")
+                try:
+                    payload = request.data
+                    if 'time_zone' in payload:
+                        time_zone = payload['time_zone'] if payload['time_zone'] else '99'  #default value 99 refers to local timezone in moodle
+                        log.info("#SA || time_zone ---------preparing payload for moodle")
+                        moodle_url = configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php"
+                        payload = {
+                            "wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""),
+                            "wsfunction" : "core_user_update_users",
+                            "moodlewsrestformat" : "json",
+                            "users[0][id]" : -100,
+                            "users[0][old_email]": request.user.email,
+                            "users[0][timezone]" : time_zone
+                        }
+                        log.info(moodle_url)
+                        log.info(payload)
+                        log.info("#SA || time_zone ---------preparing completed payload for moodle")
+                        log.info("#SA || time_zone ---------calling moodle api")
+                        requests.request("POST", moodle_url, params = payload)
+                        log.info("#SA || time_zone ---------executed moodle api")
+                except Exception as e:
+                    log.error(e)
+                log.info("#SA || time_zone ---------sync time_zone started")
 
         except UserNotAuthorized:
             return Response(status=status.HTTP_403_FORBIDDEN)
