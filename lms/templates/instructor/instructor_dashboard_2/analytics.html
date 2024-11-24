@@ -90,7 +90,7 @@
 					<select class="play_time_options" id="play_time_options">
 						%for key in section_data["course_log"]["course_log"]:
 							%if "unit_type" in key:
-								%if key["unit_type"] == "encryptplayer":
+								%if key["unit_type"] == "video":
 									
 									<% sec_name = key["section_name"]%>
 									<% sub_sec_name = key["subsection_name"]%>
