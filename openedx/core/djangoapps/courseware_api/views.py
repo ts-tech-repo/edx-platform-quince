@@ -68,8 +68,10 @@ from common.djangoapps.student.models import (
 from .serializers import CourseInfoSerializer
 
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+import crum
 import requests
 import logging
+from pytz import UTC, timezone
 log = logging.getLogger(__name__)
 
 class CoursewareMeta:
@@ -509,29 +511,36 @@ class CoursewareInformation(RetrieveAPIView):
                 )
         
         #SA || updateTimeZoneToMoodle
-        if browser_timezone:
-            log.info("#SA || time_zone 2---------sync time_zone started")
-            try:
-                log.info("#SA || time_zone 2 ---------preparing payload for moodle")
-                moodle_url = configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php"
-                payload = {
-                    "wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""),
-                    "wsfunction" : "core_user_update_users",
-                    "moodlewsrestformat" : "json",
-                    "users[0][id]" : -100,
-                    "users[0][old_email]": user.email,
-                    "users[0][timezone]" : browser_timezone
-                }
-                log.info(moodle_url)
-                log.info(payload)
-                log.info("#SA || time_zone 2 ---------preparing completed payload for moodle")
-                log.info("#SA || time_zone 2 ---------calling moodle api")
-                #requests.request("POST", moodle_url, params = payload)
-                requests.post(moodle_url, data = payload)
-                log.info("#SA || time_zone 2 ---------executed moodle api")
-            except Exception as e:
-                log.error(e)
-            log.info("#SA || time_zone 2 ---------sync time_zone started")
+    
+    def update_moodle_timezone(self, user):
+        browser_timezone = self.request.query_params.get('browser_timezone', None)
+
+        from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
+        user_timezone_locale = user_timezone_locale_prefs(crum.get_current_request())
+        user_timezone = timezone(user_timezone_locale['user_timezone'] or browser_timezone or str(UTC))
+
+        log.info("#SA || time_zone 2---------sync time_zone started")
+        try:
+            log.info("#SA || time_zone 2 ---------preparing payload for moodle")
+            moodle_url = configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php"
+            payload = {
+                "wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""),
+                "wsfunction" : "core_user_update_users",
+                "moodlewsrestformat" : "json",
+                "users[0][id]" : -100,
+                "users[0][old_email]": user.email,
+                "users[0][timezone]" : user_timezone
+            }
+            log.info(moodle_url)
+            log.info(payload)
+            log.info("#SA || time_zone 2 ---------preparing completed payload for moodle")
+            log.info("#SA || time_zone 2 ---------calling moodle api")
+            #requests.request("POST", moodle_url, params = payload)
+            requests.post(moodle_url, data = payload)
+            log.info("#SA || time_zone 2 ---------executed moodle api")
+        except Exception as e:
+            log.error(e)
+        log.info("#SA || time_zone 2 ---------sync time_zone started")
 
     def get_object(self):
         """
