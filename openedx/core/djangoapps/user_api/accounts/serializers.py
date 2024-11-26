@@ -192,6 +192,7 @@ class UserReadOnlySerializer(serializers.Serializer):  # lint-amnesty, pylint: d
                     "level_of_education": AccountLegacyProfileSerializer.convert_empty_to_None(
                         user_profile.level_of_education
                     ),
+                    "company": AccountLegacyProfileSerializer.convert_empty_to_None(user_profile.company),
                     "mailing_address": user_profile.mailing_address,
                     "requires_parental_consent": user_profile.requires_parental_consent(),
                     "account_privacy": get_profile_visibility(user_profile, user, self.configuration),
