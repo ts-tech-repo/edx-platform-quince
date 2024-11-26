@@ -563,6 +563,8 @@ class CoursewareInformation(RetrieveAPIView):
 
         # Record a user's browser timezone
         self.set_last_seen_courseware_timezone(original_user)
+        self.update_moodle_timezone(original_user)
+        
 
         return overview
 
