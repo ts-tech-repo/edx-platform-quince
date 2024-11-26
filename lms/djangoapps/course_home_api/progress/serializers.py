@@ -42,14 +42,6 @@ class SubsectionScoresSerializer(ReadOnlySerializer):
 
     letter_grade = serializers.CharField()
 
-    def get_letter_grade(self, subsection):
-        log.info("#sabidA #v6 subsection: %s", subsection)
-        return 'SABID'
-
-    def get_comment(self, subsection):
-        log.info("#AmanK #v6 subsection: %s", subsection)
-        return 'AMAN'
-
     def get_override(self, subsection):
         """Proctoring or grading score override"""
         if subsection.override is None:
