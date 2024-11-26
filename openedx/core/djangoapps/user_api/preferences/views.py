@@ -147,8 +147,8 @@ class PreferencesView(APIView):
                             "users[0][old_email]": request.user.email,
                             "users[0][timezone]" : time_zone
                         }
-                        log.info(moodle_url)
-                        log.info(payload)
+                        log.info("#SA || time_zone --------- {0}".format(moodle_url))
+                        log.info("#SA || time_zone --------- {0}".format(payload))
                         log.info("#SA || time_zone ---------preparing completed payload for moodle")
                         log.info("#SA || time_zone ---------calling moodle api")
                         #requests.request("POST", moodle_url, params = payload)
