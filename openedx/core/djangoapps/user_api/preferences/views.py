@@ -129,7 +129,6 @@ class PreferencesView(APIView):
             )
         try:
             with transaction.atomic():
-                update_user_preferences(request.user, request.data, user=username)
                 
                 #SA || updateTimeZoneToMoodle
                 log.info("#SA || time_zone ---------sync time_zone started")
@@ -159,6 +158,8 @@ class PreferencesView(APIView):
                 except Exception as e:
                     log.error(e)
                 log.info("#SA || time_zone ---------sync time_zone started")
+
+                update_user_preferences(request.user, request.data, user=username)
 
         except UserNotAuthorized:
             return Response(status=status.HTTP_403_FORBIDDEN)
