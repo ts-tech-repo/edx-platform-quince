@@ -65,12 +65,15 @@
                         return $.Event('keydown', {keyCode: key});
                     };
 
+                var speeds = [0.75, 1.0, 1.5, 1.75, 2.0];
+
                 beforeEach(function() {
                     state = jasmine.initializePlayer();
                     $speedControl = $('.speeds');
                     $speedButton = $('.speed-button');
                     $speedsContainer = $('.video-speeds');
                     speedEntries = $speedsContainer.find('.speed-option');
+                    state.videoSpeedControl.speeds = speeds;
                 });
 
                 it('open/close the speed menu on mouseenter/mouseleave',

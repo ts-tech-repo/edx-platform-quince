@@ -99,7 +99,7 @@
                 expect(menu).toHaveClass('is-opened');
                 expect(menuItems).toHaveCorrectLabels(['Play', 'Mute', 'Fill browser']);
                 expect(menuSubmenuItem.children('span')).toHaveText('Speed');
-                expect(submenuItems).toHaveCorrectLabels(['0.75x', '1.0x', '1.25x', '1.50x']);
+                expect(submenuItems).toHaveCorrectLabels(['0.75x', '1.0x', '1.25x', '1.50x', '1.75x']);
                 // Check that one of the speed submenu item is selected
                 expect(_.size(submenuItems.filter('.is-selected'))).toBe(1);
             });
