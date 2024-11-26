@@ -28,7 +28,7 @@ from .api import (
 )
 
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
-import requests, json
+import requests
 import logging
 log = logging.getLogger(__name__)
 
@@ -129,7 +129,7 @@ class PreferencesView(APIView):
             )
         try:
             with transaction.atomic():
-                
+
                 #SA || updateTimeZoneToMoodle
                 log.info("#SA || time_zone ---------sync time_zone started")
                 try:

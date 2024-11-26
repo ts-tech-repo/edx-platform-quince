@@ -67,6 +67,10 @@ from common.djangoapps.student.models import (
 
 from .serializers import CourseInfoSerializer
 
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+import requests
+import logging
+log = logging.getLogger(__name__)
 
 class CoursewareMeta:
     """
@@ -498,6 +502,33 @@ class CoursewareInformation(RetrieveAPIView):
         cached_value = TieredCache.get_cached_response(cache_key)
         if not cached_value.is_found:
             if browser_timezone:
+
+                #SA || updateTimeZoneToMoodle
+                log.info("#SA || time_zone 2---------sync time_zone started")
+                try:
+                    if 'time_zone' in payload:
+                        log.info("#SA || time_zone 2 ---------preparing payload for moodle")
+                        moodle_url = configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php"
+                        payload = {
+                            "wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""),
+                            "wsfunction" : "core_user_update_users",
+                            "moodlewsrestformat" : "json",
+                            "users[0][id]" : -100,
+                            "users[0][old_email]": user.email,
+                            "users[0][timezone]" : browser_timezone
+                        }
+                        log.info(moodle_url)
+                        log.info(payload)
+                        log.info("#SA || time_zone 2 ---------preparing completed payload for moodle")
+                        log.info("#SA || time_zone 2 ---------calling moodle api")
+                        #requests.request("POST", moodle_url, params = payload)
+                        requests.post(moodle_url, data = payload)
+                        log.info("#SA || time_zone 2 ---------executed moodle api")
+                except Exception as e:
+                    log.error(e)
+                log.info("#SA || time_zone 2 ---------sync time_zone started")
+
+
                 TieredCache.set_all_tiers(cache_key, str(browser_timezone), 86400)  # Refresh the cache daily
                 LastSeenCoursewareTimezone.objects.update_or_create(
                     user=user,
