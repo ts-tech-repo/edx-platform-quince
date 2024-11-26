@@ -137,23 +137,21 @@ class PreferencesView(APIView):
                     if 'time_zone' in payload:
                         time_zone = payload['time_zone'] if payload['time_zone'] else '99'  #default value 99 refers to local timezone in moodle
                         log.info("#SA || time_zone ---------preparing payload for moodle")
-                        moodle_url = "https://md.lb.talentsprint.com/webservice/rest/server.php"
+                        moodle_url = configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php"
                         payload = {
-                            "wstoken" : "1141b49c2458b3b237ebc824b07a9f2a",
+                            "wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""),
                             "wsfunction" : "core_user_update_users",
                             "moodlewsrestformat" : "json",
                             "users[0][id]" : -100,
                             "users[0][old_email]": request.user.email,
                             "users[0][timezone]" : time_zone
                         }
-                        log.info("#SA || time_zone --------- {0}".format(moodle_url))
-                        log.info("#SA || time_zone --------- {0}".format(payload))
+                        log.info(moodle_url)
+                        log.info(payload)
                         log.info("#SA || time_zone ---------preparing completed payload for moodle")
                         log.info("#SA || time_zone ---------calling moodle api")
                         #requests.request("POST", moodle_url, params = payload)
-                        resp = requests.post(moodle_url, data = payload)
-                        resp.raise_for_status()
-                        resp.close()
+                        requests.post(moodle_url, data = payload)
                         log.info("#SA || time_zone ---------executed moodle api")
                 except Exception as e:
                     log.error(e)
