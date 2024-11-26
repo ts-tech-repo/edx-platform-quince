@@ -35,7 +35,7 @@
                     expect(li.filter('.is-active')).toHaveData(
                         'speed', state.videoSpeedControl.currentSpeed
                     );
-                    expect(li.length).toBe(state.speeds.length);
+                    expect(li.length).toBe(state.speeds.length + 1);
 
                     $.each(li.toArray().reverse(), function(index, link) {
                         expect($(link).attr('data-speed')).toEqual(state.speeds[index]);
@@ -120,7 +120,8 @@
 
                 it('UP and DOWN keydown function as expected on speed entries',
                     function() {
-                        var speed_0_75 = speedEntries.filter(':contains("0.75x")'),
+                        var speed_1_75 = speedEntries.filter(':contains("1.75x")'),
+                            speed_0_75 = speedEntries.filter(':contains("0.75x")'),
                             speed_1_0 = speedEntries.filter(':contains("1.0x")');
 
                         // First open menu
@@ -130,8 +131,11 @@
                         speed_0_75.trigger(keyPressEvent(KEY.UP));
                         expect(speed_1_0).toBeFocused();
 
-                        speed_1_0.trigger(keyPressEvent(KEY.DOWN));
-                        expect(speed_0_75).toBeFocused();
+                        speed_1_0.trigger(keyPressEvent(KEY.UP));
+                        expect(speed_1_75).toBeFocused();
+
+                        speed_1_75.trigger(keyPressEvent(KEY.DOWN));
+                        expect(speed_1_0).toBeFocused();
                     });
 
                 it('ESC keydown on speed entry closes menu', function() {
@@ -195,9 +199,9 @@
                 it('trigger speedChange event', function() {
                     spyOnEvent(state.el, 'speedchange');
 
-                    $('li[data-speed="0.75"] .speed-option').click();
+                    $('li[data-speed="1.75"] .speed-option').click();
                     expect('speedchange').toHaveBeenTriggeredOn(state.el);
-                    expect(state.videoSpeedControl.currentSpeed).toEqual('0.75');
+                    expect(state.videoSpeedControl.currentSpeed).toEqual('1.75');
                 });
             });
         });
