@@ -162,6 +162,7 @@ class UserReadOnlySerializer(serializers.Serializer):  # lint-amnesty, pylint: d
             "goals": None,
             "year_of_birth": None,
             "level_of_education": None,
+            "company": None,
             "mailing_address": None,
             "requires_parental_consent": None,
             "accomplishments_shared": accomplishments_shared,
