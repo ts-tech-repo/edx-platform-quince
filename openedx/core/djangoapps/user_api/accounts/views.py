@@ -440,6 +440,7 @@ class AccountViewSet(ViewSet):
 
         try:
             with transaction.atomic():
+                log.info('#MP data for patch request %s', request.data)
                 update_account_settings(request.user, request.data, username=username)
                 account_settings = get_account_settings(request, [username])[0]
         except UserNotAuthorized:
