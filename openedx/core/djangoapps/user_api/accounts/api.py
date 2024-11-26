@@ -40,6 +40,7 @@ from openedx.core.lib.api.view_utils import add_serializer_errors
 from openedx.features.enterprise_support.utils import get_enterprise_readonly_account_fields
 from openedx.features.name_affirmation_api.utils import is_name_affirmation_installed
 from .serializers import AccountLegacyProfileSerializer, AccountUserSerializer, UserReadOnlySerializer, _visible_fields
+import logging
 
 name_affirmation_installed = is_name_affirmation_installed()
 if name_affirmation_installed:
@@ -52,6 +53,7 @@ visible_fields = _visible_fields
 
 @helpers.intercept_errors(errors.UserAPIInternalError, ignore_errors=[errors.UserAPIRequestError])
 def get_account_settings(request, usernames=None, configuration=None, view=None):
+    logging.info("#MP get_account_settings")
     """Returns account information for a user serialized as JSON.
 
     Note:
@@ -94,13 +96,14 @@ def get_account_settings(request, usernames=None, configuration=None, view=None)
             admin_fields = settings.ACCOUNT_VISIBILITY_CONFIGURATION.get('admin_fields')
         else:
             admin_fields = None
+        logging.info('#MP admin_fields %s', admin_fields)
         serialized_users.append(UserReadOnlySerializer(
             user,
             configuration=configuration,
             custom_fields=admin_fields,
             context={'request': request}
         ).data)
-
+    logging.info('#MP serialized_users %s', serialized_users)
     return serialized_users
 
 

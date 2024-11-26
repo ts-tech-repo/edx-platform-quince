@@ -416,6 +416,7 @@ class AccountViewSet(ViewSet):
         return Response(data)
 
     def retrieve(self, request, username):
+        log.info("#MP retrieve user %s", username)
         """
         GET /api/user/v1/accounts/{username}/
         """
