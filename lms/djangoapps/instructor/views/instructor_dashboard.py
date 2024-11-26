@@ -15,7 +15,7 @@ from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 from django.views.decorators.cache import cache_control
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST
 from edx_proctoring.api import does_backend_support_onboarding
 from edx_when.api import is_enabled_for_course
@@ -249,6 +249,7 @@ def instructor_dashboard_2(request, course_id):  # lint-amnesty, pylint: disable
     certificate_invalidations = CertificateInvalidation.get_certificate_invalidations(course_key)
 
     sections.append(_section_course_log(course, access, False))
+    sections.append(_section_edx_analytics(course, access, False))
 
     context = {
         'course': course,
@@ -758,6 +759,7 @@ def _section_analytics(course, access, loadOnTabClick):
     }
     if loadOnTabClick:
         section_data["course_id"] = str(course.id)
+    log.info(section_data)
     return section_data
 
 
@@ -1004,4 +1006,64 @@ def load_tab(request, course_id, loadTab):
             block for block in openassessment_blocks if block.parent is not None
         ]
         context = {"course": course, "section_data" : _section_open_response_assessment(request, course, openassessment_blocks, {}, True)}
+    elif loadTab == "analytics":
+        context = {"section_data" : _section_edx_analytics(course, {}, True)}
     return render_to_response("instructor/instructor_dashboard_2/{0}.html".format(loadTab), context)
+
+
+@login_required
+@csrf_exempt
+def analytics_api(request):
+    try:
+        url = 'https://maple-analytics.talentsprint.com/reports/get_analytics_data'
+        course_id = request.POST.get("course_id")
+        module = request.POST.get("module_name")
+        video_id = request.POST.get("video_id", None)
+        
+        course_key = CourseKey.from_string(course_id)
+        query_features = list(configuration_helpers.get_value('student_profile_download_fields', []))
+        students_data = enrolled_students_features(course_key, query_features)
+        
+        domain_name = configuration_helpers.get_value('SITE_NAME', '')
+        secret = configuration_helpers.get_value('ANALYTICS_API_KEY', 'c696nd8cs8297gi3i6nhr2j5rbr654ks')
+
+        response = requests.post(url, data={"course_id": course_id, "students_data": json.dumps(students_data), "module_name": module, "video_id": video_id, "host": domain_name, "secret": secret})
+        return JsonResponse({"data": response.json()})
+    except Exception as e:
+        log.info(e)
+        return {"error": "please check logs"}
+    
+def _section_edx_analytics(course, access, loadOnTabClick):
+    try:
+        
+        section_data = {
+            'section_key': 'analytics',
+            'section_display_name': _('Analytics'),
+            'access': access,
+            'course_id': str(course.id),
+            'user_analytics' : 'user_analytics',
+            'loadOnTabClick' : loadOnTabClick
+        }
+        if not loadOnTabClick:
+            return section_data
+        
+
+        response = requests.get("https://staging.quince02.talentsprint.com/extras/"+str(course.id)+"/get_course_log", params={"analytics": "video_report"})
+
+        section_data["course_log"] = response.json()
+
+        log.info(section_data)
+
+        return section_data
+    except Exception as e:
+        log.info(e)
+        section_data =  {'section_key': 'analytics',
+            'section_display_name': _('Analytics'),
+            'access': access,
+            'course_id': str(course.id),
+            'user_analytics' : {},
+            'gradebook' : {},
+            'attendance' : {},
+            'course_log': {}
+        }
+        return section_data

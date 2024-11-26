@@ -1740,13 +1740,13 @@ def extras_update_lti_grades(request):
     usage_id = request.POST.get("usage_id", "")
     user_object = User.objects.get(email = user_email)
     user_id = user_object.id
-    grade = request.POST.get("user_grade", "")
     course_id = request.POST.get("course_id", "")
     #AK || added new field for comment
     comment = request.POST.get("comment", "")
 
     #SA || added new field for letter grade
     letter_grade = request.POST.get("letter_grade", "")
+    grade = 0 if letter_grade else request.POST.get("user_grade", "")
 
     if letter_grade:
         grade = 0

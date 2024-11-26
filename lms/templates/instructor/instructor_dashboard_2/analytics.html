@@ -1,0 +1,141 @@
+<%page args="section_data" expression_filter="h"/>
+<script>
+	var current_course_id = "${section_data['course_id']}"
+</script>
+%if section_data['user_analytics']:
+
+<script>
+	var current_course_id = "${section_data['course_id']}"
+</script>
+<script type="text/javascript" src="https://static.talentsprint.com/edx_scripts/analytics.js"></script>  
+<style>
+	/* #course_log_form {
+		display: none;
+	} */
+	#loading_image{
+		text-align: center;
+	}
+
+	div#video-div {
+		margin-top: 10px;
+	}
+
+	form.play_time_form {
+		text-align: center;
+		margin-top: 20px;
+	}
+
+	input#submit_play_time_data {
+		background: #178ad2;
+		border: #178ad2;
+		color: white;
+		box-shadow: none;
+		text-shadow: none;
+		font-size: 15px;
+		height: 26px;
+		line-height: 0;
+	}
+
+	.video-table tr:nth-child(even) {
+    	background: #dedede;
+	}
+
+	ul.video_wise_report_ul li {
+		list-style: none;
+		display: inline-block;
+		margin-right: 20px;
+		background: #0f75b4;
+		padding: 25px 25px 0 25px;
+		color: #fff;
+		width: 18%;
+		height: 75px;
+		border-radius: 20px;
+	}
+
+	p.cards_text {
+		text-align: center;
+		font-weight: bold;
+	}
+
+</style>
+
+	
+	<div class = 'analytics_tabs'>
+	<ul class = "analytics" id = "analytics">
+            <li class = 'video-report'>Video Report</li>
+
+        </ul>
+
+
+	</div>
+	<select id="analyticsTabsDropdown" style="display:none;">
+		<option value = 'video-report'>Video Report</option>
+	</select>
+    <div class="running-tasks-container action-type-container" style="overflow-y: auto; height:400px;">
+             
+             <!-- <a href = "#enrolled_students" rel = "leanModal"> Click Here</a>
+	     <section class="popup-box" id="enrolled_students" style="background:#fff;padding:10px;"> -->
+
+                    <header class="popup-header1">
+                    <h2 style="display:none;color:#000">Enrolled Students</h2>
+		    </header>
+		
+		<div class = 'analytics_tables'>
+		
+
+		<div class='course_log_form' id='course_log_form'>
+			
+			%if "course_log" in section_data and "course_log" in section_data["course_log"]:
+				<form class="play_time_form" onsubmit="get_play_time_data(); return false;">
+					<select class="play_time_options" id="play_time_options">
+						%for key in section_data["course_log"]["course_log"]:
+							%if "unit_type" in key:
+								%if key["unit_type"] == "video":
+									
+									<% sec_name = key["section_name"]%>
+									<% sub_sec_name = key["subsection_name"]%>
+									<% unit_name = key["unit_name"]%>
+									<option value="${key['block_id']}">${sec_name} > ${sub_sec_name} > ${unit_name} </option>
+								%endif
+							%endif
+						% endfor
+					</select>
+					<input class="submit_play_time_data" id="submit_play_time_data" type="submit" value="Submit">
+				</form>
+				
+				<div id="video_wise_report" class="video_wise_report">
+					<ul class="video_wise_report_ul" id="video_wise_report_ul">
+						<li class="cards" onclick="return false;">
+								<p class="cards_text" id="unique_views">-</p>
+								<p class="cards_text" >Unique Views</p>
+						</li>
+						<li class="cards">
+								<p class="cards_text" id="total_time_spent">-</p>
+								<p class="cards_text" >Total Time Spent</p>
+						</li>
+						<li class="cards">
+								<p class="cards_text" id="keywords_searched">-</p>
+								<p class="cards_text" >Keyword Searches</p>
+						</li>
+						<li class="cards">
+								<p class="cards_text" id="transcript_interaction">-</p>
+								<p class="cards_text" >Transcript Interactions</p>
+						</li>
+					</ul>
+				</div>
+				<div id="chart_div" style="width: 60%; height: 400px; margin: auto; display: none;"></div>
+				<div class="video-div" id="video-div"></div>
+				<!-- <table class="video-report" id="video-report"></table> -->
+			%endif
+		</div>
+		</div>
+		<!-- </section> -->	
+	<p id="loading_image">	<img id="load_image" src="https://cdn.exec.talentsprint.com/gifs/loading_1.gif" style="display: none;"> </p>
+
+	</div>
+%else:
+	<p>Analytics Tab</p>
+
+
+%endif
+<!-- <script type="text/javascript" src="https://static.talentsprint.com/edx_scripts/staging_div_append.js"></script> -->
