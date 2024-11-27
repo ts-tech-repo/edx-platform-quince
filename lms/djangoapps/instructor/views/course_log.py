@@ -1,60 +1,83 @@
 import logging
 import json
 import pytz
+from datetime import datetime
 
 from bson.json_util import dumps
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from common.djangoapps.edxmako.shortcuts import render_to_string, render_to_response
 from common.djangoapps.util.json_request import JsonResponse
+from django.http import HttpResponse
 from opaque_keys.edx.keys import CourseKey
 from xmodule.modulestore import ModuleStoreEnum
 from xmodule.modulestore.django import modulestore
 from django.views.decorators.clickjacking import xframe_options_exempt
 from itertools import chain
+from collections import OrderedDict
 
+#VK-Start
+from openedx.features.course_experience.utils import get_course_outline_block_tree
+from lms.djangoapps.course_api.blocks.api import get_blocks
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+#Vk-End
 
 log = logging.getLogger(__name__)
+@xframe_options_exempt
+@csrf_exempt
+def extras_get_course_log(request, course_id):
+    use_case = request.GET.get("analytics", None)
+    if use_case:
+        course_log = get_course_unit_log_analytics(course_id)
+    else:
+        course_log = get_course_structure(course_id)
+    json_data = dumps(course_log)
+    json_data = json.loads(json_data)
+    return JsonResponse(json_data)
+    #return HttpResponse(json_data, content_type="application/json")
+    #return render(request, 'course_log.html', context =  course_log)
 
-# def get_course_unit_log_analytics(course_id):
-# 	course_log = {}
-# 	try:
-# 		course_key = CourseKey.from_string(course_id)
-# 		split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
-# 		active_version_collection = split_modulestore.db_connection.course_index
-# 		structure_collection = split_modulestore.db_connection.structures
-# 		course = list(active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run}))
+def get_course_unit_log_analytics(course_id):
+	course_log = {}
+	try:
+		course_key = CourseKey.from_string(course_id)
+		split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
+		active_version_collection = split_modulestore.db_connection.course_index
+		structure_collection = split_modulestore.db_connection.structures
+		course = list(active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run}))
 
-# 		course_structure  = list(structure_collection.find({"_id" : course[0]["versions"]["published-branch"]}, {"blocks" : 1}))
-# 		data = []
+		course_structure  = list(structure_collection.find({"_id" : course[0]["versions"]["published-branch"]}, {"blocks" : 1}))
+		data = []
 
-# 		for i in course_structure[0]["blocks"]:
-# 			if "display_name" in i["fields"] and i["block_type"] in ["vertical"]:
-# 				log.info(i)
-# 				log.info(i["edit_info"]["edited_by"])
-# 				log.info(User.objects)
-# 				u = User.objects.get(id = i["edit_info"]["edited_by"])
-# 				subsection_name = get_subsection_name(i["block_id"], course_structure)
-# 				section_name = get_section_name(subsection_name[1], course_structure)
-# 				data.append({"unit_name" : i["fields"]["display_name"], "edited_by_email" : u.email, "edited_by_name" : u.first_name, "edited_on" : i["edit_info"]["edited_on"], "subsection_name": subsection_name[0],"section_name" : section_name, "block_type": i["block_type"], "block_id": i["block_id"], "unit_type": i["fields"]["children"][0][0] if i["fields"]["children"] else ""})
+		for i in course_structure[0]["blocks"]:
+			if "display_name" in i["fields"] and i["block_type"] in ["vertical"]:
+				log.info(i)
+				log.info(i["edit_info"]["edited_by"])
+				log.info(User.objects)
+				u = User.objects.get(id = i["edit_info"]["edited_by"])
+				subsection_name = get_subsection_name(i["block_id"], course_structure)
+				section_name = get_section_name(subsection_name[1], course_structure)
+				data.append({"unit_name" : i["fields"]["display_name"], "edited_by_email" : u.email, "edited_by_name" : u.first_name, "edited_on" : i["edit_info"]["edited_on"], "subsection_name": subsection_name[0],"section_name" : section_name, "block_type": i["block_type"], "block_id": i["block_id"], "unit_type": i["fields"]["children"][0][0] if i["fields"]["children"] else ""})
 
-# 		course_log = sorted(data, key = lambda k:k['edited_on'], reverse=True)
-# 		#course_log = json.loads(dumps(course_log))
-# 	except Exception as e:
-# 		log.error(e)
+		course_log = sorted(data, key = lambda k:k['edited_on'], reverse=True)
+		#course_log = json.loads(dumps(course_log))
+	except Exception as e:
+		log.error(e)
 
-# 	return {"course_log" : course_log}
+	return {"course_log" : course_log}
 
-# def get_subsection_name(id, course_structure):
-# 	for i in course_structure[0]["blocks"]:
-# 		if i["block_type"] in ["sequential"]:
-# 			if id in chain(*i["fields"]["children"]):
-# 				return [i["fields"]["display_name"], i["block_id"]]
+def get_subsection_name(id, course_structure):
+	for i in course_structure[0]["blocks"]:
+		if i["block_type"] in ["sequential"]:
+			if id in chain(*i["fields"]["children"]):
+				return [i["fields"]["display_name"], i["block_id"]]
 
-# def get_section_name(id, course_structure):
-# 	for i in course_structure[0]["blocks"]:
-# 		if i["block_type"] in ["chapter"]:
-# 			if id in chain(*i["fields"]["children"]):
-# 				return i["fields"]["display_name"]
+def get_section_name(id, course_structure):
+	for i in course_structure[0]["blocks"]:
+		if i["block_type"] in ["chapter"]:
+			if id in chain(*i["fields"]["children"]):
+				return i["fields"]["display_name"]
 
 def get_course_unit_log(course_id):
     course_key = CourseKey.from_string(course_id)
@@ -190,42 +213,43 @@ def conver_utc_ist(utc_datetime):
     formated_ist = edited_info_ist.strftime("%b %d,%Y %H:%M:%S")
     return formated_ist
 
-# def get_course_structure(course_id):
-# 	course_key = CourseKey.from_string(course_id)
-# 	split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
-# 	active_version_collection = split_modulestore.db_connection.course_index
-# 	structure_collection = split_modulestore.db_connection.structures
-# 	course = list(active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run}))
+def get_course_structure(course_id):
+	course_key = CourseKey.from_string(course_id)
+	split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
+	active_version_collection = split_modulestore.db_connection.course_index
+	structure_collection = split_modulestore.db_connection.structures
+	course = list(active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run}))
 
-# 	course_structure  = list(structure_collection.find({"_id" : course[0]["versions"]["published-branch"]}, {"blocks" : 1}))
-# 	data = {}
-# 	for i in course_structure[0]["blocks"]:
-# 		if "display_name" in i["fields"] and i["block_type"] in ["vertical"]:
-# 			u = User.objects.get(id = i["edit_info"]["edited_by"])
-# 			subsection_name = get_subsection_name(i["block_id"], course_structure)
-# 			section_name = get_section_name(subsection_name[1], course_structure)
-# 			#log.info(i)
-# 			data[i["block_id"]] = {"unit_name" : i["fields"]["display_name"], "edited_by_email" : u.email, "edited_by_name" : u.first_name, "edited_on" : i["edit_info"]["edited_on"], "subsection_name": subsection_name[0],"section_name" : section_name}
-# 			if i['fields']['children']:
-# 				data[i["block_id"]]["block_type"] = i['fields']['children'][0][0]
+	course_structure  = list(structure_collection.find({"_id" : course[0]["versions"]["published-branch"]}, {"blocks" : 1}))
+	data = {}
+	for i in course_structure[0]["blocks"]:
+		if "display_name" in i["fields"] and i["block_type"] in ["vertical"]:
+			u = User.objects.get(id = i["edit_info"]["edited_by"])
+			subsection_name = get_subsection_name(i["block_id"], course_structure)
+			section_name = get_section_name(subsection_name[1], course_structure)
+			#log.info(i)
+			data[i["block_id"]] = {"unit_name" : i["fields"]["display_name"], "edited_by_email" : u.email, "edited_by_name" : u.first_name, "edited_on" : i["edit_info"]["edited_on"], "subsection_name": subsection_name[0],"section_name" : section_name}
+			if i['fields']['children']:
+				data[i["block_id"]]["block_type"] = i['fields']['children'][0][0]
 
-# 	#sorted_data = sorted(data.items(), key=lambda x: x[1]["edited_on"], reverse=True)
-# 	return data
+	#sorted_data = sorted(data.items(), key=lambda x: x[1]["edited_on"], reverse=True)
+	return data
 
-# #VK-Start
-# @csrf_exempt
-# def get_course_block_structure(request, course_id):
-# 	EDX_API_KEY = configuration_helpers.get_value("EDX_API_KEY", "")
-# 	secret = request.POST.get("secret", None)
-# 	if secret is None:
-# 		log.info("No Secret Key available")
-# 		return JsonResponse({})
-# 	if secret == EDX_API_KEY:
-# 		course_key = CourseKey.from_string(course_id)
-# 		course_usage_key = modulestore().make_course_usage_key(course_key)
-# 		structure = get_course_outline_block_tree(request, course_id)
-# 		return JsonResponse({"structure": structure})
-# 	else:
-# 		log.info("Wrong API KEY")
-# 		return JsonResponse({})
-# #VK-End
+#VK-Start
+@csrf_exempt
+def get_course_block_structure(request, course_id):
+	EDX_API_KEY = configuration_helpers.get_value("EDX_API_KEY", "")
+	secret = request.POST.get("secret", None)
+	if secret is None:
+		log.info("No Secret Key available")
+		return JsonResponse({})
+	if secret == EDX_API_KEY:
+		course_key = CourseKey.from_string(course_id)
+		course_usage_key = modulestore().make_course_usage_key(course_key)
+		structure = get_course_outline_block_tree(request, course_id)
+		return JsonResponse({"structure": structure})
+	else:
+		log.info("Wrong API KEY")
+		return JsonResponse({})
+#VK-End
+

@@ -316,6 +316,8 @@ def _get_user_course_outline_and_processors(course_key: CourseKey,  # lint-amnes
 
     full_course_outline = get_course_outline(course_key)
     user_can_see_all_content = can_see_all_content(user, course_key)
+    log.info("#AmanK:: Full course outline: %s", full_course_outline)
+    log.info("#AmanK:::User %s can see all content: %s", user, user_can_see_all_content)
 
     # These are processors that alter which sequences are visible to students.
     # For instance, certain sequences that are intentionally hidden or not yet
@@ -352,8 +354,12 @@ def _get_user_course_outline_and_processors(course_key: CourseKey,  # lint-amnes
                 inaccessible_sequences |= processor_inaccessible_sequences
 
     # Open question: Does it make sense to remove a Section if it has no Sequences in it?
+    log.info("#AmanK:::usage_keys_to_remove: %s", usage_keys_to_remove)
+    log.info("#AmanK:::inaccessible_sequences: %s", inaccessible_sequences)
     trimmed_course_outline = full_course_outline.remove(usage_keys_to_remove)
     accessible_sequences = frozenset(set(trimmed_course_outline.sequences) - inaccessible_sequences)
+    log.info("#AmanK:::accessible_sequences: %s", accessible_sequences)
+    log.info("#AmanK:::trimmed_course_outline: %s", trimmed_course_outline)
 
     user_course_outline = UserCourseOutlineData(
         base_outline=full_course_outline,
@@ -375,7 +381,7 @@ def _get_user_course_outline_and_processors(course_key: CourseKey,  # lint-amnes
             ]
         }
     )
-
+    log.info("#AmanK:::user_course_outline: %s", user_course_outline)
     return user_course_outline, processors
 
 
