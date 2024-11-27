@@ -299,6 +299,7 @@ class OutlineTabView(RetrieveAPIView):
         #
         # The long term goal is to remove the Course Blocks API call entirely,
         # so this is a tiny first step in that migration.
+        log.info("#AmanK course blocks:::",course_blocks)
         if course_blocks:
             user_course_outline = get_user_course_outline(
                 course_key, request.user, datetime.now(tz=timezone.utc)
@@ -331,6 +332,7 @@ class OutlineTabView(RetrieveAPIView):
                     )
                 ] if 'children' in chapter_data else []
 
+        log.info("#AmanK course blocks2:::",course_blocks)
         user_has_passing_grade = False
         if not request.user.is_anonymous:
             user_grade = CourseGradeFactory().read(request.user, course)
