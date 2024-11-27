@@ -299,7 +299,7 @@ class OutlineTabView(RetrieveAPIView):
         #
         # The long term goal is to remove the Course Blocks API call entirely,
         # so this is a tiny first step in that migration.
-        log.info("#AmanK course blocks::: %s",course_blocks)
+        log.info("#AmanK course blocks::: %s",course_blocks['children'])
         if course_blocks:
             user_course_outline = get_user_course_outline(
                 course_key, request.user, datetime.now(tz=timezone.utc)
@@ -307,6 +307,9 @@ class OutlineTabView(RetrieveAPIView):
             available_seq_ids = {str(usage_key) for usage_key in user_course_outline.sequences}
 
             available_section_ids = {str(section.usage_key) for section in user_course_outline.sections}
+            log.info("#AmanK available_section_ids::: %s",available_section_ids)
+            log.info("#AmanK available_seq_ids::: %s",available_seq_ids)
+            
 
             # course_blocks is a reference to the root of the course,
             # so we go through the chapters (sections) and keep only those
