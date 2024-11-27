@@ -163,6 +163,7 @@ class UserReadOnlySerializer(serializers.Serializer):  # lint-amnesty, pylint: d
             "year_of_birth": None,
             "level_of_education": None,
             "company": None,
+            "designation": None,
             "mailing_address": None,
             "requires_parental_consent": None,
             "accomplishments_shared": accomplishments_shared,
@@ -194,6 +195,7 @@ class UserReadOnlySerializer(serializers.Serializer):  # lint-amnesty, pylint: d
                         user_profile.level_of_education
                     ),
                     "company": AccountLegacyProfileSerializer.convert_empty_to_None(user_profile.company),
+                    "designation": AccountLegacyProfileSerializer.convert_empty_to_None(user_profile.designation),
                     "mailing_address": user_profile.mailing_address,
                     "requires_parental_consent": user_profile.requires_parental_consent(),
                     "account_privacy": get_profile_visibility(user_profile, user, self.configuration),
@@ -289,7 +291,7 @@ class AccountLegacyProfileSerializer(serializers.HyperlinkedModelSerializer, Rea
     class Meta:
         model = UserProfile
         fields = (
-            "name", "gender", "goals", "year_of_birth", "level_of_education", "company", "country", "state", "social_links",
+            "name", "gender", "goals", "year_of_birth", "level_of_education", "company", "designation", "country", "state", "social_links",
             "mailing_address", "bio", "profile_image", "requires_parental_consent", "language_proficiencies",
             "phone_number", "city"
         )
