@@ -189,13 +189,19 @@
             <div class="profile-section d-flex flex-column flex-lg-row align-items-center flex-wrap flex-lg-nowrap text-center text-lg-left">
               <img class="profile-img" id="profile_image" src="{{ profile.profile_image_urls.full }}" alt="">
               <p class="ml-lg-4 font-weight-bold" id="name" style="font-size: 24px;">
-                {{ profile.first_name }} {{ profile.last_name }}
+                {{ profile.first_name }}
               </p>
             </div>
             <div class="ed-section mt-3">
               <p style="height:50px;color: rgba(0,0,0,0.5);font-size: 17px; overflow: hidden;display: -webkit-box;
 -webkit-line-clamp: 2;  
 -webkit-box-orient: vertical;" id="level_of_education">{{ profile.level_of_education }}</p>
+<p style="height:50px;color: rgba(0,0,0,0.5);font-size: 17px; overflow: hidden;display: -webkit-box;
+-webkit-line-clamp: 2;  
+-webkit-box-orient: vertical;" id="company">{{ profile.company }}</p>
+<p style="height:50px;color: rgba(0,0,0,0.5);font-size: 17px; overflow: hidden;display: -webkit-box;
+-webkit-line-clamp: 2;  
+-webkit-box-orient: vertical;" id="designation">{{ profile.designation }}</p>
               </p>
               <p id="bio" style="display: none;">{{ profile.bio }}</p>
               <div id="social-links" style="display: none;">
