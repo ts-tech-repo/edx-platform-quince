@@ -100,9 +100,9 @@ def get_course_unit_log(course_id):
             break
 
         all_previous_versions.append(document)
-
+    log.info("Before soritn {0}".format(all_previous_versions))
     all_previous_versions = sorted(all_previous_versions, key=lambda x: x.get("edited_on", 0))
-
+    log.info("All sorting {0}".format(all_previous_versions))
     data = get_course_history(course_definition, published_version, all_previous_versions)    
     return data
 

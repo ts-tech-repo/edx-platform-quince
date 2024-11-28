@@ -835,6 +835,7 @@ def _section_course_log(course, access, loadOnTabClick):
         # 'course_logs' : get_course_unit_log(str(course.id))
     }
     if loadOnTabClick:
+        log.info("Here")
         section_data["course_logs"] = get_course_unit_log(str(course.id))
     return section_data
 
@@ -1015,7 +1016,7 @@ def load_tab(request, course_id, loadTab):
 @csrf_exempt
 def analytics_api(request):
     try:
-        url = 'https://maple-analytics.talentsprint.com/reports/get_analytics_data'
+        url = 'https://analytics.talentsprint.com/reports/get_quince_analytics_data'
         course_id = request.POST.get("course_id")
         module = request.POST.get("module_name")
         video_id = request.POST.get("video_id", None)
@@ -1023,7 +1024,7 @@ def analytics_api(request):
         course_key = CourseKey.from_string(course_id)
         query_features = list(configuration_helpers.get_value('student_profile_download_fields', []))
         students_data = enrolled_students_features(course_key, query_features)
-        
+        log.info("#KC Student data {0}".format(students_data)) 
         domain_name = configuration_helpers.get_value('SITE_NAME', '')
         secret = configuration_helpers.get_value('ANALYTICS_API_KEY', 'c696nd8cs8297gi3i6nhr2j5rbr654ks')
 
