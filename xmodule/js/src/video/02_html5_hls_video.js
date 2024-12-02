@@ -68,6 +68,7 @@
                         });
                         this.hls.on(HLS.Events.LEVEL_SWITCHED, function(event, data) {
                             var level = self.hls.levels[data.level];
+                            console.log("quality console");
                             console.log(
                                 '[HLS Video]: LEVEL_SWITCHED, qualityLevelInfo: ',
                                 {
@@ -101,28 +102,67 @@
                 };
 
                 // Define the HLSVideo.Player
-                console.log("coming outside");
                 Player.prototype.onReady = function() {
                     console.log("coming inside");
                     this.config.events.onReady(null);
-
+                
                     // Update resolution display on ready
                     if (!this.config.browserIsSafari) {
                         const currentLevel = this.hls.currentLevel;
                         if (currentLevel !== -1) {
                             const resolution = `${this.hls.levels[currentLevel].width}x${this.hls.levels[currentLevel].height}`;
                             this.updateResolutionDisplay(resolution);
+                            this.populateQualitySelector();
                         }
                     }
                 };
-
-                // Add a method to update the resolution display
-                Player.prototype.updateResolutionDisplay = function(resolution) {
-                    const resolutionDisplay = this.config.state.el.find('.video-resolution-display');
-                    if (resolutionDisplay.length > 0) {
-                        resolutionDisplay.text(`Resolution: ${resolution}`);
+                
+                // Add a method to populate the quality selector
+                Player.prototype.populateQualitySelector = function() {
+                    const qualitySelector = this.config.state.el.find('.video-quality-selector');
+                    if (qualitySelector.length === 0) {
+                        console.warn('[HLS Video]: Quality selector element not found.');
+                        return;
+                    }
+                
+                    qualitySelector.empty(); // Clear any existing options
+                    const levels = this.hls.levels;
+                
+                    levels.forEach((level, index) => {
+                        const qualityText = `${level.width}x${level.height} (${Math.round(level.bitrate / 1000)} kbps)`;
+                        const option = $('<option></option>')
+                            .val(index)
+                            .text(qualityText);
+                        qualitySelector.append(option);
+                    });
+                
+                    // Add an 'auto' option
+                    const autoOption = $('<option></option>')
+                        .val(-1)
+                        .text('Auto');
+                    qualitySelector.prepend(autoOption);
+                
+                    qualitySelector.on('change', (event) => {
+                        const selectedLevel = parseInt(event.target.value, 10);
+                        this.setQuality(selectedLevel);
+                    });
+                };
+                
+                // Add a method to set the video quality
+                Player.prototype.setQuality = function(level) {
+                    if (level === -1) {
+                        console.log('[HLS Video]: Switching to auto quality.');
+                        this.hls.currentLevel = -1; // Auto quality
                     } else {
-                        console.warn('[HLS Video]: Resolution display element not found.');
+                        console.log('[HLS Video]: Switching to quality level:', level);
+                        this.hls.currentLevel = level;
+                    }
+                
+                    // Update resolution display
+                    const currentLevel = this.hls.levels[level];
+                    if (currentLevel) {
+                        const resolution = `${currentLevel.width}x${currentLevel.height}`;
+                        this.updateResolutionDisplay(resolution);
                     }
                 };
 
