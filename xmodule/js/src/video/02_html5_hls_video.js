@@ -55,6 +55,7 @@
                         this.hls.on(HLS.Events.ERROR, this.onError.bind(this));
 
                         this.hls.on(HLS.Events.MANIFEST_PARSED, function(event, data) {
+                            console.log("quality console 1");
                             console.log(
                                 '[HLS Video]: MANIFEST_PARSED, qualityLevelsInfo: ',
                                 data.levels.map(function(level) {
