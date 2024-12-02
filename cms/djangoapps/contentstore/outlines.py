@@ -333,7 +333,9 @@ def get_outline_from_modulestore(course_key) -> Tuple[CourseOutlineData, List[Co
     store = modulestore()
     content_errors = []
 
-    with store.branch_setting(ModuleStoreEnum.Branch.published_only, course_key):
+    # with store.branch_setting(ModuleStoreEnum.Branch.published_only, course_key):
+    # AK | changing to BranchName for latest edx modulestore
+    with store.branch_setting(ModuleStoreEnum.BranchName.published, course_key):
         # Pull course with depth=3 so we prefetch Section -> Sequence -> Unit
         course = store.get_course(course_key, depth=3)
         sections_data = []
