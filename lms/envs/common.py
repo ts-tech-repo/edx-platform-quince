@@ -4194,6 +4194,8 @@ ACCOUNT_VISIBILITY_CONFIGURATION["bulk_shareable_fields"] = (
         'date_joined',
         'language_proficiencies',
         "level_of_education",
+        "company",
+        "designation",
         'social_links',
         'time_zone',
 
