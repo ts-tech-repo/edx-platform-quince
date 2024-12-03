@@ -22,6 +22,7 @@
             describe('always', function() {
                 beforeEach(function() {
                     state = jasmine.initializePlayer();
+                    state.speeds.push("1.75"); // Add 1.75x speed option
                 });
 
                 it('add the video speed control to player', function() {
@@ -67,6 +68,7 @@
 
                 beforeEach(function() {
                     state = jasmine.initializePlayer();
+                    state.speeds.push("1.75"); // Add 1.75x speed option
                     $speedControl = $('.speeds');
                     $speedButton = $('.speed-button');
                     $speedsContainer = $('.video-speeds');
@@ -83,7 +85,7 @@
 
                 it('do not close the speed menu on mouseleave if a speed '
                     + 'entry has focus', function() {
-                    // Open speed meenu. Focus is on last speed entry.
+                    // Open speed menu. Focus is on last speed entry.
                     $speedControl.trigger(keyPressEvent(KEY.ENTER));
                     $speedControl.mouseenter().mouseleave();
                     expect($speedControl).toHaveClass('is-opened');
