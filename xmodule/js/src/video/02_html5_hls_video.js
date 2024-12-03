@@ -1,219 +1,390 @@
 /* eslint-disable no-console, no-param-reassign */
 /**
- * HTML5 video player module to support HLS video playback.
+ * @file HTML5 video player module. Provides methods to control the in-browser
+ * HTML5 video player.
  *
+ * The goal was to write this module so that it closely resembles the YouTube
+ * API. The main reason for this is because initially the edX video player
+ * supported only YouTube videos. When HTML5 support was added, for greater
+ * compatibility, and to reduce the amount of code that needed to be modified,
+ * it was decided to write a similar API as the one provided by YouTube.
+ *
+ * @external RequireJS
+ *
+ * @module HTML5Video
  */
 
 (function(requirejs, require, define) {
-    'use strict';
+    define(
+        'video/02_html5_video.js',
+        ['underscore'],
+        function(_) {
+            var HTML5Video = {};
 
-    define('video/02_html5_hls_video.js', ['underscore', 'video/02_html5_video.js', 'hls'],
-        function(_, HTML5Video, HLS) {
-            var HLSVideo = {};
-
-            HLSVideo.Player = (function() {
-            /**
-             * Initialize HLS video player.
-             *
-             * @param {jQuery} el  Reference to video player container element
-             * @param {Object} config  Contains common config for video player
-             */
+            HTML5Video.Player = (function() {
+                /*
+         * Constructor function for HTML5 Video player.
+         *
+         * @param {String|Object} el A DOM element where the HTML5 player will
+         * be inserted (as returned by jQuery(selector) function), or a
+         * selector string which will be used to select an element. This is a
+         * required parameter.
+         *
+         * @param config - An object whose properties will be used as
+         * configuration options for the HTML5 video player. This is an
+         * optional parameter. In the case if this parameter is missing, or
+         * some of the config object's properties are missing, defaults will be
+         * used. The available options (and their defaults) are as
+         * follows:
+         *
+         *     config = {
+         *
+         *        videoSources: [],   // An array with properties being video
+         *                            // sources. The property name is the
+         *                            // video format of the source. Supported
+         *                            // video formats are: 'mp4', 'webm', and
+         *                            // 'ogg'.
+         *        poster:             Video poster URL
+         *
+         *        browserIsSafari:    Flag to tell if current browser is Safari
+         *
+         *        events: {           // Object's properties identify the
+         *                            // events that the API fires, and the
+         *                            // functions (event listeners) that the
+         *                            // API will call when those events occur.
+         *                            // If value is null, or property is not
+         *                            // specified, then no callback will be
+         *                            // called for that event.
+         *
+         *              onReady: null,
+         *              onStateChange: null
+         *          }
+         *     }
+         */
                 function Player(el, config) {
-                    var self = this;
+                    var errorMessage, lastSource, sourceList;
 
-                    this.config = config;
+                    // Create HTML markup for individual sources of the HTML5 <video> element.
+                    sourceList = $.map(config.videoSources, function(source) {
+                        return [
+                            '<source ',
+                            'src="', source,
+                            // Following hack allows to open the same video twice
+                            // https://code.google.com/p/chromium/issues/detail?id=31014
+                            // Check whether the url already has a '?' inside, and if so,
+                            // use '&' instead of '?' to prevent breaking the url's integrity.
+                            (source.indexOf('?') === -1 ? '?' : '&'),
+                            (new Date()).getTime(), '" />'
+                        ].join('');
+                    });
 
                     // do common initialization independent of player type
                     this.init(el, config);
 
-                    _.bindAll(this, 'playVideo', 'pauseVideo', 'onReady');
+                    // Create HTML markup for the <video> element, populating it with
+                    // sources from previous step. Set playback not supported error message.
+                    errorMessage = [
+                        gettext('This browser cannot play .mp4, .ogg, or .webm files.'),
+                        gettext('Try using a different browser, such as Google Chrome.')
+                    ].join('');
+                    this.video.innerHTML = sourceList.join('') + errorMessage;
 
-                    // If we have only HLS sources and browser doesn't support HLS then show error message.
-                    if (config.HLSOnlySources && !config.canPlayHLS) {
-                        this.showErrorMessage(null, '.video-hls-error');
-                        return;
-                    }
-
-                    this.config.state.el.on('initialize', _.once(function() {
-                        console.log('[HLS Video]: HLS Player initialized');
-                        self.showPlayButton();
-                    }));
-
-                    // Safari has native support to play HLS videos
-                    if (config.browserIsSafari) {
-                        this.videoEl.attr('src', config.videoSources[0]);
-                    } else {
-                    // load auto start if auto_advance is enabled
-                        if (config.state.auto_advance) {
-                            this.hls = new HLS({autoStartLoad: true});
-                        } else {
-                            this.hls = new HLS({autoStartLoad: false});
-                        }
-                        this.hls.loadSource(config.videoSources[0]);
-                        this.hls.attachMedia(this.video);
-
-                        this.hls.on(HLS.Events.ERROR, this.onError.bind(this));
-
-                        this.hls.on(HLS.Events.MANIFEST_PARSED, function(event, data) {
-                            console.log("quality console 1");
-                            console.log(
-                                '[HLS Video]: MANIFEST_PARSED, qualityLevelsInfo: ',
-                                data.levels.map(function(level) {
-                                    return {
-                                        bitrate: level.bitrate,
-                                        resolution: level.width + 'x' + level.height
-                                    };
-                                })
-                            );
-                            self.config.onReadyHLS();
-                        });
-                        this.hls.on(HLS.Events.LEVEL_SWITCHED, function(event, data) {
-                            var level = self.hls.levels[data.level];
-                            console.log("quality console");
-                            console.log(
-                                '[HLS Video]: LEVEL_SWITCHED, qualityLevelInfo: ',
-                                {
-                                    bitrate: level.bitrate,
-                                    resolution: level.width + 'x' + level.height
-                                }
-                            );
-                        });
-                    }
+                    lastSource = this.videoEl.find('source').last();
+                    lastSource.on('error', this.showErrorMessage.bind(this));
+                    lastSource.on('error', this.onError.bind(this));
+                    this.videoEl.on('error', this.onError.bind(this));
                 }
 
-                Player.prototype = Object.create(HTML5Video.Player.prototype);
-                Player.prototype.constructor = Player;
+                Player.prototype.showPlayButton = function() {
+                    this.videoOverlayEl.removeClass('is-hidden');
+                };
 
-                Player.prototype.playVideo = function() {
-                    HTML5Video.Player.prototype.updatePlayerLoadingState.apply(this, ['show']);
-                    if (!this.config.browserIsSafari) {
-                        this.hls.startLoad();
+                Player.prototype.hidePlayButton = function() {
+                    this.videoOverlayEl.addClass('is-hidden');
+                };
+
+                Player.prototype.showLoading = function() {
+                    this.el
+                        .removeClass('is-initialized')
+                        .find('.spinner')
+                        .removeAttr('tabindex')
+                        .attr({'aria-hidden': 'false'});
+                };
+
+                Player.prototype.hideLoading = function() {
+                    this.el
+                        .addClass('is-initialized')
+                        .find('.spinner')
+                        .attr({'aria-hidden': 'false', tabindex: -1});
+                };
+
+                Player.prototype.updatePlayerLoadingState = function(state) {
+                    if (state === 'show') {
+                        this.hidePlayButton();
+                        this.showLoading();
+                    } else if (state === 'hide') {
+                        this.hideLoading();
                     }
-                    HTML5Video.Player.prototype.playVideo.apply(this);
+                };
+
+                Player.prototype.callStateChangeCallback = function() {
+                    if ($.isFunction(this.config.events.onStateChange)) {
+                        this.config.events.onStateChange({
+                            data: this.playerState
+                        });
+                    }
                 };
 
                 Player.prototype.pauseVideo = function() {
-                    HTML5Video.Player.prototype.pauseVideo.apply(this);
-                    HTML5Video.Player.prototype.updatePlayerLoadingState.apply(this, ['hide']);
+                    this.video.pause();
+                };
+
+                Player.prototype.seekTo = function(value) {
+                    if (
+                        typeof value === 'number'
+                && value <= this.video.duration
+                && value >= 0
+                    ) {
+                        this.video.currentTime = value;
+                    }
+                };
+
+                Player.prototype.setVolume = function(value) {
+                    if (typeof value === 'number' && value <= 100 && value >= 0) {
+                        this.video.volume = value * 0.01;
+                    }
+                };
+
+                Player.prototype.getCurrentTime = function() {
+                    return this.video.currentTime;
+                };
+
+                Player.prototype.playVideo = function() {
+                    this.video.play();
+                };
+
+                Player.prototype.getPlayerState = function() {
+                    return this.playerState;
+                };
+
+                Player.prototype.getVolume = function() {
+                    return this.video.volume;
+                };
+
+                Player.prototype.getDuration = function() {
+                    if (isNaN(this.video.duration)) {
+                        return 0;
+                    }
+
+                    return this.video.duration;
+                };
+
+                Player.prototype.setPlaybackRate = function(value) {
+                    var newSpeed;
+
+                    newSpeed = parseFloat(value);
+
+                    if (isFinite(newSpeed)) {
+                        if (this.video.playbackRate !== value) {
+                            this.video.playbackRate = value;
+                        }
+                    }
+                };
+
+                Player.prototype.getAvailablePlaybackRates = function() {
+                    return [0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+                };
+
+                // eslint-disable-next-line no-underscore-dangle
+                Player.prototype._getLogs = function() {
+                    return this.logs;
+                };
+
+                Player.prototype.showErrorMessage = function(event, css) {
+                    var cssSelecter = css || '.video-player .video-error';
+                    this.el
+                        .find('.video-player div')
+                        .addClass('hidden')
+                        .end()
+                        .find(cssSelecter)
+                        .removeClass('is-hidden')
+                        .end()
+                        .addClass('is-initialized')
+                        .find('.spinner')
+                        .attr({
+                            'aria-hidden': 'true',
+                            tabindex: -1
+                        });
+                };
+
+                Player.prototype.onError = function() {
+                    if ($.isFunction(this.config.events.onError)) {
+                        this.config.events.onError();
+                    }
+                };
+
+                Player.prototype.destroy = function() {
+                    this.video.removeEventListener('loadedmetadata', this.onLoadedMetadata, false);
+                    this.video.removeEventListener('play', this.onPlay, false);
+                    this.video.removeEventListener('playing', this.onPlaying, false);
+                    this.video.removeEventListener('pause', this.onPause, false);
+                    this.video.removeEventListener('ended', this.onEnded, false);
+                    this.el
+                        .find('.video-player div')
+                        .removeClass('is-hidden')
+                        .end()
+                        .find('.video-player .video-error')
+                        .addClass('is-hidden')
+                        .end()
+                        .removeClass('is-initialized')
+                        .find('.spinner')
+                        .attr({'aria-hidden': 'false'});
+                    this.videoEl.off('remove');
+                    this.videoEl.remove();
+                };
+
+                Player.prototype.onReady = function() {
+                    this.config.events.onReady(null);
+                    this.showPlayButton();
+                };
+
+                Player.prototype.onLoadedMetadata = function() {
+                    this.playerState = HTML5Video.PlayerState.PAUSED;
+                    if ($.isFunction(this.config.events.onReady)) {
+                        this.onReady();
+                    }
+                };
+
+                Player.prototype.onPlay = function() {
+                    this.playerState = HTML5Video.PlayerState.BUFFERING;
+                    this.callStateChangeCallback();
+                    this.videoOverlayEl.addClass('is-hidden');
                 };
 
                 Player.prototype.onPlaying = function() {
-                    HTML5Video.Player.prototype.onPlaying.apply(this);
-                    HTML5Video.Player.prototype.updatePlayerLoadingState.apply(this, ['hide']);
+                    this.playerState = HTML5Video.PlayerState.PLAYING;
+                    this.callStateChangeCallback();
+                    this.videoOverlayEl.addClass('is-hidden');
                 };
 
-                // Define the HLSVideo.Player
-                Player.prototype.onReady = function() {
-                    console.log("coming inside");
-                    this.config.events.onReady(null);
-                
-                    // Update resolution display on ready
-                    if (!this.config.browserIsSafari) {
-                        const currentLevel = this.hls.currentLevel;
-                        if (currentLevel !== -1) {
-                            const resolution = `${this.hls.levels[currentLevel].width}x${this.hls.levels[currentLevel].height}`;
-                            this.updateResolutionDisplay(resolution);
-                            this.populateQualitySelector();
+                Player.prototype.onPause = function() {
+                    this.playerState = HTML5Video.PlayerState.PAUSED;
+                    this.callStateChangeCallback();
+                    this.showPlayButton();
+                };
+
+                Player.prototype.onEnded = function() {
+                    this.playerState = HTML5Video.PlayerState.ENDED;
+                    this.callStateChangeCallback();
+                };
+
+                Player.prototype.init = function(el, config) {
+                    var isTouch = window.onTouchBasedDevice() || '',
+                        events = ['loadstart', 'progress', 'suspend', 'abort', 'error',
+                            'emptied', 'stalled', 'play', 'pause', 'loadedmetadata',
+                            'loadeddata', 'waiting', 'playing', 'canplay', 'canplaythrough',
+                            'seeking', 'seeked', 'timeupdate', 'ended', 'ratechange',
+                            'durationchange', 'volumechange'
+                        ],
+                        self = this,
+                        callback;
+
+                    this.config = config;
+                    this.logs = [];
+                    this.el = $(el);
+
+                    // Because of problems with creating video element via jquery
+                    // (http://bugs.jquery.com/ticket/9174) we create it using native JS.
+                    this.video = document.createElement('video');
+
+                    // Get the jQuery object and set error event handlers
+                    this.videoEl = $(this.video);
+
+                    // Video player overlay play button
+                    this.videoOverlayEl = this.el.find('.video-wrapper .btn-play');
+
+                    // The player state is used by other parts of the VideoPlayer to
+                    // determine what the video is currently doing.
+                    this.playerState = HTML5Video.PlayerState.UNSTARTED;
+
+                    _.bindAll(this, 'onLoadedMetadata', 'onPlay', 'onPlaying', 'onPause', 'onEnded');
+
+                    // Attach a 'click' event on the <video> element. It will cause the
+                    // video to pause/play.
+                    callback = function() {
+                        var PlayerState = HTML5Video.PlayerState;
+
+                        if (self.playerState === PlayerState.PLAYING) {
+                            self.playerState = PlayerState.PAUSED;
+                            self.pauseVideo();
+                        } else {
+                            self.playerState = PlayerState.PLAYING;
+                            self.playVideo();
                         }
-                    }
-                };
-                
-                // Add a method to populate the quality selector
-                Player.prototype.populateQualitySelector = function() {
-                    const qualitySelector = this.config.state.el.find('.video-quality-selector');
-                    if (qualitySelector.length === 0) {
-                        console.warn('[HLS Video]: Quality selector element not found.');
-                        return;
-                    }
-                
-                    qualitySelector.empty(); // Clear any existing options
-                    const levels = this.hls.levels;
-                
-                    levels.forEach((level, index) => {
-                        const qualityText = `${level.width}x${level.height} (${Math.round(level.bitrate / 1000)} kbps)`;
-                        const option = $('<option></option>')
-                            .val(index)
-                            .text(qualityText);
-                        qualitySelector.append(option);
+                    };
+                    this.videoEl.on('click', callback);
+                    this.videoOverlayEl.on('click', callback);
+
+                    this.debug = false;
+                    $.each(events, function(index, eventName) {
+                        self.video.addEventListener(eventName, function() {
+                            self.logs.push({
+                                'event name': eventName,
+                                state: self.playerState
+                            });
+
+                            if (self.debug) {
+                                console.log(
+                                    'event name:', eventName,
+                                    'state:', self.playerState,
+                                    'readyState:', self.video.readyState,
+                                    'networkState:', self.video.networkState
+                                );
+                            }
+
+                            el.trigger('html5:' + eventName, arguments);
+                        });
                     });
-                
-                    // Add an 'auto' option
-                    const autoOption = $('<option></option>')
-                        .val(-1)
-                        .text('Auto');
-                    qualitySelector.prepend(autoOption);
-                
-                    qualitySelector.on('change', (event) => {
-                        const selectedLevel = parseInt(event.target.value, 10);
-                        this.setQuality(selectedLevel);
-                    });
-                };
-                
-                // Add a method to set the video quality
-                Player.prototype.setQuality = function(level) {
-                    if (level === -1) {
-                        console.log('[HLS Video]: Switching to auto quality.');
-                        this.hls.currentLevel = -1; // Auto quality
-                    } else {
-                        console.log('[HLS Video]: Switching to quality level:', level);
-                        this.hls.currentLevel = level;
-                    }
-                
-                    // Update resolution display
-                    const currentLevel = this.hls.levels[level];
-                    if (currentLevel) {
-                        const resolution = `${currentLevel.width}x${currentLevel.height}`;
-                        this.updateResolutionDisplay(resolution);
-                    }
-                };
 
-                // Update LEVEL_SWITCHED to handle resolution changes dynamically
-                this.hls.on(HLS.Events.LEVEL_SWITCHED, function(event, data) {
-                    const level = self.hls.levels[data.level];
-                    const resolution = `${level.width}x${level.height}`;
-                    console.log('[HLS Video]: LEVEL_SWITCHED, new resolution:', resolution);
+                    // When the <video> tag has been processed by the browser, and it
+                    // is ready for playback, notify other parts of the VideoPlayer,
+                    // and initially pause the video.
+                    this.video.addEventListener('loadedmetadata', this.onLoadedMetadata, false);
+                    this.video.addEventListener('play', this.onPlay, false);
+                    this.video.addEventListener('playing', this.onPlaying, false);
+                    this.video.addEventListener('pause', this.onPause, false);
+                    this.video.addEventListener('ended', this.onEnded, false);
 
-                    // Update resolution display
-                    self.updateResolutionDisplay(resolution);
-                });
-
-                /**
-             * Handler for HLS video errors. This only takes care of fatal erros, non-fatal errors
-             * are automatically handled by hls.js
-             *
-             * @param {String} event `hlsError`
-             * @param {Object} data  Contains the information regarding error occurred.
-             */
-                Player.prototype.onError = function(event, data) {
-                    if (data.fatal) {
-                        switch (data.type) {
-                        case HLS.ErrorTypes.NETWORK_ERROR:
-                            console.error(
-                                '[HLS Video]: Fatal network error encountered, try to recover. Details: %s',
-                                data.details
-                            );
-                            this.hls.startLoad();
-                            break;
-                        case HLS.ErrorTypes.MEDIA_ERROR:
-                            console.error(
-                                '[HLS Video]: Fatal media error encountered, try to recover. Details: %s',
-                                data.details
-                            );
-                            this.hls.recoverMediaError();
-                            break;
-                        default:
-                            console.error(
-                                '[HLS Video]: Unrecoverable error encountered. Details: %s',
-                                data.details
-                            );
-                            break;
-                        }
+                    if (/iP(hone|od)/i.test(isTouch[0])) {
+                        this.videoEl.prop('controls', true);
                     }
+
+                    // Set video poster
+                    if (this.config.poster) {
+                        this.videoEl.prop('poster', this.config.poster);
+                    }
+
+                    // Place the <video> element on the page.
+                    this.videoEl.appendTo(el.find('.video-player > div:first-child'));
                 };
 
                 return Player;
             }());
 
-            return HLSVideo;
+            // The YouTube API presents several constants which describe the player's
+            // state at a given moment. HTML5Video API will copy these constants so
+            // that code which uses both the YouTube API and this API doesn't have to
+            // change.
+            HTML5Video.PlayerState = {
+                UNSTARTED: -1,
+                ENDED: 0,
+                PLAYING: 1,
+                PAUSED: 2,
+                BUFFERING: 3,
+                CUED: 5
+            };
+
+            // HTML5Video object - what this module exports.
+            return HTML5Video;
         });
 }(RequireJS.requirejs, RequireJS.require, RequireJS.define));
