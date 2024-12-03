@@ -106,7 +106,7 @@
                                     [
                                         '<li data-speed="{speed}">',
                                         '<button class="control speed-option" tabindex="-1" aria-pressed="false">',
-                                        '{speed}xtest',
+                                        '{speed}x',
                                         '</button>',
                                         '</li>'
                                     ].join('')

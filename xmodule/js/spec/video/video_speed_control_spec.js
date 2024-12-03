@@ -22,7 +22,6 @@
             describe('always', function() {
                 beforeEach(function() {
                     state = jasmine.initializePlayer();
-                    state.speeds.push("1.75"); // Add 1.75x speed option
                 });
 
                 it('add the video speed control to player', function() {
@@ -36,7 +35,7 @@
                     expect(li.filter('.is-active')).toHaveData(
                         'speed', state.videoSpeedControl.currentSpeed
                     );
-                    expect(li.length).toBe(state.speeds.length + 1);
+                    expect(li.length).toBe(state.speeds.length);
 
                     $.each(li.toArray().reverse(), function(index, link) {
                         expect($(link).attr('data-speed')).toEqual(state.speeds[index]);
@@ -68,7 +67,6 @@
 
                 beforeEach(function() {
                     state = jasmine.initializePlayer();
-                    state.speeds.push("1.75"); // Add 1.75x speed option
                     $speedControl = $('.speeds');
                     $speedButton = $('.speed-button');
                     $speedsContainer = $('.video-speeds');
@@ -85,7 +83,7 @@
 
                 it('do not close the speed menu on mouseleave if a speed '
                     + 'entry has focus', function() {
-                    // Open speed menu. Focus is on last speed entry.
+                    // Open speed meenu. Focus is on last speed entry.
                     $speedControl.trigger(keyPressEvent(KEY.ENTER));
                     $speedControl.mouseenter().mouseleave();
                     expect($speedControl).toHaveClass('is-opened');
@@ -122,8 +120,7 @@
 
                 it('UP and DOWN keydown function as expected on speed entries',
                     function() {
-                        var speed_1_75 = speedEntries.filter(':contains("1.75x")'),
-                            speed_0_75 = speedEntries.filter(':contains("0.75x")'),
+                        var speed_0_75 = speedEntries.filter(':contains("0.75x")'),
                             speed_1_0 = speedEntries.filter(':contains("1.0x")');
 
                         // First open menu
@@ -133,11 +130,8 @@
                         speed_0_75.trigger(keyPressEvent(KEY.UP));
                         expect(speed_1_0).toBeFocused();
 
-                        speed_1_0.trigger(keyPressEvent(KEY.UP));
-                        expect(speed_1_75).toBeFocused();
-
-                        speed_1_75.trigger(keyPressEvent(KEY.DOWN));
-                        expect(speed_1_0).toBeFocused();
+                        speed_1_0.trigger(keyPressEvent(KEY.DOWN));
+                        expect(speed_0_75).toBeFocused();
                     });
 
                 it('ESC keydown on speed entry closes menu', function() {
@@ -201,9 +195,9 @@
                 it('trigger speedChange event', function() {
                     spyOnEvent(state.el, 'speedchange');
 
-                    $('li[data-speed="1.75"] .speed-option').click();
+                    $('li[data-speed="0.75"] .speed-option').click();
                     expect('speedchange').toHaveBeenTriggeredOn(state.el);
-                    expect(state.videoSpeedControl.currentSpeed).toEqual('1.75');
+                    expect(state.videoSpeedControl.currentSpeed).toEqual('0.75');
                 });
             });
         });
