@@ -15,7 +15,7 @@ from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.translation import gettext_noop
 from django.views.decorators.cache import cache_control
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_POST
 from edx_proctoring.api import does_backend_support_onboarding
 from edx_when.api import is_enabled_for_course
