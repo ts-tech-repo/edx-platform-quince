@@ -541,7 +541,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         external_user_key = get_external_key_by_user_and_course(user, course.id)
         if external_user_key:
             user_entry['external_user_key'] = external_user_key
-        log.info("#venkat user entry::: %s",user_entry)
+       
         return user_entry
 
     @verify_course_exists("Requested grade for unknown course {course}")
@@ -673,7 +673,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             entries = []
             related_models = ['user']
             users = self._paginate_users(course_key, q_objects, related_models, annotations=annotations)
-            log.info("Type of users: %s", type(users))
+            log.info("#venkat usersstotal::: %s",users)
             users_counts = self._get_users_counts(course_key, q_objects, annotations=annotations)
 
             with bulk_gradebook_view_context(course_key, users):
