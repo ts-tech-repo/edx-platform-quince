@@ -378,6 +378,18 @@ urlpatterns += [
         courseware_views.course_about,
         name='about_course',
     ),
+    re_path(
+        r'^courses/analytics_api',
+        instructor_dashboard_views.analytics_api,
+        name='analytics_api',
+    ),
+    re_path(
+        r'^extras/{}/get_course_log'.format(
+            settings.COURSE_ID_PATTERN,
+            ),
+        instructor_course_log_views.extras_get_course_log,
+        name  = 'extras_get_course_log'
+    ),
     path(
         'courses/yt_video_metadata',
         courseware_views.yt_video_metadata,
