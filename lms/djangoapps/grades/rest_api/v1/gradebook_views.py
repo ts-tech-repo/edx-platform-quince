@@ -513,7 +513,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             graded_subsections: A list of graded subsections in the given course.
             course_grade: A CourseGrade object.
         """
-        log.info({"user data":user})
+        log.info("#venkat available_data::: %s",user)
         user_entry = self._serialize_user_grade(user, course.id, course_grade)
         breakdown = self._section_breakdown(course, graded_subsections, course_grade)
 
@@ -540,7 +540,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         external_user_key = get_external_key_by_user_and_course(user, course.id)
         if external_user_key:
             user_entry['external_user_key'] = external_user_key
-        log.info({"user entry": user_entry})
+        log.info("#venkat user entry::: %s",user_entry)
         return user_entry
 
     @verify_course_exists("Requested grade for unknown course {course}")
