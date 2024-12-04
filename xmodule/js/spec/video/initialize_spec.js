@@ -78,8 +78,7 @@
                             },
                             videos: {
                                 '1.0': 'testId',
-                                '1.50': 'videoId',
-                                '1.75': 'newVideoId' // Adding 1.75x speed metadata
+                                '1.50': 'videoId'
                             },
                             youtubeId: Initialize.prototype.youtubeId,
                             isFlashMode: jasmine.createSpy().and.returnValue(false)
@@ -124,8 +123,7 @@
                             videos: {
                                 '0.50': '7tqY6eQzVhE',
                                 '1.0': 'cogebirgzzM',
-                                '1.50': 'abcdefghijkl',
-                                '1.75': 'newVideoId' // Adding 1.75x speed
+                                '1.50': 'abcdefghijkl'
                             },
                             isFlashMode: jasmine.createSpy().and.returnValue(false)
                         };
@@ -175,7 +173,7 @@
                     describe('YT', function() {
                         beforeEach(function() {
                             state = {
-                                speeds: ['0.25', '0.50', '1.0', '1.50', '1.75', '2.0'], // Adding 1.75x
+                                speeds: ['0.25', '0.50', '1.0', '1.50', '2.0'],
                                 storage: jasmine.createSpyObj('storage', ['setItem'])
                             };
                         });
@@ -183,8 +181,7 @@
                         it('check mapping', function() {
                             var map = {
                                 0.75: '0.50',
-                                1.25: '1.50',
-                                1.65: '1.75' // Mapping to new 1.75x speed
+                                1.25: '1.50'
                             };
 
                             $.each(map, function(key, expected) {
@@ -197,24 +194,34 @@
                     describe('HTML5', function() {
                         beforeEach(function() {
                             state = {
-                                speeds: ['0.75', '1.0', '1.25', '1.50', '1.75', '2.0'], // Adding 1.75x
+                                speeds: ['0.75', '1.0', '1.25', '1.50', '2.0'],
                                 storage: jasmine.createSpyObj('storage', ['setItem'])
                             };
                         });
 
-                        describe('when 1.75 speed is available', function() {
+                        describe('when 0.75 speed is available', function() {
                             beforeEach(function() {
-                                Initialize.prototype.setSpeed.call(state, '1.75');
+                                Initialize.prototype.setSpeed.call(state, '0.75');
                             });
 
                             it('set new speed', function() {
-                                expect(state.speed).toEqual(1.75);
+                                expect(state.speed).toEqual(0.75);
+                            });
+                        });
+
+                        describe('when 2.0 speed is available', function() {
+                            beforeEach(function() {
+                                Initialize.prototype.setSpeed.call(state, '2.0');
+                            });
+
+                            it('set new speed', function() {
+                                expect(state.speed).toEqual(2.0);
                             });
                         });
 
                         describe('when new speed is not available', function() {
                             beforeEach(function() {
-                                Initialize.prototype.setSpeed.call(state, '1.65');
+                                Initialize.prototype.setSpeed.call(state, '1.75');
                             });
 
                             it('set speed to 1.0x', function() {
