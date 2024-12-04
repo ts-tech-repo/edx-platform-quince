@@ -535,8 +535,8 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 return mode == CourseMode.MASTERS
 
         #if is_masters_student():
-        user_entry['full_name'] = user.profile.name
-        log.info("#venkat full::: %s",user_entry['full_name'])
+        user_entry['full_name'] = user.profile.firstname
+        log.info("#venkat fullname::: %s",user_entry['full_name'])
         external_user_key = get_external_key_by_user_and_course(user, course.id)
         if external_user_key:
             user_entry['external_user_key'] = external_user_key
