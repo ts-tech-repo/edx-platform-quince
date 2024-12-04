@@ -67,6 +67,12 @@ from common.djangoapps.student.models import (
 
 from .serializers import CourseInfoSerializer
 
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+import crum
+import requests
+import logging
+from pytz import UTC, timezone
+log = logging.getLogger(__name__)
 
 class CoursewareMeta:
     """
@@ -504,6 +510,28 @@ class CoursewareInformation(RetrieveAPIView):
                     defaults={'last_seen_courseware_timezone': browser_timezone},
                 )
 
+    #SA || updateTimeZoneToMoodle
+    def update_moodle_timezone(self, user):
+        browser_timezone = self.request.query_params.get('browser_timezone', None)
+
+        from lms.djangoapps.courseware.context_processor import user_timezone_locale_prefs
+        user_timezone_locale = user_timezone_locale_prefs(crum.get_current_request())
+        user_timezone = timezone(user_timezone_locale['user_timezone'] or browser_timezone or str(UTC))
+
+        try:
+            moodle_url = configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php"
+            payload = {
+                "wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""),
+                "wsfunction" : "core_user_update_users",
+                "moodlewsrestformat" : "json",
+                "users[0][id]" : -100,
+                "users[0][old_email]": user.email,
+                "users[0][timezone]" : user_timezone
+            }
+            requests.post(moodle_url, data = payload)
+        except Exception as e:
+            log.error(e)
+    
     def get_object(self):
         """
         Return the requested course object, if the user has appropriate
@@ -525,6 +553,7 @@ class CoursewareInformation(RetrieveAPIView):
 
         # Record a user's browser timezone
         self.set_last_seen_courseware_timezone(original_user)
+        self.update_moodle_timezone(original_user)
 
         return overview
 

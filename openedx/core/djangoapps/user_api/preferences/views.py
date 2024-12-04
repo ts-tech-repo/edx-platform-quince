@@ -27,6 +27,10 @@ from .api import (
     update_user_preferences
 )
 
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+import requests
+import logging
+log = logging.getLogger(__name__)
 
 class PreferencesView(APIView):
     """
@@ -125,6 +129,24 @@ class PreferencesView(APIView):
             )
         try:
             with transaction.atomic():
+                #SA || updateTimeZoneToMoodle
+                try:
+                    payload = request.data
+                    if 'time_zone' in payload:
+                        time_zone = payload['time_zone'] if payload['time_zone'] else '99'  #default value 99 refers to local timezone in moodle
+                        moodle_url = configuration_helpers.get_value("MOODLE_URL") + "/webservice/rest/server.php"
+                        payload = {
+                            "wstoken" : configuration_helpers.get_value("MOODLE_TOKEN", ""),
+                            "wsfunction" : "core_user_update_users",
+                            "moodlewsrestformat" : "json",
+                            "users[0][id]" : -100,
+                            "users[0][old_email]": request.user.email,
+                            "users[0][timezone]" : time_zone
+                        }
+                        requests.post(moodle_url, data = payload)
+                except Exception as e:
+                    log.error(e)
+
                 update_user_preferences(request.user, request.data, user=username)
         except UserNotAuthorized:
             return Response(status=status.HTTP_403_FORBIDDEN)
