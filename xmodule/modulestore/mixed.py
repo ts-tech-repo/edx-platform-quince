@@ -409,7 +409,7 @@ class MixedModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase):
         """
         assert isinstance(course_key, CourseKey)
         store = self._get_modulestore_for_courselike(course_key)
-        log.debug('#AMANK:: Getting course %s from modulestore %s', course_key, store)
+        log.info('#AMANK:: Getting course %s from modulestore %s', course_key, store)
         try:
             return store.get_course(course_key, depth=depth, **kwargs)
         except ItemNotFoundError:
