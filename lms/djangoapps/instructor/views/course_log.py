@@ -58,8 +58,6 @@ def get_course_unit_log_analytics(course_id):
 				u = User.objects.get(id = i["edit_info"]["edited_by"])
 				subsection_name = get_subsection_name(i["block_id"], course_structure)
 				section_name = get_section_name(subsection_name[1], course_structure)
-                if unit_type != "video":
-                    continue
 				data.append({"unit_name" : i["fields"]["display_name"], "edited_by_email" : u.email, "edited_by_name" : u.first_name, "edited_on" : i["edit_info"]["edited_on"], "subsection_name": subsection_name[0],"section_name" : section_name, "block_type": i["block_type"], "block_id": i["block_id"], "unit_type": unit_type})
 
 		course_log = sorted(data, key = lambda k:k['edited_on'], reverse=True)
