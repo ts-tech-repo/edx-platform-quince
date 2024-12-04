@@ -197,7 +197,7 @@ urlpatterns = oauth2_urlpatterns + [
     re_path(r'^extras/course_enroll_user', extras_course_enroll_user, name = 'extras_course_enroll_user'),
     re_path(r'^extras/update_user_details', extras_update_user_details, name = 'extras_update_user_details'),
     re_path(r'^extras/get_moodle_login_url', extras_get_moodle_login_url, name = 'extras_get_moodle_login_url'),
-     re_path(r'^extras/update_user_details', extras_update_user_details, name = 'extras_update_user_details'),
+    re_path(r'^extras/get_lti_tool_urls', extras_get_lti_tool_urls, name = 'extras_get_lti_tool_urls'),
 
     path('api/val/v0/', include('edxval.urls')),
     path('api/tasks/v0/', include('user_tasks.urls')),
