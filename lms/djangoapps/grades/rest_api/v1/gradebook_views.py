@@ -574,6 +574,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 )
             entry = self._gradebook_entry(grade_user, course, graded_subsections, course_grade)
             serializer = StudentGradebookEntrySerializer(entry)
+            log.info('#vernkat serializer:%s',Response(serializer.data) )
             return Response(serializer.data)
         else:
             q_objects = []
