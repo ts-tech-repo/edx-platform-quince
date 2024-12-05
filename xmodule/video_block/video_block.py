@@ -409,6 +409,7 @@ class VideoBlock(
         autoadvance_this_video = self.auto_advance and autoadvance_enabled
         is_embed = context.get('public_video_embed', False)
         is_public_view = view == PUBLIC_VIEW
+        log.info(self.speed)
         metadata = {
             'autoAdvance': autoadvance_this_video,
             # For now, the option "data-autohide-html5" is hard coded. This option
