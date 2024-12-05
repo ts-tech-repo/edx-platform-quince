@@ -107,8 +107,8 @@ def get_score(submissions_scores, csm_scores, persisted_block, block):
         log.info('Weight for block: ***{}*** is {}'
                  .format(str(block.location), weight))
         
-    log.info('#sabidA #16 Weight for block: ***{}*** is {}'
-                 .format(str(block.location), weight))
+    # log.info('#sabidA #16 Weight for block: ***{}*** is {}'
+    #              .format(str(block.location), weight))
 
     # Priority order for retrieving the scores:
     # submissions API -> CSM -> grades persisted block -> latest block content
@@ -126,10 +126,10 @@ def get_score(submissions_scores, csm_scores, persisted_block, block):
                  .format(raw_earned, raw_possible, weighted_earned,
                          weighted_possible, first_attempted, str(block.location)))
         
-    log.info('#sabidA #17 Calculated raw-earned: {}, raw_possible: {}, weighted_earned: '
-                 '{}, weighted_possible: {}, first_attempted: {} for block: ***{}***.'
-                 .format(raw_earned, raw_possible, weighted_earned,
-                         weighted_possible, first_attempted, str(block.location)))
+    # log.info('#sabidA #17 Calculated raw-earned: {}, raw_possible: {}, weighted_earned: '
+    #              '{}, weighted_possible: {}, first_attempted: {} for block: ***{}***.'
+    #              .format(raw_earned, raw_possible, weighted_earned,
+    #                      weighted_possible, first_attempted, str(block.location)))
 
     if weighted_possible is None or weighted_earned is None:
         return None
@@ -183,11 +183,11 @@ def _get_score_from_submissions(submissions_scores, block):
     """
     Returns the score values from the submissions API if found.
     """
-    log.info('#sabidA #21 submissions_scores: {}'.format(submissions_scores))
+    # log.info('#sabidA #21 submissions_scores: {}'.format(submissions_scores))
 
     if submissions_scores:
         submission_value = submissions_scores.get(str(block.location))
-        log.info('#sabidA #22 submission_value: {}'.format(submission_value))
+        # log.info('#sabidA #22 submission_value: {}'.format(submission_value))
 
         if submission_value:
             first_attempted = submission_value['created_at']
@@ -216,10 +216,10 @@ def _get_score_from_csm(csm_scores, block, weight):
     # superfluous, for backward compatibility, we continue to use its value for
     # raw_possible, giving it precedence over the one in the grades data model.
     
-    log.info('#sabidA #23 csm_scores: {}'.format(csm_scores))
+    # log.info('#sabidA #23 csm_scores: {}'.format(csm_scores))
 
     score = csm_scores.get(block.location)
-    log.info('#sabidA #24 score: {}'.format(score))
+    # log.info('#sabidA #24 score: {}'.format(score))
     
     has_valid_score = score and score.total is not None
     if has_valid_score:
@@ -247,9 +247,9 @@ def _get_score_from_persisted_or_latest_block(persisted_block, block, weight):
             str(block.location)
         ))
 
-    log.info('#sabidA #18 Using _get_score_from_persisted_or_latest_block to calculate score for block: ***{}***.'.format(
-            str(block.location)
-        ))
+    # log.info('#sabidA #18 Using _get_score_from_persisted_or_latest_block to calculate score for block: ***{}***.'.format(
+    #         str(block.location)
+    #     ))
     raw_earned = 0.0
     first_attempted = None
     letter_grade = None
@@ -264,8 +264,8 @@ def _get_score_from_persisted_or_latest_block(persisted_block, block, weight):
             log.info('Using latest block content to calculate score for block: ***{}***.')
             log.info(f'weight for block: ***{str(block.location)}*** is {raw_possible}.')
             
-        log.info('#sabidA #19 Using latest block content to calculate score for block: ***{}***.')
-        log.info(f'#sabidA #20 weight for block: ***{str(block.location)}*** is {raw_possible}.')
+        # log.info('#sabidA #19 Using latest block content to calculate score for block: ***{}***.')
+        # log.info(f'#sabidA #20 weight for block: ***{str(block.location)}*** is {raw_possible}.')
 
     # TODO TNL-5982 remove defensive code for scorables without max_score
     if raw_possible is None:
