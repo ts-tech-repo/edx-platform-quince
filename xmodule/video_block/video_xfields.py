@@ -55,12 +55,6 @@ class VideoFields:
         scope=Scope.settings,
         default=""
     )
-    youtube_id_1_75 = String(
-        help=_("Optional, for older browsers: the YouTube ID for the 1.75x speed video."),
-        display_name=_("YouTube ID for 1.75x speed"),
-        scope=Scope.settings,
-        default=""
-    )
     start_time = RelativeTime(  # datetime.timedelta object
         help=_(
             "Time you want the video to start if you don't want the entire video to play. "
