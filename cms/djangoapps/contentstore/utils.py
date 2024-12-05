@@ -1470,9 +1470,10 @@ def get_home_context(request):
         user_can_create_library,
     )
 
-    optimization_enabled = GlobalStaff().has_user(request.user) and ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
+    #optimization_enabled = GlobalStaff().has_user(request.user) and ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
+    optimization_enabled = ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
 
-    org = request.GET.get('org', '') if optimization_enabled else None
+    org = request.GET.get('org', None) or request.session.get('org', None) if optimization_enabled else None
     courses_iter, in_process_course_actions = get_courses_accessible_to_user(request, org)
     user = request.user
     libraries = []
