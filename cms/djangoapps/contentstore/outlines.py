@@ -336,7 +336,6 @@ def get_outline_from_modulestore(course_key) -> Tuple[CourseOutlineData, List[Co
 
     with store.branch_setting(ModuleStoreEnum.Branch.published_only, course_key):
         # Pull course with depth=3 so we prefetch Section -> Sequence -> Unit
-        log.info("#AMANK:::: Getting course %s from modulestore ", course_key)
         log.info("#AMANK:::: branch_setting: %s ", ModuleStoreEnum.Branch.published_only)
         log.info("#AMANK:::: store: %s ", store)
         course = store.get_course(course_key, depth=3)
