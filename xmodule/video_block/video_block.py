@@ -448,7 +448,7 @@ class VideoBlock(
             # if the video is embedded in social media
             'showCaptions': json.dumps(self.show_captions and not is_embed),
             'sources': sources,
-            'speed': self.speed,
+            'speed': ["1.75"],
             'start': self.start_time.total_seconds(),  # pylint: disable=no-member
             'streams': self.youtube_streams,
             'transcriptAvailableTranslationsUrl': self.runtime.handler_url(
