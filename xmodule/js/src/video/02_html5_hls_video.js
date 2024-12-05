@@ -100,41 +100,9 @@
                     HTML5Video.Player.prototype.updatePlayerLoadingState.apply(this, ['hide']);
                 };
 
-                // Define the HLSVideo.Player
-                console.log("coming outside");
                 Player.prototype.onReady = function() {
-                    console.log("coming inside");
                     this.config.events.onReady(null);
-
-                    // Update resolution display on ready
-                    if (!this.config.browserIsSafari) {
-                        const currentLevel = this.hls.currentLevel;
-                        if (currentLevel !== -1) {
-                            const resolution = `${this.hls.levels[currentLevel].width}x${this.hls.levels[currentLevel].height}`;
-                            this.updateResolutionDisplay(resolution);
-                        }
-                    }
                 };
-
-                // Add a method to update the resolution display
-                Player.prototype.updateResolutionDisplay = function(resolution) {
-                    const resolutionDisplay = this.config.state.el.find('.video-resolution-display');
-                    if (resolutionDisplay.length > 0) {
-                        resolutionDisplay.text(`Resolution: ${resolution}`);
-                    } else {
-                        console.warn('[HLS Video]: Resolution display element not found.');
-                    }
-                };
-
-                // Update LEVEL_SWITCHED to handle resolution changes dynamically
-                this.hls.on(HLS.Events.LEVEL_SWITCHED, function(event, data) {
-                    const level = self.hls.levels[data.level];
-                    const resolution = `${level.width}x${level.height}`;
-                    console.log('[HLS Video]: LEVEL_SWITCHED, new resolution:', resolution);
-
-                    // Update resolution display
-                    self.updateResolutionDisplay(resolution);
-                });
 
                 /**
              * Handler for HLS video errors. This only takes care of fatal erros, non-fatal errors

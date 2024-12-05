@@ -45,16 +45,7 @@ from openedx.core.djangolib.js_utils import (
           <div class="video-controls is-hidden">
               <div>
                   <div class="vcr"><div class="vidtime">0:00 / 0:00</div></div>
-                  <div class="secondary-controls">
-                    <div class="quality-control-container">
-                        <div><i class="fa fa-sliders" aria-hidden="true"></i></div>
-                    </div>
-                    <ul class="resolution-container" style="display: none;">
-                        <li>7200p</li>
-                        <li>540p</li>
-                        <li>360p</li>
-                    </ul>
-                  </div>
+                  <div class="secondary-controls"></div>
               </div>
           </div>
       </div>
@@ -137,7 +128,7 @@ from openedx.core.djangolib.js_utils import (
         % if track and showTranscriptDownload:
         <div class="wrapper-download-transcripts">
             <h4 class="hd hd-5">${_('Transcripts')}</h4>
-            % if transcript_download_format :
+            % if transcript_download_format:
             <ul class="list-download-transcripts">
                 % for item in transcript_download_formats_list:
                     <li class="transcript-option">
@@ -157,7 +148,6 @@ from openedx.core.djangolib.js_utils import (
             % endif
         </div>
         % endif
-
         % if handout:
         <div class="wrapper-handouts">
             <h4 class="hd hd-5">${_('Handouts')}</h4>

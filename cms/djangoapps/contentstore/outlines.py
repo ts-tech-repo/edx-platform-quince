@@ -4,6 +4,7 @@ is responsible for holding course outline data. Studio _pushes_ that data into
 learning_sequences at publish time.
 """
 from datetime import timezone
+import logging
 from typing import List, Tuple
 
 from edx_django_utils.monitoring import function_trace, set_custom_attribute
@@ -20,7 +21,7 @@ from openedx.core.djangoapps.content.learning_sequences.data import (
 )
 from xmodule.modulestore import ModuleStoreEnum  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
-
+log = logging.getLogger(__name__)
 
 def _remove_version_info(usage_key):
     """
@@ -335,7 +336,10 @@ def get_outline_from_modulestore(course_key) -> Tuple[CourseOutlineData, List[Co
 
     with store.branch_setting(ModuleStoreEnum.Branch.published_only, course_key):
         # Pull course with depth=3 so we prefetch Section -> Sequence -> Unit
+        log.info("#AMANK:::: branch_setting: %s ", ModuleStoreEnum.Branch.published_only)
+        log.info("#AMANK:::: store: %s ", store)
         course = store.get_course(course_key, depth=3)
+        log.info("#AMANK:::: Course: %s ", course)
         sections_data = []
         unique_sequences = {}
         for section in course.get_children():
@@ -364,6 +368,8 @@ def get_outline_from_modulestore(course_key) -> Tuple[CourseOutlineData, List[Co
             self_paced=course.self_paced,
             course_visibility=CourseVisibility(course.course_visibility),
         )
+    log.info(f"#AMANK:::: course_outline_data: {course_outline_data}")
+    log.info(f"#AMANK:::: section_data: {sections_data}")
 
     return (course_outline_data, content_errors)
 
