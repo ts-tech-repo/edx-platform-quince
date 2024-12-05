@@ -204,11 +204,13 @@ class MixedModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase):
         If locator is None, returns the first (ordered) store as the default
         """
         if locator is not None:
+            log.info("#AMANK #7 locator: %s", locator)
             locator = self._clean_locator_for_mapping(locator)
-            log.info("#AMANK #7 Getting modulestore for locator: %s", locator)
+            log.info("#AMANK #8 Getting modulestore for locator: %s", locator)
             mapping = self.mappings.get(locator, None)
             if mapping is not None:
-                log.info("#AMANK #7 Found existing mapping for %s: %s", locator, mapping)
+                log.info("#AMANK #9 self.mappings: %s", self.mappings)
+                log.info("#AMANK #10 Found existing mapping for %s: %s", locator, mapping)
                 return mapping
             else:
                 if isinstance(locator, LibraryLocator):
@@ -217,13 +219,14 @@ class MixedModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase):
                     has_locator = lambda store: store.has_course(locator)
                 for store in self.modulestores:
                     if has_locator(store):
-                        log.info("#AMANK #7 Adding mapping for %s: %s", locator, store)
-                        log.info("#AMANK #7 self.mappings: %s", self.mappings)
+                        log.info("#AMANK #11 Adding mapping for %s: %s", locator, store)
+                        log.info("#AMANK #12 self.mappings: %s", self.mappings)
+                        log.info("#AMANK #13 self.modulestores: %s", self.modulestores)
                         self.mappings[locator] = store
                         return store
 
         # return the default store
-        log.info("#AMANK #7 Returning default modulestore: %s", self.default_modulestore)
+        log.info("#AMANK #13 Returning default modulestore: %s", self.default_modulestore)
         return self.default_modulestore
 
     def _get_modulestore_by_type(self, modulestore_type):
