@@ -39,18 +39,18 @@ def extras_get_course_log(request, course_id):
     #return render(request, 'course_log.html', context =  course_log)
 
 def get_course_unit_log_analytics(course_id):
-	course_log = {}
-	try:
-		course_key = CourseKey.from_string(course_id)
-		split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
-		active_version_collection = split_modulestore.db_connection.course_index
-		structure_collection = split_modulestore.db_connection.structures
-		course = list(active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run}))
+    course_log = {}
+    try:
+        course_key = CourseKey.from_string(course_id)
+        split_modulestore = modulestore()._get_modulestore_by_type(ModuleStoreEnum.Type.split)
+        active_version_collection = split_modulestore.db_connection.course_index
+        structure_collection = split_modulestore.db_connection.structures
+        course = list(active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run}))
 
-		course_structure  = list(structure_collection.find({"_id" : course[0]["versions"]["published-branch"]}, {"blocks" : 1}))
-		data = []
+        course_structure  = list(structure_collection.find({"_id" : course[0]["versions"]["published-branch"]}, {"blocks" : 1}))
+        data = []
 
-		for i in course_structure[0]["blocks"]:
+        for i in course_structure[0]["blocks"]:
             if "display_name" in i["fields"] and i["block_type"] in ["vertical"]:
                 log.info(i)
                 log.info(i["edit_info"]["edited_by"])
