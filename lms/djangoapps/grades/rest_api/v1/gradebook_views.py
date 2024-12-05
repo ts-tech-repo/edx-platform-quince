@@ -687,6 +687,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                         entries.append(entry)
 
             serializer = StudentGradebookEntrySerializer(entries, many=True)
+            log.info("#venkat serializer d::: %s",StudentGradebookEntrySerializer(entries, many=True))
             return self.get_paginated_response(serializer.data, **users_counts)
 
     def _get_user_count(self, query_args, cache_time=3600, annotations=None):
