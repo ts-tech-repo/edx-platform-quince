@@ -2,7 +2,7 @@
 Defines an endpoint for gradebook data related to a course.
 """
 
-
+import json
 import logging
 from collections import namedtuple
 from contextlib import contextmanager
@@ -564,7 +564,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         # the user-specific course structure for each user, because that is very expensive.
         course_data = CourseData(user=None, course=course)
         graded_subsections = list(grades_context.graded_subsections_for_course(course_data.collected_structure))
-        log.info("venkat GET parameters: %s", request.GET)
+        log.info("venkat GET changed parameters: %s", json.dumps(dict(request.GET), indent=4))
 
         if request.GET.get('username'):
             with self._get_user_or_raise(request, course_key) as grade_user:
