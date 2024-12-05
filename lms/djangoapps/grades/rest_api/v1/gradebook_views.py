@@ -675,7 +675,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             entries = []
             related_models = ['user']
             users = self._paginate_users(course_key, q_objects, related_models, annotations=annotations)
-            log.info("#venkat usersstotal::: %s",vars(users))
+            log.info("#venkat usersstotal::: %s",users)
             users_counts = self._get_users_counts(course_key, q_objects, annotations=annotations)
 
             with bulk_gradebook_view_context(course_key, users):
