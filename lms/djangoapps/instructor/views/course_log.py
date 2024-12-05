@@ -90,24 +90,18 @@ def get_course_unit_log(course_id):
     course_definition = active_version_collection.find({"org" : course_key.org, "course" : course_key.course, "run" : course_key.run})
 
     published_version  = structure_collection.find_one({"_id" : course_definition[0]["versions"]["published-branch"]})
-
+    previous_version_ids = []
     #fetch all previous versions
-    all_previous_versions = [] 
     document = published_version
 
-    while True:
-        previous_version_id = document["previous_version"]
-        document = structure_collection.find_one({"_id": previous_version_id})
+    while document:
+        previous_version_ids.append(document["_id"])
+        document = structure_collection.find_one({"_id": document.get("previous_version")}, {"previous_version": 1})
 
-        if not document:
-            break
-
-        all_previous_versions.append(document)
-
-    all_previous_versions = sorted(all_previous_versions, key=lambda x: x.get("edited_on", 0))
-
-    data = get_course_history(course_definition, published_version, all_previous_versions)    
+    previous_versions = list(structure_collection.find({"_id": {"$in": previous_version_ids}}).sort("edited_on", 1))
+    data = get_course_history(course_definition, published_version, previous_versions)
     return data
+
 
 
 def get_course_history(course_definition, published_version, all_previous_versions):
@@ -126,7 +120,7 @@ def get_course_history(course_definition, published_version, all_previous_versio
 def process_course_logs(version, course_logs):
 
     components_list = []
-
+    user_cache = {}
     for block in version["blocks"]:
 
         if block["block_type"] not in ("course", "course_info", "about",  "chapter", "vertical", "sequential", "static_tab"):
@@ -137,7 +131,13 @@ def process_course_logs(version, course_logs):
             parents_list, parents_names = find_block_parents(version, block_id)
 
             edited_on = conver_utc_ist(block['edit_info']['edited_on'])
-            user_obj = User.objects.get(id = block["edit_info"]["edited_by"])
+            user_id = block["edit_info"]["edited_by"]
+
+            if user_id not in user_cache:
+
+                user_cache[user_id] = User.objects.get(id=user_id)
+
+            user_obj = user_cache[user_id]
 
             if block_id not in course_logs["components"]:
                 status = "Created"
@@ -166,7 +166,7 @@ def process_course_logs(version, course_logs):
 
             course_logs["components"][block_id]["edited_info"].append({ "definition" : block["definition"], "fields" : block["fields"],
                                                                         "parents_list" : parents_list, "parents_names" : parents_names,
-                                                                        "edited_on" : edited_on, "edited_by" : user_obj.first_name, 
+                                                                        "edited_on" : edited_on, "edited_by" : user_obj.first_name,
                                                                         "status" : status})
 
     #Check for Deleted Blocks
@@ -176,11 +176,11 @@ def process_course_logs(version, course_logs):
         for d_block_id in deleted_blocks:
             previous_block_info = course_logs["components"][d_block_id]["edited_info"][-1]
 
-            if previous_block_info["status"] != "Deleted" and d_block_id not in course_logs["latest_published_componenets"]: 
+            if previous_block_info["status"] != "Deleted" and d_block_id not in course_logs["latest_published_componenets"]:
                 user_obj = User.objects.get(id = version["edited_by"])
                 course_logs["components"][d_block_id]["edited_info"].append({ "definition" : previous_block_info["definition"],
                                                                               "fields" : previous_block_info["fields"],
-                                                                              "parents_list" : previous_block_info["parents_list"], 
+                                                                              "parents_list" : previous_block_info["parents_list"],
                                                                               "parents_names" : previous_block_info["parents_names"],
                                                                               "edited_on" : conver_utc_ist(version["edited_on"]),
                                                                               "edited_by" : user_obj.first_name, "status" : "Deleted"})
