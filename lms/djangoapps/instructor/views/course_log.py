@@ -51,17 +51,17 @@ def get_course_unit_log_analytics(course_id):
 		data = []
 
 		for i in course_structure[0]["blocks"]:
-			if "display_name" in i["fields"] and i["block_type"] in ["vertical"]:
-				log.info(i)
-				log.info(i["edit_info"]["edited_by"])
-				log.info(User.objects)
-				u = User.objects.get(id = i["edit_info"]["edited_by"])
-				subsection_name = get_subsection_name(i["block_id"], course_structure)
-				section_name = get_section_name(subsection_name[1], course_structure)
+            if "display_name" in i["fields"] and i["block_type"] in ["vertical"]:
+                log.info(i)
+                log.info(i["edit_info"]["edited_by"])
+                log.info(User.objects)
+                u = User.objects.get(id = i["edit_info"]["edited_by"])
+                subsection_name = get_subsection_name(i["block_id"], course_structure)
+                section_name = get_section_name(subsection_name[1], course_structure)
                 unit_type = i["fields"]["children"][0][0] if i["fields"]["children"] else ""
                 if unit_type != "video":
                     continue
-				data.append({"unit_name" : i["fields"]["display_name"], "edited_by_email" : u.email, "edited_by_name" : u.first_name, "edited_on" : i["edit_info"]["edited_on"], "subsection_name": subsection_name[0],"section_name" : section_name, "block_type": i["block_type"], "block_id": i["block_id"], "unit_type": unit_type})
+                data.append({"unit_name" : i["fields"]["display_name"], "edited_by_email" : u.email, "edited_by_name" : u.first_name, "edited_on" : i["edit_info"]["edited_on"], "subsection_name": subsection_name[0],"section_name" : section_name, "block_type": i["block_type"], "block_id": i["block_id"], "unit_type": unit_type})
 
 		course_log = sorted(data, key = lambda k:k['edited_on'], reverse=True)
 		#course_log = json.loads(dumps(course_log))
