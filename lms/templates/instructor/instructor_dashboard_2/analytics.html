@@ -85,7 +85,7 @@
 
 		<div class='course_log_form' id='course_log_form'>
 			
-			%if "course_log" in section_data and "course_log" in section_data["course_log"]:
+			%if "course_log" in section_data and "course_log" in section_data["course_log"] and section_data["course_log"]["course_log"]:
 				<form class="play_time_form" onsubmit="get_play_time_data(); return false;">
 					<select class="play_time_options" id="play_time_options">
 						%for key in section_data["course_log"]["course_log"]:
@@ -127,6 +127,8 @@
 				<p id="loading_image">	<img id="load_image" src="https://cdn.exec.talentsprint.com/gifs/loading_1.gif" style="display: none;"> </p>
 				<div class="video-div" id="video-div"></div>
 				<!-- <table class="video-report" id="video-report"></table> -->
+			%else:
+				<p style="text-align: center;">There is no video content available for this course.</p>
 			%endif
 		</div>
 		</div>
