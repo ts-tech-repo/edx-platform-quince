@@ -68,7 +68,7 @@ def get_course_unit_log_analytics(course_id):
     except Exception as e:
         log.error(e)
 
-	return {"course_log" : course_log}
+    return {"course_log" : course_log}
 
 def get_subsection_name(id, course_structure):
 	for i in course_structure[0]["blocks"]:
