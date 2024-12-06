@@ -91,9 +91,11 @@ function(
                 //  - show the new block expanded
                 //  - ensure it is scrolled into view
                 //  - make its name editable
-                this.publishXBlock();
                 this.refresh(this.createNewItemViewState(locator, ViewUtils.getScrollOffset($(event.target))));
             }
+            XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+                success: this.options.onSave
+            });
         },
 
         /**
@@ -113,6 +115,9 @@ function(
                 //  - make its name editable
                 this.refresh(this.createNewItemViewState(locator, scrollOffset));
             }
+            XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+                success: this.options.onSave
+            });
         },
 
         onSectionAdded: function(locator, xblockElement, scrollOffset) {

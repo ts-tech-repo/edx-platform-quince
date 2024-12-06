@@ -299,7 +299,6 @@ function($, _, gettext, ViewUtils, ModuleUtils, XBlockInfo, StringUtils) {
         return ViewUtils.runOperationShowingMessage(gettext('Saving'),
             function() {
                 xblockInfo.save(xblockData, options);
-                console.log("Aman updateXBlockFields");
                 return xblockInfo.save(xblockData, options);
             }
         );
