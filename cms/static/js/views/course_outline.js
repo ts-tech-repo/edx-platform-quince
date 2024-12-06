@@ -91,6 +91,7 @@ function(
                 //  - show the new block expanded
                 //  - ensure it is scrolled into view
                 //  - make its name editable
+                this.publishXBlock();
                 this.refresh(this.createNewItemViewState(locator, ViewUtils.getScrollOffset($(event.target))));
             }
         },

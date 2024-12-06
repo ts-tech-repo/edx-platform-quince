@@ -2,7 +2,7 @@
 Define some view level utility functions here that multiple view modules will share
 """
 
-
+import logging
 from contextlib import contextmanager
 
 from django.contrib.auth import get_user_model
@@ -17,6 +17,7 @@ from common.djangoapps.util.query import use_read_replica_if_available
 from lms.djangoapps.grades.course_grade_factory import CourseGradeFactory
 from openedx.core.lib.api.view_utils import DeveloperErrorViewMixin
 
+log = logging.getLogger(__name__)
 USER_MODEL = get_user_model()
 
 
@@ -86,7 +87,7 @@ class GradeViewMixin(DeveloperErrorViewMixin):
 
         # May raise CourseEnrollment.DoesNotExist if no enrollment exists for this user/course.
         _ = CourseEnrollment.objects.get(user=grade_user, course_id=course_key)
-
+        log.info("#venkat user util::: %s",CourseEnrollment.objects.get(user=grade_user, course_id=course_key))
         return grade_user
 
     @contextmanager

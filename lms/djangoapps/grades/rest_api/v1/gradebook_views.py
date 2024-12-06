@@ -2,7 +2,7 @@
 Defines an endpoint for gradebook data related to a course.
 """
 
-
+import json
 import logging
 from collections import namedtuple
 from contextlib import contextmanager
@@ -513,7 +513,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             graded_subsections: A list of graded subsections in the given course.
             course_grade: A CourseGrade object.
         """
-        # log.info("#venkat available_data::: %s",user)
+        log.info("#venkat available_data::: %s",vars(user))
         user_entry = self._serialize_user_grade(user, course.id, course_grade)
         breakdown = self._section_breakdown(course, graded_subsections, course_grade)
 
@@ -536,7 +536,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
 
         #if is_masters_student():
         # log.info("#venkat profiled::: %s", vars(user.profile))
-        user_entry['full_name'] = user.profile.name
+        user_entry['full_name'] = user.first_name
         # log.info("#venkat fullname::: %s",user_entry['full_name'])
         external_user_key = get_external_key_by_user_and_course(user, course.id)
         if external_user_key:
@@ -564,6 +564,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         # the user-specific course structure for each user, because that is very expensive.
         course_data = CourseData(user=None, course=course)
         graded_subsections = list(grades_context.graded_subsections_for_course(course_data.collected_structure))
+        log.info("venkat GET changed parameters: %s", json.dumps(dict(request.GET), indent=4))
 
         if request.GET.get('username'):
             with self._get_user_or_raise(request, course_key) as grade_user:
@@ -574,6 +575,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 )
             entry = self._gradebook_entry(grade_user, course, graded_subsections, course_grade)
             serializer = StudentGradebookEntrySerializer(entry)
+            log.info('#vernkat serializer:%s',Response(serializer.data) )
             return Response(serializer.data)
         else:
             q_objects = []
@@ -685,6 +687,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                         entries.append(entry)
 
             serializer = StudentGradebookEntrySerializer(entries, many=True)
+            log.info("#venkat serializer d::: %s",StudentGradebookEntrySerializer(entries, many=True))
             return self.get_paginated_response(serializer.data, **users_counts)
 
     def _get_user_count(self, query_args, cache_time=3600, annotations=None):

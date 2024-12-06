@@ -298,6 +298,8 @@ function($, _, gettext, ViewUtils, ModuleUtils, XBlockInfo, StringUtils) {
         options = _.extend({}, {patch: true}, options);
         return ViewUtils.runOperationShowingMessage(gettext('Saving'),
             function() {
+                xblockInfo.save(xblockData, options);
+                console.log("Aman updateXBlockFields");
                 return xblockInfo.save(xblockData, options);
             }
         );

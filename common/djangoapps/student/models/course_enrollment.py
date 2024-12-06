@@ -255,7 +255,7 @@ class CourseEnrollment(models.Model):
     MODEL_TAGS = ['course', 'is_active', 'mode']
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    log.info("#venkat user d::: %s",user)
     course = models.ForeignKey(
         CourseOverview,
         db_constraint=False,
