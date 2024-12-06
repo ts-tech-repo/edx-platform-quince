@@ -418,7 +418,7 @@ def _accessible_courses_summary_iter(request, org=None):
         Filter out unusable and inaccessible courses
         """
         # TODO remove this condition when templates purged from db
-        if course_summary.location.course == 'templates':
+        if course_summary.location.course == 'templates' or (org is not None and course_summary.location.org != org):
             return False
 
         return has_studio_read_access(request.user, course_summary.id)
