@@ -1474,9 +1474,11 @@ def get_home_context(request):
     optimization_enabled = ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
 
     org = request.GET.get('org', None) or request.session.get('org', None) if optimization_enabled else None
+    logging.info(f"org: {org}")
     if org is not None:
         org = org.upper()
     courses_iter, in_process_course_actions = get_courses_accessible_to_user(request, org)
+    logging.info(f"courses_iter: {courses_iter}")
     user = request.user
     libraries = []
     response_format = get_response_format(request)
