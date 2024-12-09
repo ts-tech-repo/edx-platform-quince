@@ -98,7 +98,8 @@ def get_course_unit_log(course_id):
         previous_version_ids.append(document["_id"])
         document = structure_collection.find_one({"_id": document.get("previous_version")}, {"previous_version": 1})
 
-    previous_versions = list(structure_collection.find({"_id": {"$in": previous_version_ids}}).sort("edited_on", 1))
+    previous_versions = list(structure_collection.aggregate([{"$match": {"_id": {"$in": previous_version_ids}}},{"$sort": {"edited_on": 1}}], allowDiskUse=True))
+ 
     data = get_course_history(course_definition, published_version, previous_versions)
     return data
 
