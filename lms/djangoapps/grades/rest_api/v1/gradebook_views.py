@@ -515,6 +515,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         """
         user_entry = self._serialize_user_grade(user, course.id, course_grade)
         breakdown = self._section_breakdown(course, graded_subsections, course_grade)
+        # log.info("#venkat breakdown _data::: %s",breakdown)
         user_entry['section_breakdown'] = breakdown
         user_entry['progress_page_url'] = reverse(
             'student_progress',
