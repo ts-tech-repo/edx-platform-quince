@@ -558,13 +558,14 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             course_key: The edx course opaque key of a course object.
         """
         course = get_course_by_id(course_key, depth=None)
-
+        log.info("venkat course total: %s", course)
         # We fetch the entire course structure up-front, and use this when iterating
         # over users to determine their subsection grades.  We purposely avoid fetching
         # the user-specific course structure for each user, because that is very expensive.
         course_data = CourseData(user=None, course=course)
+        log.info("venkat course data parameters: %s", course_data)
         graded_subsections = list(grades_context.graded_subsections_for_course(course_data.collected_structure))
-        log.info("venkat GET changed parameters: %s", json.dumps(dict(request.GET), indent=4))
+        log.info("venkatsubsection parameters: %s", graded_subsections)
 
         if request.GET.get('username'):
             with self._get_user_or_raise(request, course_key) as grade_user:
