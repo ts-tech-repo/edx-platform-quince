@@ -673,7 +673,7 @@ def course_index(request, course_key):
         proctoring_errors = CourseMetadata.validate_proctoring_settings(course_block, advanced_dict, request.user)
 
         user_clipboard = content_staging_api.get_user_clipboard_json(request.user.id, request)
-        log.info("#venkat lmslink 1:::%s",lms_link)
+        log.info("lms link 1 {0}".format(lms_link))
         return render_to_response('course_outline.html', {
             'language_code': request.LANGUAGE_CODE,
             'context_course': course_block,
@@ -741,7 +741,7 @@ def _process_courses_list(courses_iter, in_process_course_actions, split_archive
         """
         Return a dict of the data which the view requires for each course
         """
-        log.info("#venkat lmslink 2:::%s",get_lms_link_for_item(course.location))
+        log.info("lms link 2 {0}".format(get_lms_link_for_item(course.location)))
         course_context = {
             'display_name': course.display_name,
             'course_key': str(course.location.course_key),
