@@ -632,7 +632,6 @@ def course_index(request, course_key):
     """
     # A depth of None implies the whole course. The course outline needs this in order to compute has_changes.
     # A unit may not have a draft version, but one of its components could, and hence the unit itself has changes.
-    log.info("allowwed")
     with modulestore().bulk_operations(course_key):
         course_block = get_course_and_check_access(course_key, request.user, depth=None)
         if not course_block:
