@@ -513,10 +513,8 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             graded_subsections: A list of graded subsections in the given course.
             course_grade: A CourseGrade object.
         """
-        log.info("#venkat available_data::: %s",vars(user))
         user_entry = self._serialize_user_grade(user, course.id, course_grade)
         breakdown = self._section_breakdown(course, graded_subsections, course_grade)
-        log.info("#venkat breakdown _data::: %s",breakdown)
         user_entry['section_breakdown'] = breakdown
         user_entry['progress_page_url'] = reverse(
             'student_progress',
@@ -535,9 +533,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 return mode == CourseMode.MASTERS
 
         #if is_masters_student():
-        # log.info("#venkat profiled::: %s", vars(user.profile))
         user_entry['full_name'] = user.first_name
-        # log.info("#venkat fullname::: %s",user_entry['full_name'])
         external_user_key = get_external_key_by_user_and_course(user, course.id)
         if external_user_key:
             user_entry['external_user_key'] = external_user_key
@@ -557,18 +553,14 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             request: A Django request object.
             course_key: The edx course opaque key of a course object.
         """
-        log.info("venkat self: %s", vars(self))
-        log.info("venkat request: %s", vars(request))
-        # log.info("venkat coursekey: %s", course_key)
+       
         course = get_course_by_id(course_key, depth=None)
         # log.info("venkat course total: %s", course)
         # We fetch the entire course structure up-front, and use this when iterating
         # over users to determine their subsection grades.  We purposely avoid fetching
         # the user-specific course structure for each user, because that is very expensive.
         course_data = CourseData(user=None, course=course)
-        log.info("venkat course data parameters: %s", course_data)
         graded_subsections = list(grades_context.graded_subsections_for_course(course_data.collected_structure))
-        log.info("venkatsubsection parameters: %s", graded_subsections)
 
         if request.GET.get('username'):
             with self._get_user_or_raise(request, course_key) as grade_user:
@@ -579,7 +571,6 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 )
             entry = self._gradebook_entry(grade_user, course, graded_subsections, course_grade)
             serializer = StudentGradebookEntrySerializer(entry)
-            log.info('#vernkat serializer:%s',Response(serializer.data) )
             return Response(serializer.data)
         else:
             q_objects = []
@@ -665,12 +656,10 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 q_objects.append(q_object)
             if request.GET.get('excluded_course_roles'):
                 excluded_course_roles = request.GET.getlist('excluded_course_roles')
-                # log.info("#venkat excluded roles::: %s",excluded_course_roles)
                 course_access_role_filters = dict(
                     user=OuterRef('user'),
                     course_id=course_key,
                 )
-                # log.info("#venkat access filter roles::: %s",course_access_role_filters)
                 if 'all' not in excluded_course_roles:
                     course_access_role_filters['role__in'] = excluded_course_roles
                 annotations['has_excluded_role'] = Exists(
