@@ -516,6 +516,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         log.info("#venkat available_data::: %s",vars(user))
         user_entry = self._serialize_user_grade(user, course.id, course_grade)
         breakdown = self._section_breakdown(course, graded_subsections, course_grade)
+        log.info("#venkat breakdown _data::: %s",breakdown)
         user_entry['section_breakdown'] = breakdown
         user_entry['progress_page_url'] = reverse(
             'student_progress',
@@ -660,10 +661,12 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 q_objects.append(q_object)
             if request.GET.get('excluded_course_roles'):
                 excluded_course_roles = request.GET.getlist('excluded_course_roles')
+                # log.info("#venkat excluded roles::: %s",excluded_course_roles)
                 course_access_role_filters = dict(
                     user=OuterRef('user'),
                     course_id=course_key,
                 )
+                # log.info("#venkat access filter roles::: %s",course_access_role_filters)
                 if 'all' not in excluded_course_roles:
                     course_access_role_filters['role__in'] = excluded_course_roles
                 annotations['has_excluded_role'] = Exists(
