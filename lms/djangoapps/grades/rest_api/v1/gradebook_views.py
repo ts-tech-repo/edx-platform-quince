@@ -557,6 +557,9 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             request: A Django request object.
             course_key: The edx course opaque key of a course object.
         """
+        log.info("venkat self: %s", self)
+        log.info("venkat request: %s", request)
+        log.info("venkat coursekey: %s", course_key)
         course = get_course_by_id(course_key, depth=None)
         log.info("venkat course total: %s", course)
         # We fetch the entire course structure up-front, and use this when iterating
