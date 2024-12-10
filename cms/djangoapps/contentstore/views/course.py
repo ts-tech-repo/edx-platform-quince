@@ -418,7 +418,7 @@ def _accessible_courses_summary_iter(request, org=None):
         Filter out unusable and inaccessible courses
         """
         # TODO remove this condition when templates purged from db
-        if course_summary.location.course == 'templates':
+        if course_summary.location.course == 'templates' or (org is not None and course_summary.location.org != org):
             return False
 
         return has_studio_read_access(request.user, course_summary.id)
@@ -673,7 +673,7 @@ def course_index(request, course_key):
         proctoring_errors = CourseMetadata.validate_proctoring_settings(course_block, advanced_dict, request.user)
 
         user_clipboard = content_staging_api.get_user_clipboard_json(request.user.id, request)
-
+        log.info("lms link 1 {0}".format(lms_link))
         return render_to_response('course_outline.html', {
             'language_code': request.LANGUAGE_CODE,
             'context_course': course_block,
@@ -741,6 +741,7 @@ def _process_courses_list(courses_iter, in_process_course_actions, split_archive
         """
         Return a dict of the data which the view requires for each course
         """
+        log.info("lms link 2 {0}".format(get_lms_link_for_item(course.location)))
         course_context = {
             'display_name': course.display_name,
             'course_key': str(course.location.course_key),

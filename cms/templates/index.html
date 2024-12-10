@@ -203,7 +203,7 @@ from openedx.core.djangolib.js_utils import (
       </div>
       % endif
 
-      %if optimization_enabled:
+      %if optimization_enabled and "talentsprint.com" in user.email:
       <div class="optimization-form">
         <h2 class="title title-3">${_("Organization and Library Settings")}</h2>
         <form class="form" action="/home/" method="GET">

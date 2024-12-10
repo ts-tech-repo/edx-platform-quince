@@ -204,13 +204,10 @@ class MixedModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase):
         If locator is None, returns the first (ordered) store as the default
         """
         if locator is not None:
-            log.info("#AMANK #7 locator: %s", locator)
             locator = self._clean_locator_for_mapping(locator)
-            log.info("#AMANK #8 Getting modulestore for locator: %s", locator)
             mapping = self.mappings.get(locator, None)
             if mapping is not None:
-                log.info("#AMANK #9 self.mappings: %s", self.mappings)
-                log.info("#AMANK #10 Found existing mapping for %s: %s", locator, mapping)
+                
                 return mapping
             else:
                 if isinstance(locator, LibraryLocator):
@@ -219,14 +216,10 @@ class MixedModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase):
                     has_locator = lambda store: store.has_course(locator)
                 for store in self.modulestores:
                     if has_locator(store):
-                        log.info("#AMANK #11 Adding mapping for %s: %s", locator, store)
-                        log.info("#AMANK #12 self.mappings: %s", self.mappings)
-                        log.info("#AMANK #13 self.modulestores: %s", self.modulestores)
                         self.mappings[locator] = store
                         return store
 
         # return the default store
-        log.info("#AMANK #13 Returning default modulestore: %s", self.default_modulestore)
         return self.default_modulestore
 
     def _get_modulestore_by_type(self, modulestore_type):
@@ -417,7 +410,6 @@ class MixedModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase):
         """
         assert isinstance(course_key, CourseKey)
         store = self._get_modulestore_for_courselike(course_key)
-        log.info('#AMANK:: Getting course from modulestore: %s', store)
         try:
             return store.get_course(course_key, depth=depth, **kwargs)
         except ItemNotFoundError:
@@ -1082,16 +1074,11 @@ class MixedModuleStore(ModuleStoreDraftAndPublished, ModuleStoreWriteBase):
         previous_thread_branch_setting = getattr(self.thread_cache, 'branch_setting', None)
         try:
             self.thread_cache.branch_setting = branch_setting
-            log.info("#AMANK #1 branch_setting: %s", branch_setting)
-            log.info("#AMANK #2 store: %s", store)
-            log.info("#AMANK #3 course_id: %s", course_id)
-            log.info("#AMANK #4 self.thread_cache.branch_setting: %s", self.thread_cache.branch_setting)
-            log.info("#AMANK #5 previous_thread_branch_setting: %s", previous_thread_branch_setting)
+           
             with store.branch_setting(branch_setting, course_id):
                 yield
         finally:
             self.thread_cache.branch_setting = previous_thread_branch_setting
-            log.info("#AMANK #6 self.thread_cache.branch_setting: %s", self.thread_cache.branch_setting)
 
     @contextmanager
     def bulk_operations(self, course_id, emit_signals=True, ignore_case=False):

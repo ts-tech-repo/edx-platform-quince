@@ -409,6 +409,7 @@ class VideoBlock(
         autoadvance_this_video = self.auto_advance and autoadvance_enabled
         is_embed = context.get('public_video_embed', False)
         is_public_view = view == PUBLIC_VIEW
+        log.info(self.speed)
         metadata = {
             'autoAdvance': autoadvance_this_video,
             # For now, the option "data-autohide-html5" is hard coded. This option
@@ -447,7 +448,7 @@ class VideoBlock(
             # if the video is embedded in social media
             'showCaptions': json.dumps(self.show_captions and not is_embed),
             'sources': sources,
-            'speed': self.speed,
+            'speed': ["1.75"],
             'start': self.start_time.total_seconds(),  # pylint: disable=no-member
             'streams': self.youtube_streams,
             'transcriptAvailableTranslationsUrl': self.runtime.handler_url(
