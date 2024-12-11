@@ -365,7 +365,7 @@ class OutlineTabView(RetrieveAPIView):
         context['enable_links'] = show_enrolled or allow_public
         context['enrollment'] = enrollment
         serializer = self.get_serializer_class()(data, context=context)
-        log.info("venkat serializerdata 1 {0}".format(Response(serializer.data)))
+        log.info("venkat serializerdata 1 {0}".format(serializer.data))
         return Response(serializer.data)
 
     def finalize_response(self, request, response, *args, **kwargs):
