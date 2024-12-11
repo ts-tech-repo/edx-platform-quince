@@ -229,7 +229,6 @@ class OutlineTabView(RetrieveAPIView):
         offer_data = None
         resume_course = {
             'has_visited_course': False,
-            'sample_test': False,
             'url': None,
         }
         welcome_message_html = None
@@ -239,8 +238,12 @@ class OutlineTabView(RetrieveAPIView):
         show_enrolled = is_enrolled or is_staff
         enable_proctored_exams = False
         if show_enrolled:
+            log.info("venkat requestenroll 1 {0}".format(request))
+            log.info("venkat course key string 1 {0}".format(course_key_string))
+            log.info("venkat requestuser 1 {0}".format(request.user))
             course_blocks = get_course_outline_block_tree(request, course_key_string, request.user)
-            log.info(course_blocks)
+            log.info("venkat course blocks 1 {0}".format(course_blocks))
+            # log.info(course_blocks)
             date_blocks = get_course_date_blocks(course, request.user, request, num_assignments=1)
             dates_widget['course_date_blocks'] = [block for block in date_blocks if not isinstance(block, TodaysDate)]
 
