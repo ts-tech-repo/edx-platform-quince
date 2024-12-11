@@ -291,6 +291,7 @@ def course_handler(request, course_key_string=None):
     try:
         if course_key_string:
             course_key = CourseKey.from_string(course_key_string)
+            request.session['org'] = course_key.org
             if course_key.deprecated:
                 logging.error(f"User {request.user.id} tried to access Studio for Old Mongo course {course_key}.")
                 return HttpResponseNotFound()

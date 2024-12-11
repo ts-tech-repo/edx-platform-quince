@@ -128,6 +128,7 @@ def container_handler(request, usage_key_string):
                 course, xblock, lms_link, preview_lms_link = _get_item_in_course(request, usage_key)
             except ItemNotFoundError:
                 return HttpResponseBadRequest()
+            request.session['org'] = usage_key.course_key.org
             component_templates = get_component_templates(course)
             ancestor_xblocks = []
             parent = get_parent_xblock(xblock)
