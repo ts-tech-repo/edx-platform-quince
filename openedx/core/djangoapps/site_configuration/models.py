@@ -81,22 +81,17 @@ class SiteConfiguration(models.Model):
         """
         query = cls.objects.filter(site_values__contains=org, enabled=True).all()
         # venkat lmsquery 1 <QuerySet [<SiteConfiguration: staging.quince.talentsprint.com >, <SiteConfiguration: studio.staging.quince.talentsprint.com >, <SiteConfiguration: staging.quince.secondary.talentsprint.com >, <SiteConfiguration: staging.quince02.talentsprint.com >, <SiteConfiguration: studio.staging.quince02.talentsprint.com >]>
-        logger.info("venkat orgelement 1 {0}".format(org))
-        logger.info("venkat lmsquery 1 {0}".format(query))
-        logger.info("venkat selectrelated 1 {0}".format(select_related))
+        
         if select_related is not None:
             query = query.select_related(*select_related)
         for configuration in query:
             course_org_filter = configuration.get_value('course_org_filter', [])
-            logger.info("venkat orgfilter 1 {0}".format(course_org_filter))
             # The value of 'course_org_filter' can be configured as a string representing
             # a single organization or a list of strings representing multiple organizations.
             if not isinstance(course_org_filter, list):
                 course_org_filter = [course_org_filter]
-            logger.info("venkat course org 1 {0}".format(course_org_filter))
-            logger.info("venkat configuration 1 {0}, Type: {1}".format(configuration, type(configuration)))
-            #  <SiteConfiguration: staging.quince.talentsprint.com >
-            if org in course_org_filter and "quince02" in str(configuration):
+            
+            if org in course_org_filter :
                 return configuration
         return None
 
@@ -115,7 +110,6 @@ class SiteConfiguration(models.Model):
             Configuration value for the given key.
         """
         configuration = cls.get_configuration_for_org(org)
-        logger.info("lms configuration 1 {0}".format(configuration))
         if configuration is None:
             return default
         else:

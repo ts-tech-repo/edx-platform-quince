@@ -673,7 +673,6 @@ def course_index(request, course_key):
         proctoring_errors = CourseMetadata.validate_proctoring_settings(course_block, advanced_dict, request.user)
 
         user_clipboard = content_staging_api.get_user_clipboard_json(request.user.id, request)
-        log.info("lms link 1 {0}".format(lms_link))
         return render_to_response('course_outline.html', {
             'language_code': request.LANGUAGE_CODE,
             'context_course': course_block,
