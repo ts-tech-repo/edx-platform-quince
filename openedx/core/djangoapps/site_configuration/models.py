@@ -94,7 +94,8 @@ class SiteConfiguration(models.Model):
             if not isinstance(course_org_filter, list):
                 course_org_filter = [course_org_filter]
             logger.info("venkat course org 1 {0}".format(course_org_filter))
-            if org in course_org_filter:
+            logger.info("venkat configuration 1 {0}".format(configuration))
+            if org in course_org_filter  :
                 return configuration
         return None
 
