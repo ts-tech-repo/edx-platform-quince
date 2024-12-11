@@ -95,7 +95,8 @@ class SiteConfiguration(models.Model):
                 course_org_filter = [course_org_filter]
             logger.info("venkat course org 1 {0}".format(course_org_filter))
             logger.info("venkat configuration 1 {0}".format(configuration))
-            if org in course_org_filter  :
+            #  <SiteConfiguration: staging.quince.talentsprint.com >
+            if org in course_org_filter and "quince02" in configuration:
                 return configuration
         return None
 
