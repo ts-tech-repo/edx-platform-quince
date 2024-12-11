@@ -80,6 +80,8 @@ class SiteConfiguration(models.Model):
             select_related (list or None): A list of values to pass as arguments to select_related
         """
         query = cls.objects.filter(site_values__contains=org, enabled=True).all()
+        # venkat lmsquery 1 <QuerySet [<SiteConfiguration: staging.quince.talentsprint.com >, <SiteConfiguration: studio.staging.quince.talentsprint.com >, <SiteConfiguration: staging.quince.secondary.talentsprint.com >, <SiteConfiguration: staging.quince02.talentsprint.com >, <SiteConfiguration: studio.staging.quince02.talentsprint.com >]>
+        logger.info("venkat orgelement 1 {0}".format(org))
         logger.info("venkat lmsquery 1 {0}".format(query))
         logger.info("venkat selectrelated 1 {0}".format(select_related))
         if select_related is not None:
@@ -91,6 +93,7 @@ class SiteConfiguration(models.Model):
             # a single organization or a list of strings representing multiple organizations.
             if not isinstance(course_org_filter, list):
                 course_org_filter = [course_org_filter]
+            logger.info("venkat course org 1 {0}".format(course_org_filter))
             if org in course_org_filter:
                 return configuration
         return None

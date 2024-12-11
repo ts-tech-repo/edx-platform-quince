@@ -188,7 +188,7 @@ def get_lms_link_for_item(location, preview=False):
         )
 
     return "//{lms_base}/courses/{course_key}/jump_to/{location}".format(
-        lms_base= lms_base.replace("quince", "quince02"),
+        lms_base= lms_base,
         course_key=str(location.course_key),
         location=str(location),
     )
