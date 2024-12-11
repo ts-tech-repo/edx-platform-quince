@@ -304,10 +304,11 @@ class OutlineTabView(RetrieveAPIView):
         # The long term goal is to remove the Course Blocks API call entirely,
         # so this is a tiny first step in that migration.
         if course_blocks:
+            log.info("venkat coursekey {0}".format(course_key))
             user_course_outline = get_user_course_outline(
                 course_key, request.user, datetime.now(tz=timezone.utc)
             )
-            log.info("venkat courseoutline2 {0}".format(vars(user_course_outline)))
+            # log.info("venkat courseoutline2 {0}".format(vars(user_course_outline)))
             available_seq_ids = {str(usage_key) for usage_key in user_course_outline.sequences}
             available_section_ids = set()
 
