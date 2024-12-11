@@ -307,6 +307,7 @@ class OutlineTabView(RetrieveAPIView):
             user_course_outline = get_user_course_outline(
                 course_key, request.user, datetime.now(tz=timezone.utc)
             )
+            log.info("venkat courseoutline 1 {0}".format(user_course_outline))
             available_seq_ids = {str(usage_key) for usage_key in user_course_outline.sequences}
 
             available_section_ids = {str(section.usage_key) for section in user_course_outline.sections}
@@ -321,7 +322,7 @@ class OutlineTabView(RetrieveAPIView):
                 for chapter_data in course_blocks.get('children', [])
                 if chapter_data['id'] in available_section_ids
             ]
-            log.info("venkat childrencourses 1 {0}".format(course_blocks['children']))
+            # log.info("venkat childrencourses 1 {0}".format(course_blocks['children']))
             # course_blocks is a reference to the root of the course, so we go
             # through the chapters (sections) to look for sequences to remove.
             for chapter_data in course_blocks['children']:
