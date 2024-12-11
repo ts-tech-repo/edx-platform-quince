@@ -80,10 +80,13 @@ class SiteConfiguration(models.Model):
             select_related (list or None): A list of values to pass as arguments to select_related
         """
         query = cls.objects.filter(site_values__contains=org, enabled=True).all()
+        logger.info("venkat lmsquery 1 {0}".format(query))
+        logger.info("venkat selectrelated 1 {0}".format(select_related))
         if select_related is not None:
             query = query.select_related(*select_related)
         for configuration in query:
             course_org_filter = configuration.get_value('course_org_filter', [])
+            logger.info("venkat orgfilter 1 {0}".format(course_org_filter))
             # The value of 'course_org_filter' can be configured as a string representing
             # a single organization or a list of strings representing multiple organizations.
             if not isinstance(course_org_filter, list):
