@@ -238,9 +238,9 @@ class OutlineTabView(RetrieveAPIView):
         show_enrolled = is_enrolled or is_staff
         enable_proctored_exams = False
         if show_enrolled:
-            log.info("venkat requestenroll 1 {0}".format(request))
-            log.info("venkat course key string 1 {0}".format(course_key_string))
-            log.info("venkat requestuser 1 {0}".format(request.user))
+            # log.info("venkat requestenroll 1 {0}".format(request))
+            # log.info("venkat course key string 1 {0}".format(course_key_string))
+            # log.info("venkat requestuser 1 {0}".format(request.user))
             course_blocks = get_course_outline_block_tree(request, course_key_string, request.user)
             log.info("venkat course blocks 1 {0}".format(course_blocks))
             # log.info(course_blocks)
@@ -365,7 +365,7 @@ class OutlineTabView(RetrieveAPIView):
         context['enable_links'] = show_enrolled or allow_public
         context['enrollment'] = enrollment
         serializer = self.get_serializer_class()(data, context=context)
-
+        log.info("venkat serializerdata 1 {0}".format(Response(serializer.data)))
         return Response(serializer.data)
 
     def finalize_response(self, request, response, *args, **kwargs):
