@@ -308,7 +308,7 @@ class OutlineTabView(RetrieveAPIView):
             user_course_outline = get_user_course_outline(
                 course_key, request.user, datetime.now(tz=timezone.utc)
             )
-            # log.info("venkat courseoutline2 {0}".format(vars(user_course_outline)))
+            log.info("venkat courseoutline2 {0}".format(vars(user_course_outline)))
             available_seq_ids = {str(usage_key) for usage_key in user_course_outline.sequences}
             available_section_ids = set()
 
