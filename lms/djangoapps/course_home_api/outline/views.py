@@ -229,6 +229,7 @@ class OutlineTabView(RetrieveAPIView):
         offer_data = None
         resume_course = {
             'has_visited_course': False,
+            'sample_test': False,
             'url': None,
         }
         welcome_message_html = None
