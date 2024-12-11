@@ -328,7 +328,6 @@ class OutlineTabView(RetrieveAPIView):
             course_blocks['children'] = [
                 chapter_data
                 for chapter_data in course_blocks.get('children', [])
-                if chapter_data['id'] in available_section_ids
             ]
             # log.info("venkat childrencourses 1 {0}".format(course_blocks['children']))
             # course_blocks is a reference to the root of the course, so we go
