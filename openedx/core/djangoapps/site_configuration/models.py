@@ -107,6 +107,7 @@ class SiteConfiguration(models.Model):
             Configuration value for the given key.
         """
         configuration = cls.get_configuration_for_org(org)
+        logger.info("lms configuration 1 {0}".format(configuration))
         if configuration is None:
             return default
         else:
