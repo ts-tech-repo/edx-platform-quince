@@ -242,7 +242,7 @@ class OutlineTabView(RetrieveAPIView):
             # log.info("venkat course key string 1 {0}".format(course_key_string))
             # log.info("venkat requestuser 1 {0}".format(request.user))
             course_blocks = get_course_outline_block_tree(request, course_key_string, request.user)
-            log.info("venkat course blocks 1 {0}".format(course_blocks))
+            # log.info("venkat course blocks 1 {0}".format(course_blocks))
             # log.info(course_blocks)
             date_blocks = get_course_date_blocks(course, request.user, request, num_assignments=1)
             dates_widget['course_date_blocks'] = [block for block in date_blocks if not isinstance(block, TodaysDate)]
@@ -311,7 +311,7 @@ class OutlineTabView(RetrieveAPIView):
 
             available_section_ids = {str(section.usage_key) for section in user_course_outline.sections}
             
-            
+            log.info("venkat available sectionids 1 {0}".format(available_section_ids))
 
             # course_blocks is a reference to the root of the course,
             # so we go through the chapters (sections) and keep only those
@@ -321,7 +321,7 @@ class OutlineTabView(RetrieveAPIView):
                 for chapter_data in course_blocks.get('children', [])
                 if chapter_data['id'] in available_section_ids
             ]
-
+            log.info("venkat childrencourses 1 {0}".format(course_blocks['children']))
             # course_blocks is a reference to the root of the course, so we go
             # through the chapters (sections) to look for sequences to remove.
             for chapter_data in course_blocks['children']:
@@ -365,7 +365,7 @@ class OutlineTabView(RetrieveAPIView):
         context['enable_links'] = show_enrolled or allow_public
         context['enrollment'] = enrollment
         serializer = self.get_serializer_class()(data, context=context)
-        log.info("venkat serializerdata 1 {0}".format(serializer.data))
+        # log.info("venkat serializerdata 1 {0}".format(serializer.data))
         return Response(serializer.data)
 
     def finalize_response(self, request, response, *args, **kwargs):
