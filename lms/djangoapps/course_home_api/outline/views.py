@@ -309,9 +309,16 @@ class OutlineTabView(RetrieveAPIView):
             )
             log.info("venkat courseoutline2 {0}".format(vars(user_course_outline)))
             available_seq_ids = {str(usage_key) for usage_key in user_course_outline.sequences}
+            available_section_ids = set()
 
-            available_section_ids = {str(section.usage_key) for section in user_course_outline.sections}
-            available_section_ids.add("block-v1:QUINCE+TestingCoursefeedback+CF01+type@chapter+block@60a99f0e31d747e88af40ab36b512ca0")
+            # Iterate over each section in the user_course_outline
+            for section in user_course_outline.sections:
+                log.info("venkat available sectionset 1 {0}".format(section))
+                section_usage_key_str = str(section.usage_key)
+                
+                available_section_ids.add(section_usage_key_str)
+            # available_section_ids = {str(section.usage_key) for section in user_course_outline.sections}
+            # available_section_ids.add("block-v1:QUINCE+TestingCoursefeedback+CF01+type@chapter+block@60a99f0e31d747e88af40ab36b512ca0")
             log.info("venkat available sectionids 1 {0}".format(available_section_ids))
 
             # course_blocks is a reference to the root of the course,
