@@ -238,12 +238,9 @@ class OutlineTabView(RetrieveAPIView):
         show_enrolled = is_enrolled or is_staff
         enable_proctored_exams = False
         if show_enrolled:
-            # log.info("venkat requestenroll 1 {0}".format(request))
-            # log.info("venkat course key string 1 {0}".format(course_key_string))
-            # log.info("venkat requestuser 1 {0}".format(request.user))
+            
             course_blocks = get_course_outline_block_tree(request, course_key_string, request.user)
-            # log.info("venkat course blocks 1 {0}".format(course_blocks))
-            # log.info(course_blocks)
+           
             date_blocks = get_course_date_blocks(course, request.user, request, num_assignments=1)
             dates_widget['course_date_blocks'] = [block for block in date_blocks if not isinstance(block, TodaysDate)]
 
@@ -308,28 +305,24 @@ class OutlineTabView(RetrieveAPIView):
             user_course_outline = get_user_course_outline(
                 course_key, request.user, datetime.now(tz=timezone.utc)
             )
-            log.info("venkat courseoutline2 {0}".format(vars(user_course_outline)))
             available_seq_ids = {str(usage_key) for usage_key in user_course_outline.sequences}
             available_section_ids = set()
 
             # Iterate over each section in the user_course_outline
             for section in user_course_outline.sections:
-                log.info("venkat available sectionset 1 {0}".format(section))
                 section_usage_key_str = str(section.usage_key)
                 
                 available_section_ids.add(section_usage_key_str)
             # available_section_ids = {str(section.usage_key) for section in user_course_outline.sections}
             # available_section_ids.add("block-v1:QUINCE+TestingCoursefeedback+CF01+type@chapter+block@60a99f0e31d747e88af40ab36b512ca0")
-            log.info("venkat available sectionids 1 {0}".format(available_section_ids))
 
-            # course_blocks is a reference to the root of the course,
+            # course_blocks is a reference to the root of the course,if chapter_data['id'] in available_section_ids
             # so we go through the chapters (sections) and keep only those
             # which are part of the outline.
             course_blocks['children'] = [
                 chapter_data
                 for chapter_data in course_blocks.get('children', [])
             ]
-            # log.info("venkat childrencourses 1 {0}".format(course_blocks['children']))
             # course_blocks is a reference to the root of the course, so we go
             # through the chapters (sections) to look for sequences to remove.
             for chapter_data in course_blocks['children']:
