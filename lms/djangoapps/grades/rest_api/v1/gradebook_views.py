@@ -682,6 +682,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 ):
                     if not exc:
                         entry = self._gradebook_entry(user, course, graded_subsections, course_grade)
+                        log.info("#venkat entrydata::: %s",entry)
                         entries.append(entry)
 
             serializer = StudentGradebookEntrySerializer(entries, many=True)
