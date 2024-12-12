@@ -663,6 +663,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                     user=OuterRef('user'),
                     course_id=course_key,
                 )
+                log.info("#venkat course accessrole::: %s",course_access_role_filters)
                 if 'all' not in excluded_course_roles:
                     course_access_role_filters['role__in'] = excluded_course_roles
                 annotations['has_excluded_role'] = Exists(
