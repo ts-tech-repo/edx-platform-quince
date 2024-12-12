@@ -682,9 +682,10 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 ):
                     if not exc:
                         entry = self._gradebook_entry(user, course, graded_subsections, course_grade)
-                        if '@ts.com' not in entry["email"] or '@talentsprint.com' not in entry["email"]:
-                            log.info("#venkat entrydata::: %s",entry)
-                            entries.append(entry)
+                        if '@ts.com' in entry["email"] or '@talentsprint.com' in entry["email"]:
+                            continue
+                        log.info("#venkat entrydata::: %s",entry)
+                        entries.append(entry)
 
             serializer = StudentGradebookEntrySerializer(entries, many=True)
             log.info("#venkat serializer d::: %s",StudentGradebookEntrySerializer(entries, many=True))
