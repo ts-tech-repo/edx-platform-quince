@@ -556,12 +556,14 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         """
        
         course = get_course_by_id(course_key, depth=None)
-        log.info("venkat coursetotal: %s", course)
         # We fetch the entire course structure up-front, and use this when iterating
         # over users to determine their subsection grades.  We purposely avoid fetching
         # the user-specific course structure for each user, because that is very expensive.
         course_data = CourseData(user=None, course=course)
+        log.info("venkat coursedata: %s", course_data)
+
         graded_subsections = list(grades_context.graded_subsections_for_course(course_data.collected_structure))
+        log.info("venkat grade subsection: %s", graded_subsections)
 
         if request.GET.get('username'):
             with self._get_user_or_raise(request, course_key) as grade_user:
