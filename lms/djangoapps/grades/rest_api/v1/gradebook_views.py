@@ -659,6 +659,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 q_objects.append(q_object)
             if request.GET.get('excluded_course_roles'):
                 excluded_course_roles = request.GET.getlist('excluded_course_roles')
+                log.info("#venkat excludedrole::: %s",excluded_course_roles)
                 course_access_role_filters = dict(
                     user=OuterRef('user'),
                     course_id=course_key,
