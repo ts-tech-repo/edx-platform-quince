@@ -315,9 +315,7 @@ def _get_user_course_outline_and_processors(course_key: CourseKey,  # lint-amnes
     set_custom_attribute('learning_sequences.api.user_id', user.id)
 
     full_course_outline = get_course_outline(course_key)
-    log.info("venkat fullcourse outline {0}".format(full_course_outline))
     user_can_see_all_content = can_see_all_content(user, course_key)
-    log.info("venkat allcontent {0}".format(user_can_see_all_content))
     # These are processors that alter which sequences are visible to students.
     # For instance, certain sequences that are intentionally hidden or not yet
     # released. These do not need to be run for staff users. This is where we
