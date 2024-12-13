@@ -311,6 +311,10 @@ class OutlineTabView(RetrieveAPIView):
             # log.info("#AmanK available_seq_ids::: %s",available_seq_ids)
             
             log.info("#venkat course blocks::: %s",course_blocks)
+            course_blocks["children"] = [
+                child for child in course_blocks["children"]
+                if "Duplicate" not in child.get("display_name", "")
+            ]
             # course_blocks is a reference to the root of the course,if chapter_data['id'] in available_section_ids
             # so we go through the chapters (sections) and keep only those
             # which are part of the outline.
