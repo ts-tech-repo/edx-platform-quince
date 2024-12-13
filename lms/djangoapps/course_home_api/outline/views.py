@@ -3,7 +3,7 @@ Outline Tab Views
 """
 from datetime import datetime, timezone
 import logging
-from dataclasses import asdict
+
 from completion.exceptions import UnavailableCompletionData  # lint-amnesty, pylint: disable=wrong-import-order
 from completion.utilities import get_key_to_last_completed_block  # lint-amnesty, pylint: disable=wrong-import-order
 from django.conf import settings  # lint-amnesty, pylint: disable=wrong-import-order
@@ -238,9 +238,8 @@ class OutlineTabView(RetrieveAPIView):
         show_enrolled = is_enrolled or is_staff
         enable_proctored_exams = False
         if show_enrolled:
-            
             course_blocks = get_course_outline_block_tree(request, course_key_string, request.user)
-           
+            log.info(course_blocks)
             date_blocks = get_course_date_blocks(course, request.user, request, num_assignments=1)
             dates_widget['course_date_blocks'] = [block for block in date_blocks if not isinstance(block, TodaysDate)]
 
@@ -300,22 +299,18 @@ class OutlineTabView(RetrieveAPIView):
         #
         # The long term goal is to remove the Course Blocks API call entirely,
         # so this is a tiny first step in that migration.
+        # log.info("#AmanK course blocks::: %s",course_blocks['children'])
         if course_blocks:
-            
             user_course_outline = get_user_course_outline(
                 course_key, request.user, datetime.now(tz=timezone.utc)
             )
             available_seq_ids = {str(usage_key) for usage_key in user_course_outline.sequences}
-            available_section_ids = set()
 
-            # Iterate over each section in the user_course_outline
-            for section in user_course_outline.sections:
-                section_usage_key_str = str(section.usage_key)
-                
-                available_section_ids.add(section_usage_key_str)
-            # available_section_ids = {str(section.usage_key) for section in user_course_outline.sections}
-            # available_section_ids.add("block-v1:QUINCE+TestingCoursefeedback+CF01+type@chapter+block@60a99f0e31d747e88af40ab36b512ca0")
-
+            available_section_ids = {str(section.usage_key) for section in user_course_outline.sections}
+            log.info("#venkat available_section_ids::: %s",available_section_ids)
+            # log.info("#AmanK available_seq_ids::: %s",available_seq_ids)
+            
+            log.info("#venkat course blocks::: %s",course_blocks)
             # course_blocks is a reference to the root of the course,if chapter_data['id'] in available_section_ids
             # so we go through the chapters (sections) and keep only those
             # which are part of the outline.
@@ -323,6 +318,7 @@ class OutlineTabView(RetrieveAPIView):
                 chapter_data
                 for chapter_data in course_blocks.get('children', [])
             ]
+
             # course_blocks is a reference to the root of the course, so we go
             # through the chapters (sections) to look for sequences to remove.
             for chapter_data in course_blocks['children']:
@@ -338,6 +334,7 @@ class OutlineTabView(RetrieveAPIView):
                     )
                 ] if 'children' in chapter_data else []
 
+        # log.info("#AmanK course blocks2::: %s",course_blocks)
         user_has_passing_grade = False
         if not request.user.is_anonymous:
             user_grade = CourseGradeFactory().read(request.user, course)
@@ -366,7 +363,7 @@ class OutlineTabView(RetrieveAPIView):
         context['enable_links'] = show_enrolled or allow_public
         context['enrollment'] = enrollment
         serializer = self.get_serializer_class()(data, context=context)
-        # log.info("venkat serializerdata 1 {0}".format(serializer.data))
+
         return Response(serializer.data)
 
     def finalize_response(self, request, response, *args, **kwargs):
