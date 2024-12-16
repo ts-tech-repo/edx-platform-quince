@@ -311,7 +311,6 @@ class OutlineTabView(RetrieveAPIView):
             course_blocks['children'] = [
                 chapter_data
                 for chapter_data in course_blocks.get('children', [])
-                if chapter_data['id'] in available_section_ids
             ]
 
             # course_blocks is a reference to the root of the course, so we go
