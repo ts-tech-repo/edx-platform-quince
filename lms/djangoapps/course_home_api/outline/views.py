@@ -390,7 +390,7 @@ class OutlineTabView(RetrieveAPIView):
 @permission_classes((IsAuthenticated,))
 def dismiss_welcome_message(request):  # pylint: disable=missing-function-docstring
     course_id = request.data.get('course_id', None)
-
+    log.info("#venkat updated %s",course_id)
     # If body doesn't contain 'course_id', return 400 to client.
     if not course_id:
         raise ParseError(_("'course_id' is required."))
@@ -416,7 +416,7 @@ def save_course_goal(request):  # pylint: disable=missing-function-docstring
     course_id = request.data.get('course_id')
     days_per_week = request.data.get('days_per_week')
     subscribed_to_reminders = request.data.get('subscribed_to_reminders')
-
+    log.info("#venkat savecourse %s",course_id)
     # If body doesn't contain 'course_id', return 400 to client.
     if not course_id:
         raise ParseError("'course_id' is required.")
