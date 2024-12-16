@@ -2,7 +2,6 @@
 Outline Tab Views
 """
 from datetime import datetime, timezone
-import logging
 
 from completion.exceptions import UnavailableCompletionData  # lint-amnesty, pylint: disable=wrong-import-order
 from completion.utilities import get_key_to_last_completed_block  # lint-amnesty, pylint: disable=wrong-import-order
@@ -55,7 +54,7 @@ from openedx.features.course_experience.utils import get_course_outline_block_tr
 from openedx.features.discounts.utils import generate_offer_data
 from xmodule.course_block import COURSE_VISIBILITY_PUBLIC, COURSE_VISIBILITY_PUBLIC_OUTLINE  # lint-amnesty, pylint: disable=wrong-import-order
 
-log = logging.getLogger(__name__)
+
 class UnableToDismissWelcomeMessage(APIException):
     status_code = 400
     default_detail = 'Unable to dismiss welcome message.'
@@ -239,7 +238,6 @@ class OutlineTabView(RetrieveAPIView):
         enable_proctored_exams = False
         if show_enrolled:
             course_blocks = get_course_outline_block_tree(request, course_key_string, request.user)
-            log.info(course_blocks)
             date_blocks = get_course_date_blocks(course, request.user, request, num_assignments=1)
             dates_widget['course_date_blocks'] = [block for block in date_blocks if not isinstance(block, TodaysDate)]
 
@@ -299,7 +297,6 @@ class OutlineTabView(RetrieveAPIView):
         #
         # The long term goal is to remove the Course Blocks API call entirely,
         # so this is a tiny first step in that migration.
-        # log.info("#AmanK course blocks::: %s",course_blocks['children'])
         if course_blocks:
             user_course_outline = get_user_course_outline(
                 course_key, request.user, datetime.now(tz=timezone.utc)
@@ -307,20 +304,14 @@ class OutlineTabView(RetrieveAPIView):
             available_seq_ids = {str(usage_key) for usage_key in user_course_outline.sequences}
 
             available_section_ids = {str(section.usage_key) for section in user_course_outline.sections}
-            log.info("#venkat available_section_ids::: %s",available_section_ids)
-            # log.info("#AmanK available_seq_ids::: %s",available_seq_ids)
-            
-            log.info("#venkat course blocks::: %s",course_blocks)
-            # course_blocks["children"] = [
-            #     child for child in course_blocks["children"]
-            #     if "Duplicate" not in child.get("display_name", "")
-            # ]
-            # course_blocks is a reference to the root of the course,if chapter_data['id'] in available_section_ids
+
+            # course_blocks is a reference to the root of the course,
             # so we go through the chapters (sections) and keep only those
             # which are part of the outline.
             course_blocks['children'] = [
                 chapter_data
                 for chapter_data in course_blocks.get('children', [])
+                if chapter_data['id'] in available_section_ids
             ]
 
             # course_blocks is a reference to the root of the course, so we go
@@ -338,7 +329,6 @@ class OutlineTabView(RetrieveAPIView):
                     )
                 ] if 'children' in chapter_data else []
 
-        # log.info("#AmanK course blocks2::: %s",course_blocks)
         user_has_passing_grade = False
         if not request.user.is_anonymous:
             user_grade = CourseGradeFactory().read(request.user, course)
@@ -390,7 +380,7 @@ class OutlineTabView(RetrieveAPIView):
 @permission_classes((IsAuthenticated,))
 def dismiss_welcome_message(request):  # pylint: disable=missing-function-docstring
     course_id = request.data.get('course_id', None)
-    log.info("#venkat updated %s",course_id)
+
     # If body doesn't contain 'course_id', return 400 to client.
     if not course_id:
         raise ParseError(_("'course_id' is required."))
@@ -416,7 +406,7 @@ def save_course_goal(request):  # pylint: disable=missing-function-docstring
     course_id = request.data.get('course_id')
     days_per_week = request.data.get('days_per_week')
     subscribed_to_reminders = request.data.get('subscribed_to_reminders')
-    log.info("#venkat savecourse %s",course_id)
+
     # If body doesn't contain 'course_id', return 400 to client.
     if not course_id:
         raise ParseError("'course_id' is required.")
