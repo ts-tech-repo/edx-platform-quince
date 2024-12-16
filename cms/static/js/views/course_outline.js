@@ -115,9 +115,9 @@ function(
                 //  - make its name editable
                 this.refresh(this.createNewItemViewState(locator, scrollOffset));
             }
-            XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
-                success: this.options.onSave
-            });
+            // XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+            //     success: this.options.onSave
+            // });
         },
 
         onSectionAdded: function(locator, xblockElement, scrollOffset) {
