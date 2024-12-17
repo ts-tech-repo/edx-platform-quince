@@ -106,6 +106,7 @@ function(
              */
         onChildDuplicated: function(locator, xblockType, xblockElement) {
             var scrollOffset = ViewUtils.getScrollOffset(xblockElement);
+            console.log("X block type 1",xblockType);
             if (xblockType === 'section') {
                 this.onSectionAdded(locator, xblockElement, scrollOffset);
             } else {
