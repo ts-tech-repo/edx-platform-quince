@@ -6,10 +6,9 @@
 <link href="https://static.talentsprint.com/extras/table_template/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" rel="stylesheet">
 <link href="https://cdn.datatables.net/1.13.6/css/dataTables.jqueryui.min.css" rel="stylesheet">
-<link rel="icon" type="image/x-icon" href="https://static.talentsprint.com/favicon.ico"/>
 <link href="https://cdn.datatables.net/scroller/2.2.0/css/scroller.jqueryui.min.css" rel="stylesheet">
 <style>
-table.dataTable>thead>tr>th{background-color:#0075bb;color: white;}
+table.dataTable>thead>tr>th{background-color:#15376d;color: white;}
 h1{text-align: center;margin-top: 20px;font-size: 30px;font-weight: 700;margin-bottom: 50px;}
 h5{text-align: center;text-decoration: underline;font-weight: 700;color: #2b78e4;}
 img.logo{height: 60px;display: block;margin-top: 20px;margin-left: auto;margin-right: auto;}
@@ -27,7 +26,7 @@ img.logo{height: 60px;display: block;margin-top: 20px;margin-left: auto;margin-r
 .dataTables_wrapper .dataTables_filter input{outline-offset: 0px;width: 220px;border: 2px solid #aaa;}
 .dataTables_wrapper .dataTables_filter input {border-radius: 6px;}
 .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody{max-height: 360px!important;}
-.dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody::-webkit-scrollbar {display: none;}
+/* .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody::-webkit-scrollbar {display: none;} */
 div.dataTables_scrollHead table {border-top-left-radius: 10px;}
 div.dataTables_scrollHead th:first-child {border-top-left-radius: 10px;}
 div.dataTables_scrollHead th:last-child {border-top-right-radius: 10px;}
@@ -57,13 +56,14 @@ table.dataTable>thead>tr>th, table.dataTable>thead>tr>td {padding: 8px 30px;font
 table.dataTable tbody th, table.dataTable tbody td {padding: 8px 5px;font-size: small;}
 h1{font-size: 20px;margin-bottom: 20px;}
 }
-#tableData td:nth-child(4), #tableData td:nth-child(5){
+#tableData td:nth-child(4), #tableData td:nth-child(3){
     white-space: nowrap !important;
 }
 #tableData td:nth-child(1){
     white-space: wrap !important;
 }
 </style>
+<link href="https://static.talentsprint.com/edx_styles/assessment_tracker.css" rel="stylesheet">
 </head>
 <body>
 <div class="container">
@@ -77,7 +77,6 @@ h1{font-size: 20px;margin-bottom: 20px;}
             <tr class="header">
                 <th>Assessment</th>
                 <th>Module</th>
-                <th>Faculty</th>
                 <th>Release Date </th>
                 <th>Due Date </th>
                 <th>Submission Status</th>
@@ -91,7 +90,6 @@ h1{font-size: 20px;margin-bottom: 20px;}
             <tr>
                 <td>{{ item.assignment_name }}</td>
                 <td>{{ item.module }}</td>
-                <td>{{ item.faculty }}</td>
                 <td id="start_date_cell">{% if item.start_date == 'Jan 01, 1970 05:30 AM' or item.start_date == 'Jan 01, 1970 12:00 AM'%}-{% else %}{{ item.start_date }}{% endif %}</td>
                 <td id="due_date_cell">{% if item.due_date == 'Jan 01, 1970 05:30 AM' or item.due_date == 'Jan 01, 1970 12:00 AM'%}-{% else %}{{ item.due_date }}{% endif %}</td>
                 <td>{{ item.submission_status }}</td>
@@ -187,5 +185,3 @@ var maxCharacters = 28;
 </script>
 </body>
 </html>
-
-
