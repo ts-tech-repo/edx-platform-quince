@@ -38,12 +38,12 @@ def get_course_outline_block_tree(request, course_id, user=None, allow_start_dat
         of those children.
         """
         children = block.get('children', [])
-
+        log.info("# venkat childrendata %s",children)
         for i in range(len(children)):
             child_id = block['children'][i]
             child_detail = populate_children(all_blocks[child_id], all_blocks)
             block['children'][i] = child_detail
-
+        log.info("# venkat blockdata %s",block)
         return block
 
     def recurse_mark_scored(block):
