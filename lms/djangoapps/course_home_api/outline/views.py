@@ -325,7 +325,7 @@ class OutlineTabView(RetrieveAPIView):
                         # Edge case: Sometimes we have weird course structures.
                         # We expect only sequentials here, but if there is
                         # another type, just skip it (don't filter it out).
-                        seq_data['type'] != 'sequential'
+                        seq_data['type'] == 'sequential'
                     )
                 ] if 'children' in chapter_data else []
 
