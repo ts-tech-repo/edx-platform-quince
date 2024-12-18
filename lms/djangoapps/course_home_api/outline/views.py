@@ -315,13 +315,13 @@ class OutlineTabView(RetrieveAPIView):
             ]
 
             # course_blocks is a reference to the root of the course, so we go
-            # through the chapters (sections) to look for sequences to remove.
+            # through the chapters (sections) to look for sequences to remove. seq_data['id'] in available_seq_ids or
             for chapter_data in course_blocks['children']:
                 chapter_data['children'] = [
                     seq_data
                     for seq_data in chapter_data['children']
                     if (
-                        seq_data['id'] in available_seq_ids or
+                        
                         # Edge case: Sometimes we have weird course structures.
                         # We expect only sequentials here, but if there is
                         # another type, just skip it (don't filter it out).
