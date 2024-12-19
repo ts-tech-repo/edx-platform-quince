@@ -81,7 +81,6 @@ function(
         },
         
         onChildAdded: function(locator, category, event) {
-            console.log(" category type 1");
             if (category === 'vertical') {
                 // For units, redirect to the new unit's page in inline edit mode
                 this.onUnitAdded(locator);
@@ -94,9 +93,9 @@ function(
                 //  - make its name editable
                 this.refresh(this.createNewItemViewState(locator, ViewUtils.getScrollOffset($(event.target))));
             }
-            // XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
-            //     success: this.options.onSave
-            // });
+            XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+                success: this.options.onSave
+            });
         },
 
         /**
@@ -107,17 +106,14 @@ function(
              */
         onChildDuplicated: function(locator, xblockType, xblockElement) {
             var scrollOffset = ViewUtils.getScrollOffset(xblockElement);
-            console.log("X block type 1",xblockType);
             if (xblockType === 'section') {
                 this.onSectionAdded(locator, xblockElement, scrollOffset);
-                
             } else {
                 // For all other block types, refresh the view and do the following:
                 //  - show the new block expanded
                 //  - ensure it is scrolled into view
                 //  - make its name editable
                 this.refresh(this.createNewItemViewState(locator, scrollOffset));
-               
             }
             XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
                 success: this.options.onSave
@@ -130,7 +126,6 @@ function(
                 sectionInfo, sectionView;
                 // For new chapters in a non-empty view, add a new child view and render it
                 // to avoid the expense of refreshing the entire page.
-            console.log("self data added",)
             if (this.model.hasChildren()) {
                 sectionInfo = new XBlockOutlineInfo({
                     id: locator,
@@ -153,7 +148,6 @@ function(
         onChildDeleted: function(childView) {
             var xblockInfo = this.model,
                 children = xblockInfo.get('child_info') && xblockInfo.get('child_info').children;
-                console.log("children data",children);
                 // If deleting a section that isn't the final one, just remove it for efficiency
                 // as it cannot visually effect the other sections.
             if (childView.model.isChapter() && children && children.length > 1) {
@@ -212,7 +206,7 @@ function(
                     this.model.get('category'), this.parentView.model, true
                 )
             });
-            console.log("public modal d",modal);
+
             if (modal) {
                 modal.show();
             }
@@ -370,7 +364,6 @@ function(
                 } = data.static_file_notices;
 
                 const notices = [];
-                console.log("errror files",errorFiles);
                 if (errorFiles.length) {
                     notices.push((next) => new PromptView.Error({
                         title: gettext("Some errors occurred"),
@@ -438,7 +431,7 @@ function(
                     this.model.get('category'), this.parentView.model, true
                 )
             });
-            console.log("data modal",modal);
+
             if (modal) {
                 window.analytics.track('edx.bi.highlights.modal_open');
                 modal.show();
@@ -454,7 +447,7 @@ function(
         showActionsMenu(event) {
             const showActionsButton = event.currentTarget;
             const subMenu = showActionsButton.parentElement.querySelector(".wrapper-nav-sub");
-            console.log("venkat event",event);
+
             // Close all open dropdowns
             const elements = document.querySelectorAll("li.action-item.action-actions-menu.nav-item");
             elements.forEach(element => {
