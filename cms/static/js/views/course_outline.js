@@ -81,7 +81,7 @@ function(
         },
 
         onChildAdded: function(locator, category, event) {
-            console.log(" category type 1",category);
+            console.log(" category type 1");
             if (category === 'vertical') {
                 // For units, redirect to the new unit's page in inline edit mode
                 this.onUnitAdded(locator);
@@ -110,6 +110,9 @@ function(
             console.log("X block type 1",xblockType);
             if (xblockType === 'section') {
                 this.onSectionAdded(locator, xblockElement, scrollOffset);
+                XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+                    success: this.options.onSave
+                });
             } else {
                 // For all other block types, refresh the view and do the following:
                 //  - show the new block expanded
