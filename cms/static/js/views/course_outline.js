@@ -79,50 +79,50 @@ function(
             }
             this.refresh();
         },
-        consol()
-        onChildAdded: function(locator, category, event) {
-            console.log(" category type 1");
-            if (category === 'vertical') {
-                // For units, redirect to the new unit's page in inline edit mode
-                this.onUnitAdded(locator);
-            } else if (category === 'chapter' && this.model.hasChildren()) {
-                this.onSectionAdded(locator);
-            } else {
-                // For all other block types, refresh the view and do the following:
-                //  - show the new block expanded
-                //  - ensure it is scrolled into view
-                //  - make its name editable
-                this.refresh(this.createNewItemViewState(locator, ViewUtils.getScrollOffset($(event.target))));
-            }
-            XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
-                success: this.options.onSave
-            });
-        },
+        
+        // onChildAdded: function(locator, category, event) {
+        //     console.log(" category type 1");
+        //     if (category === 'vertical') {
+        //         // For units, redirect to the new unit's page in inline edit mode
+        //         this.onUnitAdded(locator);
+        //     } else if (category === 'chapter' && this.model.hasChildren()) {
+        //         this.onSectionAdded(locator);
+        //     } else {
+        //         // For all other block types, refresh the view and do the following:
+        //         //  - show the new block expanded
+        //         //  - ensure it is scrolled into view
+        //         //  - make its name editable
+        //         this.refresh(this.createNewItemViewState(locator, ViewUtils.getScrollOffset($(event.target))));
+        //     }
+        //     XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+        //         success: this.options.onSave
+        //     });
+        // },
 
-        /**
-             * Perform specific actions for duplicated xblock.
-             * @param {String}  locator  The locator of the new duplicated xblock.
-             * @param {String}  xblockType The front-end terminology of the xblock category.
-             * @param {jquery Element}  xblockElement  The xblock element to be duplicated.
-             */
-        onChildDuplicated: function(locator, xblockType, xblockElement) {
-            var scrollOffset = ViewUtils.getScrollOffset(xblockElement);
-            console.log("X block type 1",xblockType);
-            if (xblockType === 'section') {
-                this.onSectionAdded(locator, xblockElement, scrollOffset);
+        // /**
+        //      * Perform specific actions for duplicated xblock.
+        //      * @param {String}  locator  The locator of the new duplicated xblock.
+        //      * @param {String}  xblockType The front-end terminology of the xblock category.
+        //      * @param {jquery Element}  xblockElement  The xblock element to be duplicated.
+        //      */
+        // onChildDuplicated: function(locator, xblockType, xblockElement) {
+        //     var scrollOffset = ViewUtils.getScrollOffset(xblockElement);
+        //     console.log("X block type 1",xblockType);
+        //     if (xblockType === 'section') {
+        //         this.onSectionAdded(locator, xblockElement, scrollOffset);
                 
-            } else {
-                // For all other block types, refresh the view and do the following:
-                //  - show the new block expanded
-                //  - ensure it is scrolled into view
-                //  - make its name editable
-                this.refresh(this.createNewItemViewState(locator, scrollOffset));
+        //     } else {
+        //         // For all other block types, refresh the view and do the following:
+        //         //  - show the new block expanded
+        //         //  - ensure it is scrolled into view
+        //         //  - make its name editable
+        //         this.refresh(this.createNewItemViewState(locator, scrollOffset));
                
-            }
-            XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
-                success: this.options.onSave
-            });
-        },
+        //     }
+        //     XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+        //         success: this.options.onSave
+        //     });
+        // },
 
         onSectionAdded: function(locator, xblockElement, scrollOffset) {
             var self = this,
