@@ -303,9 +303,10 @@ class OutlineTabView(RetrieveAPIView):
                 course_key, request.user, datetime.now(tz=timezone.utc)
             )
             available_seq_ids = {str(usage_key) for usage_key in user_course_outline.sequences}
-            log.info("sequence ids %s",available_seq_ids)
+            log.info("sequence ids1 %s",available_seq_ids)
             available_section_ids = {str(section.usage_key) for section in user_course_outline.sections}
-            log.info('#venkat courseblocklistdata  %s',course_blocks)
+            log.info("section ids1 %s",available_section_ids)
+            log.info('#venkat courseblocklist1  %s',course_blocks)
             # course_blocks is a reference to the root of the course,if chapter_data['id'] in available_section_ids
             # so we go through the chapters (sections) and keep only those
             # which are part of the outline.
