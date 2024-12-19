@@ -79,7 +79,7 @@ function(
             }
             this.refresh();
         },
-
+        consol()
         onChildAdded: function(locator, category, event) {
             console.log(" category type 1");
             if (category === 'vertical') {
