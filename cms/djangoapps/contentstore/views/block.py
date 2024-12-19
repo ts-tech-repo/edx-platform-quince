@@ -128,7 +128,7 @@ def xblock_handler(request, usage_key_string=None):
               The locator (unicode representation of a UsageKey) for the created xblock (minus children) is returned.
     """
     response = handle_xblock(request, usage_key_string)
-    log.info("# venkat handle block response content: %s", response.content)
+    log.info("# venkat handle block response content: %s", vars(response))
     return response
 
 
