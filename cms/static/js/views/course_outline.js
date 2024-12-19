@@ -94,9 +94,9 @@ function(
                 //  - make its name editable
                 this.refresh(this.createNewItemViewState(locator, ViewUtils.getScrollOffset($(event.target))));
             }
-            XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
-                success: this.options.onSave
-            });
+            // XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+            //     success: this.options.onSave
+            // });
         },
 
         /**

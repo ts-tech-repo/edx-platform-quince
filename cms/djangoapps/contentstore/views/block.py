@@ -127,8 +127,9 @@ def xblock_handler(request, usage_key_string=None):
                      fields except parent_locator)
               The locator (unicode representation of a UsageKey) for the created xblock (minus children) is returned.
     """
-    log.info("# venkat handle block %s",handle_xblock(request, usage_key_string))
-    return handle_xblock(request, usage_key_string)
+    response = handle_xblock(request, usage_key_string)
+    log.info("# venkat handle block response content: %s", response.content)
+    return response
 
 
 @require_http_methods("GET")
