@@ -123,9 +123,9 @@ function(
                     success: this.options.onSave
                 });
             }
-            // XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
-            //     success: this.options.onSave
-            // });
+            XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+                success: this.options.onSave
+            });
         },
 
         onSectionAdded: function(locator, xblockElement, scrollOffset) {
