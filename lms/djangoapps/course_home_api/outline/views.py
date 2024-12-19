@@ -2,7 +2,7 @@
 Outline Tab Views
 """
 from datetime import datetime, timezone
-
+import logging
 from completion.exceptions import UnavailableCompletionData  # lint-amnesty, pylint: disable=wrong-import-order
 from completion.utilities import get_key_to_last_completed_block  # lint-amnesty, pylint: disable=wrong-import-order
 from django.conf import settings  # lint-amnesty, pylint: disable=wrong-import-order
@@ -53,6 +53,7 @@ from openedx.features.course_experience.url_helpers import get_learning_mfe_home
 from openedx.features.course_experience.utils import get_course_outline_block_tree, get_start_block
 from openedx.features.discounts.utils import generate_offer_data
 from xmodule.course_block import COURSE_VISIBILITY_PUBLIC, COURSE_VISIBILITY_PUBLIC_OUTLINE  # lint-amnesty, pylint: disable=wrong-import-order
+log = logging.getLogger(__name__)
 
 
 class UnableToDismissWelcomeMessage(APIException):
