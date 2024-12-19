@@ -128,7 +128,7 @@ def get_blocks(
         include_completion=include_completion,
         include_has_scheduled_content=include_has_scheduled_content
     )
-    log.info("# venkata blocks %s",blocks)
+    log.info("# venkata blocks %s",vars(blocks))
     log.info("# venkata blocksfilter %s",block_types_filter)
     # filter blocks by types
     if block_types_filter:
