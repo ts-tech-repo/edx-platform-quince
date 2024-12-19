@@ -179,12 +179,13 @@ def handle_xblock(request, usage_key_string=None):
     """
     if usage_key_string:
         usage_key = usage_key_with_run(usage_key_string)
-
+        log.info("#venkat requestmethod %s",request.method)
         access_check = (
             has_studio_read_access
             if request.method == "GET"
             else has_studio_write_access
         )
+        log.info("#venkat accesscheck %s",access_check)
         if not access_check(request.user, usage_key.course_key):
             raise PermissionDenied()
 
