@@ -123,10 +123,14 @@ def get_course_outline_block_tree(request, course_id, user=None, allow_start_dat
 
     course_outline_root_block = all_blocks['blocks'].get(all_blocks['root'], None)
     if course_outline_root_block:
-        populate_children(course_outline_root_block, all_blocks['blocks'])
-        recurse_mark_scored(course_outline_root_block)
-        recurse_num_graded_problems(course_outline_root_block)
-        recurse_mark_auth_denial(course_outline_root_block)
+        populate = populate_children(course_outline_root_block, all_blocks['blocks'])
+        log.info("#venkat populate %s",populate)
+        marks_scored = recurse_mark_scored(course_outline_root_block)
+        log.info("#venkat marksscored %s",marks_scored)
+        recurse_num = recurse_num_graded_problems(course_outline_root_block)
+        log.info("#venkat recurse_num %s",recurse_num)
+        recurse_mark = recurse_mark_auth_denial(course_outline_root_block)
+        log.info("#venkat recurse_mark %s",recurse_mark)
     return course_outline_root_block
 
 
