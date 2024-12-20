@@ -222,7 +222,7 @@ def handle_xblock(request, usage_key_string=None):
             return modify_xblock(usage_key, request)
 
     elif request.method in ("PUT", "POST"):
-        log.info("#venkat requestjson %s",vars(request.json))
+        log.info("#venkat requestjson %s", request.json)
         if "duplicate_source_locator" in request.json:
             parent_usage_key = usage_key_with_run(request.json["parent_locator"])
             duplicate_source_usage_key = usage_key_with_run(
