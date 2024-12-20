@@ -822,12 +822,14 @@ def _duplicate_block(
         log.info("#venkat sourceitem %s",source_item)
         # Change the blockID to be unique.
         dest_usage_key = source_item.location.replace(name=uuid4().hex)
+        log.info("#venkat dest_usage_key %s",dest_usage_key)
         category = dest_usage_key.block_type
-
+        log.info("#venkat categoryb %s",category)
         # Update the display name to indicate this is a duplicate (unless display name provided).
         # Can't use own_metadata(), b/c it converts data for JSON serialization -
         # not suitable for setting metadata of the new block
         duplicate_metadata = {}
+        log.info("#venkata fieldvalues %s",source_item.fields.values())
         for field in source_item.fields.values():
             if field.scope == Scope.settings and field.is_set_on(source_item):
                 duplicate_metadata[field.name] = field.read_from(source_item)
