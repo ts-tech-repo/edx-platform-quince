@@ -819,6 +819,7 @@ def _duplicate_block(
     store = modulestore()
     with store.bulk_operations(duplicate_source_usage_key.course_key):
         source_item = store.get_item(duplicate_source_usage_key)
+        log.info("#venkat sourceitem %s",source_item)
         # Change the blockID to be unique.
         dest_usage_key = source_item.location.replace(name=uuid4().hex)
         category = dest_usage_key.block_type
