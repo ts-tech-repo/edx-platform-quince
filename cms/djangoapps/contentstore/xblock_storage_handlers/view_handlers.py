@@ -225,10 +225,11 @@ def handle_xblock(request, usage_key_string=None):
         log.info("#venkat requestjson %s", request.json)
         if "duplicate_source_locator" in request.json:
             parent_usage_key = usage_key_with_run(request.json["parent_locator"])
+            log.info("#venkat parentusage %s",parent_usage_key)
             duplicate_source_usage_key = usage_key_with_run(
                 request.json["duplicate_source_locator"]
             )
-
+            log.info("#venkat duplicatesource %s",duplicate_source_usage_key)
             source_course = duplicate_source_usage_key.course_key
             dest_course = parent_usage_key.course_key
             if not has_studio_write_access(
