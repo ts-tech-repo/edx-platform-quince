@@ -103,6 +103,7 @@ function(
              */
         onChildDuplicated: function(locator, xblockType, xblockElement) {
             var scrollOffset = ViewUtils.getScrollOffset(xblockElement);
+            console.log(xblockType);
             if (xblockType === 'section') {
                 this.onSectionAdded(locator, xblockElement, scrollOffset);
             } else {
@@ -111,6 +112,9 @@ function(
                 //  - ensure it is scrolled into view
                 //  - make its name editable
                 this.refresh(this.createNewItemViewState(locator, scrollOffset));
+                XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+                        success: this.options.onSave
+                    });
             }
             // XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
             //     success: this.options.onSave
