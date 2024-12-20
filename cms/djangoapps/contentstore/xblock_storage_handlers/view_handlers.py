@@ -231,7 +231,9 @@ def handle_xblock(request, usage_key_string=None):
             )
             log.info("#venkat duplicatesource %s",duplicate_source_usage_key)
             source_course = duplicate_source_usage_key.course_key
+            log.info("#venkat sourcecourse %s",source_course)
             dest_course = parent_usage_key.course_key
+            log.info("#venkat dest_course %s",dest_course)
             if not has_studio_write_access(
                 request.user, dest_course
             ) or not has_studio_read_access(request.user, source_course):
@@ -249,7 +251,8 @@ def handle_xblock(request, usage_key_string=None):
                     },
                     status=400,
                 )
-
+            log.info("# venkat username %s",request.user)
+            log.info("#venkat displayname %s",request.json.get("display_name"))
             dest_usage_key = _duplicate_block(
                 parent_usage_key,
                 duplicate_source_usage_key,
