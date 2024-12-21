@@ -206,9 +206,6 @@ function(
                     this.model.get('category'), this.parentView.model, true
                 )
             });
-            XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
-                success: this.options.onSave
-            });
 
             if (modal) {
                 modal.show();
