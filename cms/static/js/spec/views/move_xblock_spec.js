@@ -728,7 +728,6 @@ describe('MoveXBlock', function() {
         });
 
         it('do not move an xblock when cancel button is clicked', function() {
-            console.log("loginnnnnnnnnnnnnnnnnnnnnn");
             
             modal.$el.find('.modal-actions .action-cancel').click();
             expect(getMovedAlertNotification().html().length).toEqual(0);
