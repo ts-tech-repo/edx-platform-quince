@@ -105,7 +105,9 @@ function(
             var scrollOffset = ViewUtils.getScrollOffset(xblockElement);
             if (xblockType === 'section') {
                 this.onUnitAdded(locator);
+                this.onSectionAdded(locator);
                 this.onSectionAdded(locator, xblockElement, scrollOffset);
+                this.refresh(this.createNewItemViewState(locator, scrollOffset));
             } else {
                 // For all other block types, refresh the view and do the following:
                 //  - show the new block expanded
