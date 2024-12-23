@@ -316,6 +316,7 @@ def _get_user_course_outline_and_processors(course_key: CourseKey,  # lint-amnes
 
     full_course_outline = get_course_outline(course_key)
     user_can_see_all_content = can_see_all_content(user, course_key)
+    log.info(f"{user_can_see_all_content} user_can_see_all_content")
     # These are processors that alter which sequences are visible to students.
     # For instance, certain sequences that are intentionally hidden or not yet
     # released. These do not need to be run for staff users. This is where we
