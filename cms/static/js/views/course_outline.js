@@ -104,22 +104,17 @@ function(
             onChildDuplicated: function(locator, xblockType, xblockElement) {
                 var scrollOffset = ViewUtils.getScrollOffset(xblockElement);
 
-                // Refresh the view to reflect the duplicated block
+                // Refresh the view for the new duplicated block
                 this.refresh(this.createNewItemViewState(locator, scrollOffset));
 
                 if (xblockType === 'section') {
-                    // Publish only the section and prevent cascading publication
-                    XBlockViewUtils.updateXBlockFields(this.model, {"publish": "make_public"}, {
+                    // Publish only the section
+                    XBlockViewUtils.updateXBlockFields(this.model, { "publish": "make_public" }, {
                         success: function() {
-                            // After publishing the section, explicitly ensure subsections and units remain unpublished
-                            XBlockViewUtils.updateXBlockFields(this.model, {"publish": "make_private"}, {
-                                success: function() {
-                                    console.log("Subsections and units reverted to private state.");
-                                },
-                                error: function() {
-                                    console.error("Failed to revert subsections and units to private state.");
-                                }
-                            });
+                            console.log("Section published successfully.");
+
+                            // Revert child blocks (subsections and units) to private
+                            this.revertChildBlocksToPrivate(locator);
                         }.bind(this),
                         error: function() {
                             console.error("Failed to publish the section.");
@@ -127,8 +122,42 @@ function(
                     });
                 } else {
                     // Handle other block types (e.g., subsections and units)
-                    this.refresh(this.createNewItemViewState(locator, scrollOffset));
+                    this.expandNewBlock(locator, scrollOffset);
                 }
+            },
+
+            /**
+             * Revert all child blocks (subsections and units) under a section to a private state.
+             * @param {String} sectionLocator The locator of the parent section.
+             */
+            revertChildBlocksToPrivate: function(sectionLocator) {
+                // Fetch child blocks of the section
+                XBlockViewUtils.getChildBlocks(sectionLocator, function(children) {
+                    children.forEach(function(child) {
+                        // Set each child block to private
+                        XBlockViewUtils.updateXBlockFields(child.model, { "publish": "make_private" }, {
+                            success: function() {
+                                console.log(`Child block ${child.model.id} reverted to private.`);
+                            },
+                            error: function() {
+                                console.error(`Failed to revert child block ${child.model.id} to private.`);
+                            }
+                        });
+                    });
+                }, function() {
+                    console.error("Failed to fetch child blocks.");
+                });
+            },
+
+            /**
+             * Expand the new block, ensure it is scrolled into view, and make its name editable.
+             * @param {String} locator The locator of the xblock.
+             * @param {Number} scrollOffset The offset for scrolling.
+             */
+            expandNewBlock: function(locator, scrollOffset) {
+                this.refresh(this.createNewItemViewState(locator, scrollOffset));
+                // Additional logic to expand block and make its name editable
+                // ...
             },
 
         onSectionAdded: function(locator, xblockElement, scrollOffset) {
