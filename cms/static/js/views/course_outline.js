@@ -104,8 +104,6 @@ function(
         onChildDuplicated: function(locator, xblockType, xblockElement) {
             var scrollOffset = ViewUtils.getScrollOffset(xblockElement);
             if (xblockType === 'section') {
-                this.onUnitAdded(locator);
-                this.onSectionAdded(locator);
                 this.onSectionAdded(locator, xblockElement, scrollOffset);
                 this.refresh(this.createNewItemViewState(locator, scrollOffset));
             } else {
