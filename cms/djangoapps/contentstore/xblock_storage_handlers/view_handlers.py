@@ -217,7 +217,6 @@ def handle_xblock(request, usage_key_string=None):
             _delete_item(usage_key, request.user)
             return JsonResponse()
         else:  # Since we have a usage_key, we are updating an existing xblock.
-            log.info("Here in modify xblock")
             return modify_xblock(usage_key, request)
 
     elif request.method in ("PUT", "POST"):
@@ -559,6 +558,7 @@ def _save_xblock(  # lint-amnesty, pylint: disable=too-many-statements
         # Make public after updating the xblock, in case the caller asked for both an update and a publish.
         # Used by Bok Choy tests and by republishing of staff locks.
         if publish == "make_public":
+            log.info("Here in make public")
             modulestore().publish(xblock.location, user.id)
 
         # If summary_configuration_enabled is not None, use AIAsideSummary to update it.
