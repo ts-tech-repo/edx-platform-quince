@@ -179,13 +179,11 @@ def handle_xblock(request, usage_key_string=None):
     """
     if usage_key_string:
         usage_key = usage_key_with_run(usage_key_string)
-        log.info("#venkat requestmethod %s",request.method)
         access_check = (
             has_studio_read_access
             if request.method == "GET"
             else has_studio_write_access
         )
-        log.info("#venkat accesscheck %s",access_check)
         if not access_check(request.user, usage_key.course_key):
             raise PermissionDenied()
 
@@ -222,18 +220,13 @@ def handle_xblock(request, usage_key_string=None):
             return modify_xblock(usage_key, request)
 
     elif request.method in ("PUT", "POST"):
-        log.info("#venkat requestjson %s", request.json)
         if "duplicate_source_locator" in request.json:
             parent_usage_key = usage_key_with_run(request.json["parent_locator"])
-            log.info("#venkat parentusage %s",parent_usage_key)
             duplicate_source_usage_key = usage_key_with_run(
                 request.json["duplicate_source_locator"]
             )
-            log.info("#venkat duplicatesource %s",duplicate_source_usage_key)
             source_course = duplicate_source_usage_key.course_key
-            log.info("#venkat sourcecourse %s",source_course)
             dest_course = parent_usage_key.course_key
-            log.info("#venkat dest_course %s",dest_course)
             if not has_studio_write_access(
                 request.user, dest_course
             ) or not has_studio_read_access(request.user, source_course):
@@ -251,8 +244,6 @@ def handle_xblock(request, usage_key_string=None):
                     },
                     status=400,
                 )
-            log.info("# venkat username %s",request.user)
-            log.info("#venkat displayname %s",request.json.get("display_name"))
             dest_usage_key = _duplicate_block(
                 parent_usage_key,
                 duplicate_source_usage_key,
@@ -567,6 +558,7 @@ def _save_xblock(  # lint-amnesty, pylint: disable=too-many-statements
         # Make public after updating the xblock, in case the caller asked for both an update and a publish.
         # Used by Bok Choy tests and by republishing of staff locks.
         if publish == "make_public":
+            log.info("Here in make public")
             modulestore().publish(xblock.location, user.id)
 
         # If summary_configuration_enabled is not None, use AIAsideSummary to update it.
@@ -638,7 +630,6 @@ def _create_block(request):
                 },
                 status=400,
             )
-    log.info("Coming here")
     created_block = create_xblock(
         parent_locator=parent_locator,
         user=request.user,
@@ -819,17 +810,13 @@ def _duplicate_block(
     store = modulestore()
     with store.bulk_operations(duplicate_source_usage_key.course_key):
         source_item = store.get_item(duplicate_source_usage_key)
-        log.info("#venkat sourceitem %s",source_item)
         # Change the blockID to be unique.
         dest_usage_key = source_item.location.replace(name=uuid4().hex)
-        log.info("#venkat dest_usage_key %s",dest_usage_key)
         category = dest_usage_key.block_type
-        log.info("#venkat categoryb %s",category)
         # Update the display name to indicate this is a duplicate (unless display name provided).
         # Can't use own_metadata(), b/c it converts data for JSON serialization -
         # not suitable for setting metadata of the new block
         duplicate_metadata = {}
-        log.info("#venkata fieldvalues %s",source_item.fields.values())
         for field in source_item.fields.values():
             if field.scope == Scope.settings and field.is_set_on(source_item):
                 duplicate_metadata[field.name] = field.read_from(source_item)
