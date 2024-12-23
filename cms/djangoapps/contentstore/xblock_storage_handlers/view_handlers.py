@@ -638,7 +638,7 @@ def _create_block(request):
                 },
                 status=400,
             )
-
+    log.info("Coming here")
     created_block = create_xblock(
         parent_locator=parent_locator,
         user=request.user,
