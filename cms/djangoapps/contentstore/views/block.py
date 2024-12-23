@@ -298,6 +298,7 @@ def xblock_outline_handler(request, usage_key_string):
     a course.
     """
     usage_key = usage_key_with_run(usage_key_string)
+    log.info("# venkat usagekey %s",usage_key)
     if not has_studio_read_access(request.user, usage_key.course_key):
         raise PermissionDenied()
 
