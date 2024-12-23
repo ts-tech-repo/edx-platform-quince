@@ -104,8 +104,10 @@ function(
         onChildDuplicated: function(locator, xblockType, xblockElement) {
             var scrollOffset = ViewUtils.getScrollOffset(xblockElement);
             if (xblockType === 'section') {
-                this.onSectionAdded(locator, xblockElement, scrollOffset);
                 this.refresh(this.createNewItemViewState(locator, scrollOffset));
+                XBlockViewUtils.updateXBlockFields(this.model, {"publish":"make_public"}, {
+                        success: this.options.onSave
+                    });
             } else {
                 // For all other block types, refresh the view and do the following:
                 //  - show the new block expanded
