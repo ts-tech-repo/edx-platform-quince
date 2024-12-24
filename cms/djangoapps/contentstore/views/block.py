@@ -127,10 +127,7 @@ def xblock_handler(request, usage_key_string=None):
                      fields except parent_locator)
               The locator (unicode representation of a UsageKey) for the created xblock (minus children) is returned.
     """
-    log.info("# venkat requestdata %s",request)
-    log.info("# venkat usagestring %s",usage_key_string)
     response = handle_xblock(request, usage_key_string)
-    log.info("# venkat handle block response content: %s", vars(response))
     return response
 
 
@@ -298,14 +295,17 @@ def xblock_outline_handler(request, usage_key_string):
     a course.
     """
     usage_key = usage_key_with_run(usage_key_string)
+    log.info("# venkat usagekey %s",usage_key)
     if not has_studio_read_access(request.user, usage_key.course_key):
         raise PermissionDenied()
 
     response_format = request.GET.get("format", "html")
+    log.info("# venkat response_format %s",response_format)
     if response_format == "json" or "application/json" in request.META.get(
         "HTTP_ACCEPT", "application/json"
     ):
         store = modulestore()
+        log.info("# venkat storedata %s",store)
         with store.bulk_operations(usage_key.course_key):
             root_xblock = store.get_item(usage_key, depth=None)
             return JsonResponse(
