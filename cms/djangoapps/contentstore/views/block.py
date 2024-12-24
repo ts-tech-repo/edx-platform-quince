@@ -300,10 +300,12 @@ def xblock_outline_handler(request, usage_key_string):
         raise PermissionDenied()
 
     response_format = request.GET.get("format", "html")
+    log.info("# venkat response_format %s",response_format)
     if response_format == "json" or "application/json" in request.META.get(
         "HTTP_ACCEPT", "application/json"
     ):
         store = modulestore()
+        log.info("# venkat storedata %s",store)
         with store.bulk_operations(usage_key.course_key):
             root_xblock = store.get_item(usage_key, depth=None)
             return JsonResponse(
