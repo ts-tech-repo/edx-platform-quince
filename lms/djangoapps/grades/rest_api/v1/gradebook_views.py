@@ -688,10 +688,10 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                         
                         User = get_user_model()
                         email_to_check = entry.get("email", "")
-                        username_to_check = "ssdfgdf"
+                        username_to_check = entry.get("username", "")
 
                         # Check if the user exists
-                        has_role = User.objects.filter(email=email_to_check, username=username_to_check, is_active=True).exists()
+                        has_role = User.objects.filter(email=email_to_check, username=username_to_check, is_active=True)
 
                         log.info("#venkat has_role::: %s", has_role)
                         if '@ts.com' in entry["email"] or '@talentsprint.com' in entry["email"]:
