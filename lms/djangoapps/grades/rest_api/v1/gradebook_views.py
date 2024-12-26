@@ -693,7 +693,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                         # Check if the user exists
                         has_role = User.objects.filter(email=email_to_check, username=username_to_check, is_active=True)
 
-                        log.info("#venkat has_role::: %s", has_role)
+                        log.info("#venkat has_role::: %s", vars(has_role))
                         if '@ts.com' in entry["email"] or '@talentsprint.com' in entry["email"]:
                             continue
                         log.info("#venkat entrydata::: %s",entry)
