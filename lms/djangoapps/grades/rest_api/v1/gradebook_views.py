@@ -685,22 +685,17 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 ):
                     if not exc:
                         entry = self._gradebook_entry(user, course, graded_subsections, course_grade)
-                        
-                        User = get_user_model()
-                        email_to_check = entry.get("email", "")
-                        username_to_check = entry.get("username", "")
-
                         # Check if the user exists
-                        user_records = User.objects.filter(email=email_to_check, username=username_to_check, is_active=True)
+                        user_records = get_user_model().objects.filter(email=entry.get("email", ""), username=entry.get("username", ""), is_active=True)
                         for user in user_records:
                             user_data = {
-                                'Username': user.username,
-                                'Email': user.email,
-                                'Is Superuser': user.is_superuser,
-                                'Is Staff': user.is_staff
+                                'username': user.username,
+                                'email': user.email,
+                                'is_superuser': user.is_superuser,
+                                'is_staff': user.is_staff
                             }
                             log.info("#venkat user_data::: %s", user_data)
-                        if '@ts.com' in entry["email"] or '@talentsprint.com' in entry["email"]:
+                        if '@ts.com' in user_data["email"] or '@talentsprint.com' in user_data["email"] or user_data["is_superuser"] or user_data['is_staff'] :
                             continue
                         log.info("#venkat entrydata::: %s",entry)
                         entries.append(entry)
