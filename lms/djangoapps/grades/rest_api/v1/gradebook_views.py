@@ -685,9 +685,15 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 ):
                     if not exc:
                         entry = self._gradebook_entry(user, course, graded_subsections, course_grade)
-                        has_role = User.objects.filter( username = entry.get("username","") ,is_active=True).exists()
+                        
+                        User = get_user_model()
+                        email_to_check = entry.get("email", "")
+                        username_to_check = entry.get("username", "")
 
-                        log.info("#venkat has_role::: %s",(has_role))
+                        # Check if the user exists
+                        has_role = User.objects.filter(email=email_to_check, username=username_to_check, is_active=True).exists()
+
+                        log.info("#venkat has_role::: %s", has_role)
                         if '@ts.com' in entry["email"] or '@talentsprint.com' in entry["email"]:
                             continue
                         log.info("#venkat entrydata::: %s",entry)
