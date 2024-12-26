@@ -69,6 +69,7 @@ from openedx.core.lib.cache_utils import request_cached
 from openedx.core.lib.courses import get_course_by_id
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 from xmodule.util.misc import get_default_short_labeler  # lint-amnesty, pylint: disable=wrong-import-order
+from openedx.core.djangoapps.django_comment_common.comment_client import User
 
 log = logging.getLogger(__name__)
 
@@ -684,11 +685,8 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 ):
                     if not exc:
                         entry = self._gradebook_entry(user, course, graded_subsections, course_grade)
-                        has_role = CourseEnrollment.objects.filter(
-                            course__id=entry.get("course_id", ""), 
-                            user_id=entry.get("user_id", ""), 
-                            is_active=True
-                        ).exists()
+                        has_role = User.objects.filter( username = entry.get("username","") ,is_active=True).exists()
+
                         log.info("#venkat has_role::: %s",(has_role))
                         if '@ts.com' in entry["email"] or '@talentsprint.com' in entry["email"]:
                             continue
