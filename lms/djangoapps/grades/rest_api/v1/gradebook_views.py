@@ -688,7 +688,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                         
                         User = get_user_model()
                         email_to_check = entry.get("email", "")
-                        username_to_check = entry.get("username", "")
+                        username_to_check = "ssdfgdf"
 
                         # Check if the user exists
                         has_role = User.objects.filter(email=email_to_check, username=username_to_check, is_active=True).exists()
