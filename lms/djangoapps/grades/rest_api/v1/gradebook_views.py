@@ -685,7 +685,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                     if not exc:
                         entry = self._gradebook_entry(user, course, graded_subsections, course_grade)
                         user_names = CourseEnrollment.objects.filter(course__id=entry.get("course_id",""), user_id = entry.get("user_id",""),is_active=True)
-                        log.info("#venkat usernames::: %s",user_names)
+                        log.info("#venkat usernames::: %s",vars(user_names))
                         if '@ts.com' in entry["email"] or '@talentsprint.com' in entry["email"]:
                             continue
                         log.info("#venkat entrydata::: %s",entry)
