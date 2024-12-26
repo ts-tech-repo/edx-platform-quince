@@ -689,7 +689,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                             user_id=entry.get("user_id", ""), 
                             is_active=True
                         ).exists()
-                        log.info("#venkat has_role::: %s",vars(has_role))
+                        log.info("#venkat has_role::: %s",(has_role))
                         if '@ts.com' in entry["email"] or '@talentsprint.com' in entry["email"]:
                             continue
                         log.info("#venkat entrydata::: %s",entry)
