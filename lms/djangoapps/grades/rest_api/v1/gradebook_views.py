@@ -660,12 +660,10 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                 q_objects.append(q_object)
             if request.GET.get('excluded_course_roles'):
                 excluded_course_roles = request.GET.getlist('excluded_course_roles')
-                log.info("#venkat excludedrole::: %s",excluded_course_roles)
                 course_access_role_filters = dict(
                     user=OuterRef('user'),
                     course_id=course_key,
                 )
-                log.info("#venkat course accessrole::: %s",course_access_role_filters)
                 if 'all' not in excluded_course_roles:
                     course_access_role_filters['role__in'] = excluded_course_roles
                 annotations['has_excluded_role'] = Exists(
@@ -676,7 +674,6 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             entries = []
             related_models = ['user']
             users = self._paginate_users(course_key, q_objects, related_models, annotations=annotations)
-            log.info("#venkat usersstotal::: %s",users)
             users_counts = self._get_users_counts(course_key, q_objects, annotations=annotations)
 
             with bulk_gradebook_view_context(course_key, users):
