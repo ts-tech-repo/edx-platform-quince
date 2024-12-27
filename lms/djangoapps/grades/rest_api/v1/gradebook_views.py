@@ -516,7 +516,6 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         """
         user_entry = self._serialize_user_grade(user, course.id, course_grade)
         breakdown = self._section_breakdown(course, graded_subsections, course_grade)
-        # log.info("#venkat breakdown _data::: %s",breakdown)
         user_entry['section_breakdown'] = breakdown
         user_entry['progress_page_url'] = reverse(
             'student_progress',
@@ -539,7 +538,6 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         external_user_key = get_external_key_by_user_and_course(user, course.id)
         if external_user_key:
             user_entry['external_user_key'] = external_user_key
-        log.info(" venkat user entrydata %s",user_entry)
         return user_entry
 
     @verify_course_exists("Requested grade for unknown course {course}")
@@ -561,10 +559,8 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
         # over users to determine their subsection grades.  We purposely avoid fetching
         # the user-specific course structure for each user, because that is very expensive.
         course_data = CourseData(user=None, course=course)
-        log.info("venkat coursedata: %s", course_data)
 
         graded_subsections = list(grades_context.graded_subsections_for_course(course_data.collected_structure))
-        log.info("venkat grade subsection: %s", graded_subsections)
 
         if request.GET.get('username'):
             with self._get_user_or_raise(request, course_key) as grade_user:
@@ -693,14 +689,11 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                                 'is_superuser': user.is_superuser,
                                 'is_staff': user.is_staff
                             }
-                            log.info("#venkat user_data::: %s", user_data)
                         if user_data and ('@ts.com' in user_data.get("email","") or '@talentsprint.com' in user_data.get("email","") or user_data.get("is_superuser",False) or user_data.get("is_staff",False)) :
                             continue
-                        log.info("#venkat entrydata::: %s",entry)
                         entries.append(entry)
 
             serializer = StudentGradebookEntrySerializer(entries, many=True)
-            log.info("#venkat serializer d::: %s",StudentGradebookEntrySerializer(entries, many=True))
             return self.get_paginated_response(serializer.data, **users_counts)
 
     def _get_user_count(self, query_args, cache_time=3600, annotations=None):
