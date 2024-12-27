@@ -692,7 +692,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                                 'is_staff': user.is_staff
                             }
                             log.info("#venkat user_data::: %s", user_data)
-                        if '@ts.com' in user_data["email"] or '@talentsprint.com' in user_data["email"] or user_data["is_superuser"] or user_data['is_staff'] :
+                        if '@ts.com' in user_data.get("email","") or '@talentsprint.com' in user_data.get("email","") or user_data.get("is_superuser",False) or user_data.get("is_staff",False) :
                             continue
                         log.info("#venkat entrydata::: %s",entry)
                         entries.append(entry)
