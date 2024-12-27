@@ -677,6 +677,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
             users_counts = self._get_users_counts(course_key, q_objects, annotations=annotations)
 
             with bulk_gradebook_view_context(course_key, users):
+                user_data = {}
                 for user, course_grade, exc in CourseGradeFactory().iter(
                     users, course_key=course_key, collected_block_structure=course_data.collected_structure
                 ):
@@ -684,6 +685,7 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                         entry = self._gradebook_entry(user, course, graded_subsections, course_grade)
                         # Check if the user exists
                         user_records = get_user_model().objects.filter(email=entry.get("email", ""), username=entry.get("username", ""), is_active=True)
+
                         # for user in user_records:
                         #     user_data = {
                         #         'username': user.username,
