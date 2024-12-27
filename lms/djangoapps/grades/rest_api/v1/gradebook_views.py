@@ -686,14 +686,14 @@ class GradebookView(GradeViewMixin, PaginatedAPIView):
                         # Check if the user exists
                         user_records = get_user_model().objects.filter(email=entry.get("email", ""), username=entry.get("username", ""), is_active=True)
 
-                        # for user in user_records:
-                        #     user_data = {
-                        #         'username': user.username,
-                        #         'email': user.email,
-                        #         'is_superuser': user.is_superuser,
-                        #         'is_staff': user.is_staff
-                        #     }
-                        #     log.info("#venkat user_data::: %s", user_data)
+                        for user in user_records:
+                            user_data = {
+                                'username': user.username,
+                                'email': user.email,
+                                'is_superuser': user.is_superuser,
+                                'is_staff': user.is_staff
+                            }
+                            log.info("#venkat user_data::: %s", user_data)
                         if user_data and ('@ts.com' in user_data.get("email","") or '@talentsprint.com' in user_data.get("email","") or user_data.get("is_superuser",False) or user_data.get("is_staff",False)) :
                             continue
                         log.info("#venkat entrydata::: %s",entry)
