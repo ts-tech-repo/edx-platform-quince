@@ -36,6 +36,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import int_to_base36
 from openedx.core.djangoapps.enrollments.data import get_course_enrollments
+from social_django.models import UserSocialAuth
 
 from django.db import transaction
 from django.db.models.signals import post_save
