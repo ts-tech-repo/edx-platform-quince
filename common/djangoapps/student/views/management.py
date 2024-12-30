@@ -1002,7 +1002,6 @@ def change_email_settings(request):
 
 @csrf_exempt
 def extras_course_enroll_user(request):
-    log.info("# venkat requestdata %s",vars(request))
     data = json.loads(request.body)
     log.info(data)
     log.info("#venkat extrasdata %s",data)
