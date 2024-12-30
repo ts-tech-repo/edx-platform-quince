@@ -39,7 +39,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import int_to_base36
 from openedx.core.djangoapps.enrollments.data import get_course_enrollments
-
+from social_django.models import UserSocialAuth
 
 from django.db import transaction
 from django.db.models.signals import post_save
@@ -1002,6 +1002,7 @@ def change_email_settings(request):
 
 @csrf_exempt
 def extras_course_enroll_user(request):
+
     data = json.loads(request.body)
     log.info(data)
     log.info("#venkat extrasdata %s",data)
@@ -1059,6 +1060,7 @@ def extras_course_enroll_user(request):
 def _create_soical_auth_record(user_email, provider_name):
     user = User.objects.get(email = user_email)
     try:
+        log.info("# venkat useremail %s ",user_email)
         record = UserSocialAuth.objects.filter(user = user, provider = provider_name)
         if not record:
             UserSocialAuth.objects.create(
