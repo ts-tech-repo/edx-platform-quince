@@ -35,7 +35,7 @@ def not_found(request, exception):  # lint-amnesty, pylint: disable=unused-argum
 
 @jsonable_error(500, "The Studio servers encountered an error")
 def server_error(request):
-    return render_to_response('error.html', {'error': '500'})
+    return render_to_response('404.html', {'error': '500'})
 
 
 @fix_crum_request
@@ -47,4 +47,4 @@ def render_404(request, exception):  # lint-amnesty, pylint: disable=unused-argu
 @fix_crum_request
 @jsonable_error(500, "The Studio servers encountered an error")
 def render_500(request):
-    return HttpResponseServerError(render_to_string('500.html', {}, request=request))
+    return HttpResponseServerError(render_to_string('404.html', {}, request=request))
