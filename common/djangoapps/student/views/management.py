@@ -1005,7 +1005,7 @@ def extras_course_enroll_user(request):
 
     data = json.loads(request.body)
     log.info(data)
-
+    log.info("#venkat extrascourse %s",data)
     try:
         username = data["other"]["username"]
         first_name = data["other"]["first_name"]
