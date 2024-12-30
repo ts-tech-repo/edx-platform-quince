@@ -1002,12 +1002,11 @@ def change_email_settings(request):
 
 @csrf_exempt
 def extras_course_enroll_user(request):
-    request_body = request.body.decode('utf-8')  # Decode bytes to string
-    log.info("#venkat request body: %s", request_body)
-    log.info("#venkat requestbody %s",request)
+
     data = json.loads(request.body)
     log.info(data)
-    log.info("#venkat extrascourse %s",data)
+    log.info("#venkat extrasdata %s",data)
+
     try:
         username = data["other"]["username"]
         first_name = data["other"]["first_name"]
@@ -1033,7 +1032,7 @@ def extras_course_enroll_user(request):
     if "site_id" in data["other"]:
         if data["other"]["site_id"] == "DLT":
             _create_soical_auth_record(email, "azuread-oauth2")
-        elif data["other"]["site_id"] in ["GIAP", "eMBA"]:
+        elif data["other"]["site_id"] in ["GIAP", "eMBA", "GOOGLE"]:
             _create_soical_auth_record(email, "google-oauth2")
     
     context = {"message" : "Registered User %s" %(email)}
