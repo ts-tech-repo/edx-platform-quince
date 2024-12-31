@@ -1346,7 +1346,9 @@ def merged_attendance(responses):
             
 
     mergeddata["status_summary"] = [{"status": status, "count": sum(entry["count"] for entry in mergeddata["status_summary"] if entry["status"] == status)} for status in set(entry["status"] for entry in mergeddata["status_summary"])]
-    mergeddata["session_summary"] = {"total_sessions": sum(data["total_sessions"] for data in mergeddata["session_summary"]), "sessions_present": sum(data["sessions_present"] for data in mergeddata["session_summary"]), "overall_percentage": f"{(sum(data['sessions_present'] for data in mergeddata['session_summary']) * 100) / sum(data['total_sessions'] for data in mergeddata['session_summary']):.2f}%"}
+    mergeddata["session_summary"] = {"total_sessions": sum(data["total_sessions"] for data in mergeddata["session_summary"]),
+    "sessions_present": sum(data["sessions_present"] for data in mergeddata["session_summary"]),
+    "overall_percentage": f"{(sum(data['sessions_present'] for data in mergeddata['session_summary']) * 100) / sum(data['total_sessions'] for data in mergeddata['session_summary']):.2f}"}
 
     total_numtakensessions ,total_takensessionspoints ,total_takensessionsmaxpoints= 0,0,0
 
@@ -1356,18 +1358,18 @@ def merged_attendance(responses):
         total_takensessionsmaxpoints += float(course["takensessionsmaxpoints"])
 
     mergeddata["percentage"] = [
-        {
-            "numtakensessions": total_numtakensessions,
-            "takensessionspoints": total_takensessionspoints,
-            "takensessionsmaxpoints": total_takensessionsmaxpoints,
-            "takensessionspercentage":  total_takensessionspoints/total_takensessionsmaxpoints,
-            "userstakensessionsbyacronym": "",
-            "pointssessionscompleted": mergeddata["percentage"][0]["pointssessionscompleted"],
-            "percentagesessionscompleted": f"{((total_takensessionspoints / total_takensessionsmaxpoints) * 100):.2f}%",
-            "course": mergeddata["percentage"][0]["course"],
-            "course_id": mergeddata["percentage"][0]["course_id"]
-        }
-        ]
+    {
+        "numtakensessions": str(total_numtakensessions),
+        "takensessionspoints": str(total_takensessionspoints),
+        "takensessionsmaxpoints": str(total_takensessionsmaxpoints),
+        "takensessionspercentage":  total_takensessionspoints/total_takensessionsmaxpoints,
+        "userstakensessionsbyacronym": "",
+        "pointssessionscompleted": mergeddata["percentage"][0]["pointssessionscompleted"],
+        "percentagesessionscompleted": f"{((total_takensessionspoints / total_takensessionsmaxpoints) * 100):.1f}%",
+        "course": mergeddata["percentage"][0]["course"],
+        "course_id": mergeddata["percentage"][0]["course_id"]
+    }
+    ]
     return mergeddata
 
 @csrf_exempt
