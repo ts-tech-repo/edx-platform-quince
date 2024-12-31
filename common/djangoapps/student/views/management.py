@@ -1316,10 +1316,10 @@ def attendance_report(request):
             moodle_service_url = api_url + "/webservice/rest/server.php"
             response = requests.request("POST", moodle_service_url, headers = headers, params = querystring)
 
-            
             context_data = json.loads(response.text)
             log.info("API call response for Course {0}  and data is {1} ".format(api_url,context_data))
-            
+            if "message" in context_data :
+                continue
 
             if "Response" + str(index_no) not in responses:
                 responses["Response" + str(index_no)] = context_data
