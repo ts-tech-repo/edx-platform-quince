@@ -174,7 +174,6 @@ def get_lms_link_for_item(location, preview=False):
         "LMS_BASE",
         settings.LMS_BASE
     )
-    log.info("lms baselink1 {0}".format(lms_base))
     if lms_base is None:
         return None
 

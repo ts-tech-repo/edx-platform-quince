@@ -1005,7 +1005,6 @@ def extras_course_enroll_user(request):
 
     data = json.loads(request.body)
     log.info(data)
-    log.info("#venkat extrasdata %s",data)
 
     try:
         username = data["other"]["username"]
@@ -1060,7 +1059,6 @@ def extras_course_enroll_user(request):
 def _create_soical_auth_record(user_email, provider_name):
     user = User.objects.get(email = user_email)
     try:
-        log.info("# venkat useremail %s ",user_email)
         record = UserSocialAuth.objects.filter(user = user, provider = provider_name)
         if not record:
             UserSocialAuth.objects.create(
@@ -1301,6 +1299,8 @@ def merge_grades(responses):
 def attendance_report(request):
     try:
         moodle_base_url = configuration_helpers.get_value("MOODLE_URL", "")
+        multiple_base_url = configuration_helpers.get_value("MULTIPLE_MOODLE_URLS", "")
+        log.info("moodle urls %s",multiple_base_url)
         moodle_service_url = moodle_base_url + "/webservice/rest/server.php"
         moodle_wstoken = configuration_helpers.get_value("MOODLE_TOKEN", "")
         course_attendance_function = "mod_wsattendance_get_attendance"
