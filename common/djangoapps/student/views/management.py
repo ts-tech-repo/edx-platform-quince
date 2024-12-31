@@ -1326,8 +1326,8 @@ def attendance_report(request):
                 responses["Response" + str(index_no)] = context_data
         
         log.info("#venkat data responses %s",responses)
-        
-        context = {'attendance_report' : json.loads(response.text), 'cohort_name' : request.GET["cohort_name"]}
+        final_response = merged_attendance(responses) if len(responses) > 1 else responses.get(list(responses.keys())[0]) if len(responses) == 1 else {}
+        context = {'attendance_report' : final_response, 'cohort_name' : request.GET["cohort_name"]}
         if configuration_helpers.get_value('ATTENDANCE_TEMPLATE'):
             return render(request, configuration_helpers.get_value('ATTENDANCE_TEMPLATE'), context = context)
         else :
@@ -1335,6 +1335,39 @@ def attendance_report(request):
     except Exception as e:
         log.info(e)
         return {}
+
+def merged_attendance(responses):
+    mergeddata = {}
+
+    for key,value in responses.items():
+        for key_data, value_data in value.items():
+            mergeddata[key_data] = value_data if key_data not in mergeddata else mergeddata[key_data] + value_data
+            
+
+    mergeddata["status_summary"] = [{"status": status, "count": sum(entry["count"] for entry in mergeddata["status_summary"] if entry["status"] == status)} for status in set(entry["status"] for entry in mergeddata["status_summary"])]
+    mergeddata["session_summary"] = {"total_sessions": sum(data["total_sessions"] for data in mergeddata["session_summary"]), "sessions_present": sum(data["sessions_present"] for data in mergeddata["session_summary"]), "overall_percentage": (sum(data["sessions_present"] for data in mergeddata["session_summary"]) * 100) / sum(data["total_sessions"] for data in mergeddata["session_summary"])}
+
+    total_numtakensessions ,total_takensessionspoints ,total_takensessionsmaxpoints= 0,0,0
+
+    for course in mergeddata["percentage"]:
+        total_numtakensessions += int(course["numtakensessions"])
+        total_takensessionspoints += float(course["takensessionspoints"])
+        total_takensessionsmaxpoints += float(course["takensessionsmaxpoints"])
+
+    mergeddata["percentage"] = [
+        {
+            "numtakensessions": total_numtakensessions,
+            "takensessionspoints": total_takensessionspoints,
+            "takensessionsmaxpoints": total_takensessionsmaxpoints,
+            "takensessionspercentage":  total_takensessionspoints/total_takensessionsmaxpoints,
+            "userstakensessionsbyacronym": "",
+            "pointssessionscompleted": mergeddata["percentage"][0]["pointssessionscompleted"],
+            "percentagesessionscompleted":( total_takensessionspoints/total_takensessionsmaxpoints) * 100 ,
+            "course": mergeddata["percentage"][0]["course"],
+            "course_id": mergeddata["percentage"][0]["course_id"]
+        }
+        ]
+    return mergeddata
 
 @csrf_exempt
 def extras_reset_password_link(request):
