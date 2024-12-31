@@ -1319,7 +1319,7 @@ def attendance_report(request):
 
             
             context_data = json.loads(response.text)
-            log.info("API call response for Course {0} url is {1} and data is {2} ".format(api_url, response.status_code,context_data))
+            log.info("API call response for Course {0}  and data is {1} ".format(api_url,context_data))
             
 
             if "Response" + str(index_no) not in responses:
