@@ -1312,7 +1312,8 @@ def attendance_report(request):
         querystring = {"wstoken" : moodle_wstoken, "wsfunction" : course_attendance_function, "moodlewsrestformat" : "json", "user_email":request.user.email, "site_name" :  site }
         responses = {}
         for index_no,api_url in enumerate(multiple_base_url):
-            
+            if "staging" in api_url:
+                querystring["site_name"] = "QUINCE"
             moodle_service_url = api_url + "/webservice/rest/server.php"
             response = requests.request("POST", moodle_service_url, headers = headers, params = querystring)
 
