@@ -1310,7 +1310,23 @@ def attendance_report(request):
             site = ""
         headers = {'content-type': "text/plain"}
         querystring = {"wstoken" : moodle_wstoken, "wsfunction" : course_attendance_function, "moodlewsrestformat" : "json", "user_email":request.user.email, "site_name" :  site }
-        response = requests.request("POST", moodle_service_url, headers = headers, params = querystring)
+        responses = {}
+        for index_no,api_url in enumerate(multiple_base_url):
+            if "staging" in api_url:
+                querystring["site_name"] = "AIML"
+            moodle_service_url = api_url + "/webservice/rest/server.php"
+            response = requests.request("POST", moodle_service_url, headers = headers, params = querystring)
+
+            
+            context_data = json.loads(response.text)
+            log.info("API call response for Course {0} url is {1} and data is {2} ".format(api_url, response.status_code,context_data))
+            
+
+            if "Response" + str(index_no) not in responses:
+                responses["Response" + str(index_no)] = context_data
+        
+        log.info("#venkat data responses %s",responses)
+        
         context = {'attendance_report' : json.loads(response.text), 'cohort_name' : request.GET["cohort_name"]}
         if configuration_helpers.get_value('ATTENDANCE_TEMPLATE'):
             return render(request, configuration_helpers.get_value('ATTENDANCE_TEMPLATE'), context = context)
@@ -1319,7 +1335,6 @@ def attendance_report(request):
     except Exception as e:
         log.info(e)
         return {}
-
 
 @csrf_exempt
 def extras_reset_password_link(request):
