@@ -1327,6 +1327,7 @@ def attendance_report(request):
         
         log.info("#venkat data responses %s",responses)
         final_response = merged_attendance(responses) if len(responses) > 1 else responses.get(list(responses.keys())[0]) if len(responses) == 1 else {}
+        log.info("#venkat final responses %s",final_response)
         context = {'attendance_report' : final_response, 'cohort_name' : request.GET["cohort_name"]}
         if configuration_helpers.get_value('ATTENDANCE_TEMPLATE'):
             return render(request, configuration_helpers.get_value('ATTENDANCE_TEMPLATE'), context = context)
