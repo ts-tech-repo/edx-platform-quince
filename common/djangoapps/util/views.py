@@ -104,8 +104,10 @@ def jsonable_server_error(request, template_name='500.html'):
     """
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         msg = {"error": "The edX servers encountered an error"}
+        log.info("#venkat testing22")
         return HttpResponseServerError(json.dumps(msg))
     else:
+        log.info("#venkat testing33")
         return server_error(request, template_name=template_name)
 
 
