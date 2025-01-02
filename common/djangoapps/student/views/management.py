@@ -1318,11 +1318,14 @@ def attendance_report(request):
             context_data = json.loads(response.text)
             log.info("API call response for Course {0}  and data is {1} ".format(api_url,context_data))
             
+            if "message" in context_data :
+                continue
 
             if "Response" + str(index_no) not in responses:
                 responses["Response" + str(index_no)] = context_data
 
         final_response = merged_attendance(responses) if len(responses) > 1 else responses.get(list(responses.keys())[0]) if len(responses) == 1 else {}      
+        log.info("Merged response data is {0} ".format(final_response))
         context = {'attendance_report' : final_response, 'cohort_name' : request.GET["cohort_name"]}
         if configuration_helpers.get_value('ATTENDANCE_TEMPLATE'):
             return render(request, configuration_helpers.get_value('ATTENDANCE_TEMPLATE'), context = context)
@@ -1343,26 +1346,6 @@ def merged_attendance(responses):
     "sessions_present": sum(data["sessions_present"] for data in mergeddata["session_summary"]),
     "overall_percentage": f"{(sum(data['sessions_present'] for data in mergeddata['session_summary']) * 100) / sum(data['total_sessions'] for data in mergeddata['session_summary']):.2f}"}]
 
-    total_numtakensessions ,total_takensessionspoints ,total_takensessionsmaxpoints= 0,0,0
-
-    for course in mergeddata["percentage"]:
-        total_numtakensessions += int(course["numtakensessions"])
-        total_takensessionspoints += float(course["takensessionspoints"])
-        total_takensessionsmaxpoints += float(course["takensessionsmaxpoints"])
-
-    mergeddata["percentage"] = [
-    {
-        "numtakensessions": str(total_numtakensessions),
-        "takensessionspoints": str(total_takensessionspoints),
-        "takensessionsmaxpoints": str(total_takensessionsmaxpoints),
-        "takensessionspercentage":  total_takensessionspoints/total_takensessionsmaxpoints,
-        "userstakensessionsbyacronym": "",
-        "pointssessionscompleted": mergeddata["percentage"][0]["pointssessionscompleted"],
-        "percentagesessionscompleted": f"{((total_takensessionspoints / total_takensessionsmaxpoints) * 100):.1f}%",
-        "course": mergeddata["percentage"][0]["course"],
-        "course_id": mergeddata["percentage"][0]["course_id"]
-    }
-    ]
     return mergeddata
 
 
