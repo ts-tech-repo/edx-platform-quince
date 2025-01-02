@@ -50,5 +50,5 @@ def render_404(request, exception):  # lint-amnesty, pylint: disable=unused-argu
 @fix_crum_request
 @jsonable_error(500, "The Studio servers encountered an error")
 def render_500(request):
-    return redirect("/")
+    return redirect("https://staging.quince02.talentsprint.com/authn/login")
     # return HttpResponseServerError(render_to_string('500.html', {}, request=request))
