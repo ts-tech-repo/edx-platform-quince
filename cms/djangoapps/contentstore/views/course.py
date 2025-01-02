@@ -64,6 +64,7 @@ from common.djangoapps.util.json_request import JsonResponse, JsonResponseBadReq
 from common.djangoapps.util.string_utils import _has_non_ascii_characters
 from common.djangoapps.xblock_django.api import deprecated_xblocks
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
+from django.http import HttpResponseForbidden
 from openedx.core.djangoapps.content_staging import api as content_staging_api
 from openedx.core.djangoapps.credit.tasks import update_credit_course_requirements
 from openedx.core.djangoapps.models.course_details import CourseDetails
@@ -550,7 +551,10 @@ def course_listing(request):
     """
     if use_new_home_page():
         return redirect(get_studio_home_url())
-
+    
+    if not request.user.is_staff and not request.user.is_superuser:
+        return HttpResponseForbidden("<h1>403 forbidden</h1>")
+    
     home_context = get_home_context(request)
     return render_to_response('index.html', home_context)
 
