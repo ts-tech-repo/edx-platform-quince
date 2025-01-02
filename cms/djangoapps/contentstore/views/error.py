@@ -2,6 +2,7 @@
 import functools
 import logging
 log = logging.getLogger(__name__)
+from django.shortcuts import redirect
 
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseServerError
 
@@ -49,5 +50,6 @@ def render_404(request, exception):  # lint-amnesty, pylint: disable=unused-argu
 @fix_crum_request
 @jsonable_error(500, "The Studio servers encountered an error")
 def render_500(request):
-    log.info("#venkat testing1")
-    return HttpResponseServerError(render_to_string('500.html', {}, request=request))
+    log.info("#venkat testing1334")
+    return redirect("https://staging.quince02.talentsprint.com/authn/login")
+    # return HttpResponseServerError(render_to_string('500.html', {}, request=request))
