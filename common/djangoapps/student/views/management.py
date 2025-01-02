@@ -1349,26 +1349,26 @@ def merged_attendance(responses):
     "sessions_present": sum(data["sessions_present"] for data in mergeddata["session_summary"]),
     "overall_percentage": f"{(sum(data['sessions_present'] for data in mergeddata['session_summary']) * 100) / sum(data['total_sessions'] for data in mergeddata['session_summary']):.2f}"}]
 
-    total_numtakensessions ,total_takensessionspoints ,total_takensessionsmaxpoints= 0,0,0
+    # total_numtakensessions ,total_takensessionspoints ,total_takensessionsmaxpoints= 0,0,0
 
-    for course in mergeddata["percentage"]:
-        total_numtakensessions += int(course["numtakensessions"])
-        total_takensessionspoints += float(course["takensessionspoints"])
-        total_takensessionsmaxpoints += float(course["takensessionsmaxpoints"])
+    # for course in mergeddata["percentage"]:
+    #     total_numtakensessions += int(course["numtakensessions"])
+    #     total_takensessionspoints += float(course["takensessionspoints"])
+    #     total_takensessionsmaxpoints += float(course["takensessionsmaxpoints"])
 
-    mergeddata["percentage"] = [
-    {
-        "numtakensessions": str(total_numtakensessions),
-        "takensessionspoints": str(total_takensessionspoints),
-        "takensessionsmaxpoints": str(total_takensessionsmaxpoints),
-        "takensessionspercentage":  total_takensessionspoints/total_takensessionsmaxpoints,
-        "userstakensessionsbyacronym": "",
-        "pointssessionscompleted": mergeddata["percentage"][0]["pointssessionscompleted"],
-        "percentagesessionscompleted": f"{((total_takensessionspoints / total_takensessionsmaxpoints) * 100):.1f}%",
-        "course": mergeddata["percentage"][0]["course"],
-        "course_id": mergeddata["percentage"][0]["course_id"]
-    }
-    ]
+    # mergeddata["percentage"] = [
+    # {
+    #     "numtakensessions": str(total_numtakensessions),
+    #     "takensessionspoints": str(total_takensessionspoints),
+    #     "takensessionsmaxpoints": str(total_takensessionsmaxpoints),
+    #     "takensessionspercentage":  total_takensessionspoints/total_takensessionsmaxpoints,
+    #     "userstakensessionsbyacronym": "",
+    #     "pointssessionscompleted": mergeddata["percentage"][0]["pointssessionscompleted"],
+    #     "percentagesessionscompleted": f"{((total_takensessionspoints / total_takensessionsmaxpoints) * 100):.1f}%",
+    #     "course": mergeddata["percentage"][0]["course"],
+    #     "course_id": mergeddata["percentage"][0]["course_id"]
+    # }
+    # ]
     return mergeddata
 
 @csrf_exempt
