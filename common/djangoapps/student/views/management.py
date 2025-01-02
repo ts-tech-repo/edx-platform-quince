@@ -1309,7 +1309,7 @@ def attendance_report(request):
         else:
             site = ""
         headers = {'content-type': "text/plain"}
-        querystring = {"wstoken" : moodle_wstoken, "wsfunction" : course_attendance_function, "moodlewsrestformat" : "json", "user_email":request.user.email, "site_name" :  site }
+        querystring = {"wstoken" : moodle_wstoken, "wsfunction" : course_attendance_function, "moodlewsrestformat" : "json", "user_email":'hermankaur475@gmail.com', "site_name" :  site }
         responses = {}
         for index_no,api_url in enumerate(multiple_base_url):
             
