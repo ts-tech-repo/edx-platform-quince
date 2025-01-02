@@ -164,7 +164,7 @@
   </style>
 </head>
 
-<body class="position-relative" style="height: 100vh;">
+<body class="position-relative debugging" style="height: 100vh;">
   <img class="position-fixed connected-lines" style="top: 0; right: 0px;"
     src="https://static.talentsprint.com/lms_maple/images/topRight.svg" alt="">
 
@@ -187,7 +187,7 @@
            {% if not profile.is_superuser and not profile.is_staff %}
           <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">
             <div class="profile-section d-flex flex-column flex-lg-row align-items-center flex-wrap flex-lg-nowrap text-center text-lg-left">
-              <img class="profile-img debugging" id="profile_image" src="{{ profile.profile_image_urls.full }}" alt="">
+              <img class="profile-img" id="profile_image" src="{{ profile.profile_image_urls.full }}" alt="">
               <p class="ml-lg-4 font-weight-bold" id="name" style="font-size: 24px;">
                 {{ profile.first_name }}
               </p>
