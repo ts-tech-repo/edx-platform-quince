@@ -108,7 +108,8 @@ def render_403(request, exception=None):
 @fix_crum_request
 def render_404(request, exception=None):  # lint-amnesty, pylint: disable=unused-argument
     request.view_name = '404'
-    return HttpResponseNotFound(render_to_string('static_templates/404.html', {}, request=request))
+    return  redirect('/')
+# HttpResponseNotFound(render_to_string('static_templates/404.html', {}, request=request))
 
 
 @fix_crum_request
