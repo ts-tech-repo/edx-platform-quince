@@ -59,6 +59,7 @@ from common.djangoapps.student.roles import (
     UserBasedRole,
     OrgStaffRole
 )
+from common.djangoapps.student.models import CourseAccessRole
 from common.djangoapps.util.date_utils import get_default_time_display
 from common.djangoapps.util.json_request import JsonResponse, JsonResponseBadRequest, expect_json
 from common.djangoapps.util.string_utils import _has_non_ascii_characters
@@ -552,7 +553,7 @@ def course_listing(request):
     if use_new_home_page():
         return redirect(get_studio_home_url())
     
-    if not request.user.is_staff and not request.user.is_superuser:
+    if not request.user.is_staff and not request.user.is_superuser and not CourseAccessRole.objects.filter(user_id=request.user.id).exists():
         return HttpResponseForbidden("<h1>403 forbidden</h1>")
     
     home_context = get_home_context(request)
