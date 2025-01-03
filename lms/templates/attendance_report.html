@@ -150,8 +150,7 @@ $(".accordian-body").on("show.bs.collapse", function () {
 </script>
 <script>
   var status = "[";
-  var status_color = { Present: "#2E8B57", Late: "#FF8C00", Absent: "#FF4500", Excused: "#FFD700" };
-  console.log(typeof status_color);
+  var status_color = { Present: "#A5CB52", Late: "#FB8537", Absent: "#E86C4A", Excused: "#FEED72" };
   var distinct_colors = anychart.palettes.pastel;
   var custom_json = [];
   $("div#status_summary")
@@ -220,7 +219,7 @@ anychart.onDocumentReady(function () {
       chart.palette(palette);
 
       // configure labels
-      chart.overlapMode("allow")
+      chart.overlapMode("allow");
       chart.labels(true);
       chart.labels().rotation(0);
       chart.labels().position("center");
@@ -228,7 +227,7 @@ anychart.onDocumentReady(function () {
       chart.labels().fontSize(12);
       chart.labels().fontWeight(600);
       chart.labels().fontColor("black");
-      chart.hovered().labels(false);
+      chart.hovered().labels(true);
 
       // configure the legend
       chart.legend(true);
