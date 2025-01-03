@@ -1296,9 +1296,12 @@ def merge_grades(responses):
 @login_required
 def attendance_report(request):
     try:
-        moodle_base_url = configuration_helpers.get_value("MOODLE_URL", "")
-        multiple_base_url = configuration_helpers.get_value("MULTIPLE_MOODLE_URLS", "")
-        moodle_service_url = moodle_base_url + "/webservice/rest/server.php"
+        multiple_moodle = configuration_helpers.get_value("MULTIPLE_MOODLE", False)
+        if multiple_moodle:
+            moodle_base_url = configuration_helpers.get_value("MULTIPLE_MOODLE_URLS","")
+        else:
+            moodle_base_url = [configuration_helpers.get_value("MOODLE_URL", "")]
+        
         moodle_wstoken = configuration_helpers.get_value("MOODLE_TOKEN", "")
         course_attendance_function = "mod_wsattendance_get_attendance"
         if "site" in request.GET:
@@ -1309,7 +1312,7 @@ def attendance_report(request):
         querystring = {"wstoken" : moodle_wstoken, "wsfunction" : course_attendance_function, "moodlewsrestformat" : "json", "user_email":request.user.email, "site_name" :  site }
         
         responses = {}
-        for index_no,api_url in enumerate(multiple_base_url):
+        for index_no,api_url in enumerate(moodle_base_url):
             
             moodle_service_url = api_url + "/webservice/rest/server.php"
             response = requests.request("POST", moodle_service_url, headers = headers, params = querystring)
