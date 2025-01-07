@@ -23,7 +23,7 @@ urlpatterns = [
     re_path(r'^attendance_report', views.attendance_report, name = "attendance_report"),
     re_path(r'^extras/user_details$', views.extras_userdetails, name = 'extras_userdetails'),
     re_path(r'^notebook_submissions', views.extras_notebook_submissions, name = 'extras_notebook_submissions'),
-
+    re_path(r'^extras/get_ptc_details', views.extras_get_ptc_details, name = "extras_get_ptc_details"),
     re_path(r'^extras/reset_password_link', views.extras_reset_password_link, name = "extras_reset_password_link"),
     re_path(r'^extras/emiitk_get_grades', views.extras_emiitk_get_grades, name = "extras_emiitk_get_grades"),
     re_path(r'^extras/start_mettl_test', views.extras_start_mettl_test, name = "extras_start_mettl_test"),
