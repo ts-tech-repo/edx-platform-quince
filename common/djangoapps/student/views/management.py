@@ -1781,3 +1781,19 @@ def extras_get_lti_tool_urls(request):
         response = requests.request("POST", moodle_service_url, headers=headers, params=querystring)
         return JsonResponse(response.json())
     return JsonResponse({"error": "Please Provide course short name"})
+
+
+@csrf_exempt
+@login_required
+def extras_get_ptc_details(request):
+    try:
+        email = request.user.email
+        batch = request.POST.get("batchId")
+
+        response = requests.get("https://staging.dashboard.talentsprint.com/ops/getPTCStatus.html", headers = {"Access-Key" : "67b696468610b879ed7f224dbf6b0861f27e39d20454cb9d7af1ec52d3e5eeaa", "Content-Type" : "application/x-www-form-urlencoded"}, params = {"emailId" : email, "batchId" : batch})
+
+        return JsonResponse(json.loads(response.text))
+
+    except Exception as e:
+        return JsonResponse({})
+
