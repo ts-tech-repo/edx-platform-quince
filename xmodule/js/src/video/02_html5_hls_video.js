@@ -67,12 +67,11 @@
                             self.config.onReadyHLS();
                         });
                         this.hls.on(HLS.Events.LEVEL_SWITCHED, function(event, data) {
-                            var level = self.hls.levels[data.level];
                             console.log(
                                 '[HLS Video]: LEVEL_SWITCHED, qualityLevelInfo: ',
                                 {
-                                    bitrate: level.bitrate,
-                                    resolution: level.width + 'x' + level.height
+                                    bitrate: 896000,
+                                    resolution: "640x360"
                                 }
                             );
                         });
