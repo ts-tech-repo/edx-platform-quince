@@ -55,23 +55,28 @@
                         this.hls.on(HLS.Events.ERROR, this.onError.bind(this));
 
                         this.hls.on(HLS.Events.MANIFEST_PARSED, function(event, data) {
-                            console.log(
-                                '[HLS Video]: MANIFEST_PARSED, qualityLevelsInfo: ',
-                                data.levels.map(function(level) {
-                                    return {
-                                        bitrate: level.bitrate,
-                                        resolution: level.width + 'x' + level.height
-                                    };
-                                })
-                            );
+                            var targetLevel = data.levels.find(level => level.bitrate === 896000 && level.width === 640 && level.height === 360);
+                            if (targetLevel) {
+                                self.hls.currentLevel = targetLevel.id;
+                                console.log(
+                                    '[HLS Video]: MANIFEST_PARSED, selected qualityLevelInfo: ',
+                                    {
+                                        bitrate: targetLevel.bitrate,
+                                        resolution: targetLevel.width + 'x' + targetLevel.height
+                                    }
+                                );
+                            } else {
+                                console.error('[HLS Video]: Desired quality level not found.');
+                            }
                             self.config.onReadyHLS();
                         });
                         this.hls.on(HLS.Events.LEVEL_SWITCHED, function(event, data) {
+                            var level = self.hls.levels[data.level];
                             console.log(
                                 '[HLS Video]: LEVEL_SWITCHED, qualityLevelInfo: ',
                                 {
-                                    bitrate: 896000,
-                                    resolution: "640x360"
+                                    bitrate: level.bitrate,
+                                    resolution: level.width + 'x' + level.height
                                 }
                             );
                         });
