@@ -55,22 +55,14 @@
                         this.hls.on(HLS.Events.ERROR, this.onError.bind(this));
 
                         this.hls.on(HLS.Events.MANIFEST_PARSED, function(event, data) {
-                            var targetLevel = data.levels.find(level => level.bitrate === 896000 && level.width === 640 && level.height === 360);
-                            if (!targetLevel) {
-                                data.levels.push({
-                                    bitrate: 896000,
-                                    width: 640,
-                                    height: 360
-                                });
-                                targetLevel = data.levels[data.levels.length - 1];
-                            }
-                            self.hls.currentLevel = targetLevel.id;
                             console.log(
-                                '[HLS Video]: MANIFEST_PARSED, selected qualityLevelInfo: ',
-                                {
-                                    bitrate: targetLevel.bitrate,
-                                    resolution: targetLevel.width + 'x' + targetLevel.height
-                                }
+                                '[HLS Video]: MANIFEST_PARSED, qualityLevelsInfo: ',
+                                data.levels.map(function(level) {
+                                    return {
+                                        bitrate: level.bitrate,
+                                        resolution: level.width + 'x' + level.height
+                                    };
+                                })
                             );
                             self.config.onReadyHLS();
                         });
