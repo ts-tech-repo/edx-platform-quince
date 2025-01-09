@@ -158,9 +158,12 @@ def xblock_type_display_name(xblock, default_display_name=None):
         # string ("problem").
         return _('Problem')
     component_class = XBlock.load_class(category)
+    log.info("#venkat componentclass %s",component_class)
     if hasattr(component_class, 'display_name') and component_class.display_name.default:
+        log.info("#venkat debug11 %s",_(component_class.display_name.default))
         return _(component_class.display_name.default)  # lint-amnesty, pylint: disable=translation-of-non-string
     else:
+        log.info("#venkat debug222 %s",default_display_name)
         return default_display_name
 
 
