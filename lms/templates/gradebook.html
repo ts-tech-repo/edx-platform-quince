@@ -52,6 +52,7 @@
 											<!--  <th>Calculated weight</th> -->
 											<th class = "score_heading">Score</th>
 											<th class = "max_score_heading">Maximum Score</th>
+											<th class="bonus_point_heading">Bonus</th>
 											<th class = "percentage_heading">Percentage</th>
 											<th class = "average_heading">Average</th>
                                                                                         <th class = "highest_heading">Highest</th>
@@ -95,6 +96,15 @@
 											{%else %}
 												<td>{{record.total_grade}}</td>
 											{%endif%}
+											{% if assignment.itemtype != "course" %}
+													{%if assignment.bonuspoint is not none %}
+														<td>{{assignment.bonuspoint}}</td>
+													{% else %}
+														<td>-</td>
+													{%endif%}
+                                            	{%else%}
+                                                	<td>-</td>
+                                            {%endif%}
                                                                                         {% if assignment.itemtype == "course" %}
 											<td>{{record.coursewise_percentage}}%</td>
 											{%else%}

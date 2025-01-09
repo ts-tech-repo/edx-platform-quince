@@ -375,7 +375,6 @@ def _get_user_course_outline_and_processors(course_key: CourseKey,  # lint-amnes
             ]
         }
     )
-    log.info(user_course_outline)
     return user_course_outline, processors
 
 

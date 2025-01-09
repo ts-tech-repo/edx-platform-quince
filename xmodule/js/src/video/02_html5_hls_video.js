@@ -66,6 +66,7 @@
                             );
                             self.config.onReadyHLS();
                         });
+                        console.log(this,HLS, HLS.Events, HLS.Events.LEVEL_SWITCHED);
                         this.hls.on(HLS.Events.LEVEL_SWITCHED, function(event, data) {
                             var level = self.hls.levels[data.level];
                             console.log(
