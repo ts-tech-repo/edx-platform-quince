@@ -97,7 +97,7 @@
 												<td>{{record.total_grade}}</td>
 											{%endif%}
 											{% if assignment.itemtype != "course" %}
-													{%if assignment.bonuspoint%}
+													{%if assignment.bonuspoint is not none %}
 														<td>{{assignment.bonuspoint}}</td>
 													{% else %}
 														<td>-</td>
