@@ -472,6 +472,7 @@ def get_component_templates(courselike, library=False):  # lint-amnesty, pylint:
                 # boilerplates not supported for advanced components
                 try:
                     component_display_name = xblock_type_display_name(category, default_display_name=category)
+                    log.info("#venkat displaycompo %s",component_display_name)
                     advanced_component_templates['templates'].append(
                         create_template_dict(
                             component_display_name,
