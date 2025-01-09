@@ -497,7 +497,7 @@ def get_component_templates(courselike, library=False):  # lint-amnesty, pylint:
         )
     if advanced_component_templates['templates']:
         component_templates.insert(0, advanced_component_templates)
-
+    log.info("#venkat componentt %s",component_templates)
     return component_templates
 
 
