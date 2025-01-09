@@ -134,6 +134,8 @@ def xblock_type_display_name(xblock, default_display_name=None):
     :param default_display_name: The default value to return if no display name can be found.
     :return:
     """
+    log.info("#venkat xblockname %s",xblock)
+    log.info("#venkat defaultdisplay %s",default_display_name)
 
     if hasattr(xblock, 'category'):
         category = xblock.category
@@ -141,6 +143,7 @@ def xblock_type_display_name(xblock, default_display_name=None):
             return _('Vertical')
     else:
         category = xblock
+    log.info("#venkat categoryname %s",category)
     if category == 'chapter':
         return _('Section')
     elif category == 'sequential':
