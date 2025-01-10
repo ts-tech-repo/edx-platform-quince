@@ -77,6 +77,8 @@
                                 }
                             );
                         });
+                        console.log(config.videoSources[0]);
+                        this.videoEl.attr('src', 'https://cdn.chn.talentsprint.com/e_content/master.m3u8');
                     }
                 }
 
