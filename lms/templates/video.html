@@ -45,7 +45,16 @@ from openedx.core.djangolib.js_utils import (
           <div class="video-controls is-hidden">
               <div>
                   <div class="vcr"><div class="vidtime">0:00 / 0:00</div></div>
-                  <div class="secondary-controls"></div>
+                  <div class="secondary-controls">
+                    <div class="quality-control-container"></div>
+                        <div><i class="fa fa-sliders" aria-hidden="true"></i></div>
+                        <ul class="resolution-container" style="display: none;">
+                            <li data-resolution="720p">720p</li>
+                            <li data-resolution="540p">540p</li>
+                            <li data-resolution="360p">360p</li>
+                        </ul>
+                    </div>
+                  </div>
               </div>
           </div>
       </div>
