@@ -227,8 +227,8 @@
 
   <script>
     const mainLogo = parent.document.querySelector(".logo");
-    console.log(ids, "this is ids");
     const pPLogo = document.querySelector(".logo");
+    console.log(mainLogo, mainLogo.src, pPLogo, pPLogo.src, "this is ids");
     pPLogo.src = mainLogo.src;
     
     document.addEventListener('DOMContentLoaded', function () {
