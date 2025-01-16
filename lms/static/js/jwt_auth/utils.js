@@ -73,7 +73,7 @@ const processAxiosError = (axiosErrorObject) => {
             httpErrorRequestUrl,
             httpErrorRequestMethod,
         };
-        error.message = `Axios Error (Response): ${status} ${httpErrorRequestUrl} ${httpErrorResponseData}`;
+        error.message = `Axios Error (Responses): ${status} ${httpErrorRequestUrl} ${httpErrorResponseData}`;
     } else if (request) {
         error.customAttributes = {
             ...error.customAttributes,
