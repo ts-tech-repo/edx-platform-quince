@@ -188,7 +188,7 @@
           <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">
             <div class="profile-section d-flex flex-column flex-lg-row align-items-center flex-wrap flex-lg-nowrap text-center text-lg-left">
               <img class="profile-img" id="profile_image" src="{{ profile.profile_image_urls.full }}" alt="">
-              <p class="courseId" style="visibility: hidden;">{{ profile.course_id }}</p>
+              <p class="courseId" style="display: none;">{{ profile.course_id }}</p>
               <p class="ml-lg-4 font-weight-bold" id="name" style="font-size: 24px;">
                 {{ profile.first_name }}
               </p>
@@ -249,7 +249,7 @@
   }
 
   courseIDs.map((item) => {
-    if (courseId.includes(item)) {
+    if (courseId?.innerHTML?.includes(item)) {
       logoImage.src =
         "https://static.talentsprint.com/lms_maple/images/iiith_logo.png";
       logoImage.style.width = window.location.pathname.includes("discussions")
@@ -261,14 +261,14 @@
   });
 
   cmuIds.map((item) => {
-    if (courseId.includes(item)) {
+    if (courseId?.innerHTML?.includes(item)) {
       logoImage.src =
         "https://static.talentsprint.com/lms_maple/images/cmu-logo.png";
       localStorage.setItem("isCMU", "yes");
     }
   });
   googleIds.map((item) => {
-    if (courseId.includes(item)) {
+    if (courseId?.innerHTML?.includes(item)) {
       logoImage.src =
         "https://static.talentsprint.com/lms_maple/images/digipivot-logo-new.png";
       localStorage.setItem("isGoogle", "yes");
