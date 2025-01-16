@@ -226,10 +226,10 @@
     src="https://static.talentsprint.com/lms_maple/images/bottomLeft.svg" alt="">
 
   <script>
-    const ids = parent.document.querySelector(".logo");
+    const mainLogo = parent.document.querySelector(".logo");
     console.log(ids, "this is ids");
-    const logoChange = document.querySelector(".logo");
-    logoChange.href = ids.href;
+    const pPLogo = document.querySelector(".logo");
+    pPLogo.src = mainLogo.src;
     
     document.addEventListener('DOMContentLoaded', function () {
       const courseElement = document.querySelector('.pgn__card-wrapper-image-cap');
