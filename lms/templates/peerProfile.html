@@ -188,7 +188,7 @@
           <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">
             <div class="profile-section d-flex flex-column flex-lg-row align-items-center flex-wrap flex-lg-nowrap text-center text-lg-left">
               <img class="profile-img" id="profile_image" src="{{ profile.profile_image_urls.full }}" alt="">
-              <p id="courseId">{{ profile.course_id }}</p>
+              <p class="courseId" style="visibility: hidden;">{{ profile.course_id }}</p>
               <p class="ml-lg-4 font-weight-bold" id="name" style="font-size: 24px;">
                 {{ profile.first_name }}
               </p>
@@ -226,24 +226,8 @@
     src="https://static.talentsprint.com/lms_maple/images/bottomLeft.svg" alt="">
 
   <script>
-    window.addEventListener('message', function (event) {
-console.log(event, "this is event")
-  // Make sure the message is from your parent window
-  if (event.data.type === 'courseDetails') {
-    const courseUrls = event.data.data;
-
-formData = new FormData();
-    // if (!courseId) {
-      const result = courseUrls.find(str => str !== null && str !== "") || null;
-      if (result) {
-        courseId = handleRegex(result);
-      }
-   // }
-    // After processing all URLs, add courseId to formData
-    formData.append("course_id", courseId);
-    console.log(courseId, "FormData courseId");
-  }
-}, false);
+    const courseId = document.querySelector(".courseId");
+    console.log(courseId, courseId.innerHTML);
     document.addEventListener('DOMContentLoaded', function () {
       const courseElement = document.querySelector('.pgn__card-wrapper-image-cap');
       if (courseElement && courseElement.hasAttribute('href')) {
