@@ -227,57 +227,9 @@
 
   <script>
     const ids = parent.document.querySelector(".logo");
-    console.log(ids, "this is ids")
-    function logoChange() {
-      const courseId = document.querySelector(".courseId");
-    console.log(courseId, courseId.innerHTML);
-  let courseIDs = [
-    "course-v1:TalentSprint+BCDM+2024",
-    "course-v1:TalentSprint+MLOP+2024",
-    "course-v1:TalentSprint+AOSCF+2024",
-    "course-v1:TalentSprint+AOSCDC1+2024",
-    "course-v1:TalentSprint+AIMLOPS1+2024",
-    "course-v1:QUINCE+TestingAnalyticsloadissue+C01",
-  ];
-  let cmuIds = ["course-v1:CMU+Module_01+Cohort1"];
-  let googleIds = ["DPPL+C1"];
-
-  const tag = document.querySelector(".logo");
-  let logoImage;
-  if (tag && tag?.tagName === "IMG") {
-    logoImage = document.querySelector(".logo");
-  } else {
-    logoImage = tag?.querySelector("img");
-  }
-
-  courseIDs.map((item) => {
-    if (courseId?.innerHTML?.includes(item)) {
-      logoImage.src =
-        "https://static.talentsprint.com/lms_maple/images/iiith_logo.png";
-      logoImage.style.width = window.location.pathname.includes("discussions")
-        ? "100%"
-        : "95%";
-
-      localStorage.setItem("isIIITHCourse", "yes");
-    }
-  });
-
-  cmuIds.map((item) => {
-    if (courseId?.innerHTML?.includes(item)) {
-      logoImage.src =
-        "https://static.talentsprint.com/lms_maple/images/cmu-logo.png";
-      localStorage.setItem("isCMU", "yes");
-    }
-  });
-  googleIds.map((item) => {
-    if (courseId?.innerHTML?.includes(item)) {
-      logoImage.src =
-        "https://static.talentsprint.com/lms_maple/images/digipivot-logo-new.png";
-      localStorage.setItem("isGoogle", "yes");
-    }
-  });
-};
-logoChange();
+    console.log(ids, "this is ids");
+    const logoChange = document.querySelector(".logo");
+    logoChange.href = ids.href;
     
     document.addEventListener('DOMContentLoaded', function () {
       const courseElement = document.querySelector('.pgn__card-wrapper-image-cap');
