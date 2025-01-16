@@ -225,7 +225,24 @@
     src="https://static.talentsprint.com/lms_maple/images/bottomLeft.svg" alt="">
 
   <script>
-    console.log("edited in cursor")
+    window.addEventListener('message', function (event) {
+console.log(event, "this is event")
+  // Make sure the message is from your parent window
+  if (event.data.type === 'courseDetails') {
+    const courseUrls = event.data.data;
+
+formData = new FormData();
+    // if (!courseId) {
+      const result = courseUrls.find(str => str !== null && str !== "") || null;
+      if (result) {
+        courseId = handleRegex(result);
+      }
+   // }
+    // After processing all URLs, add courseId to formData
+    formData.append("course_id", courseId);
+    console.log(courseId, "FormData courseId");
+  }
+}, false);
     document.addEventListener('DOMContentLoaded', function () {
       const courseElement = document.querySelector('.pgn__card-wrapper-image-cap');
       if (courseElement && courseElement.hasAttribute('href')) {
