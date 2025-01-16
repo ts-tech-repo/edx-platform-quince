@@ -170,7 +170,7 @@
 
   <nav class="top-0 z-3">
     <img src="https://static.talentsprint.com/lms_maple/images/logo.png" class="my-2 logo"
-      style="height: 62px; margin-left: 70px; width: 250px" />
+      style="height: 62px; margin-left: 70px;" />
   </nav>
   <header class="mb-5" style="margin-top: 40px">
     <div class="text-center">
@@ -188,7 +188,6 @@
           <div class="bg-white p-3 colElement" style="cursor: pointer; position: relative; z-index: 10;">
             <div class="profile-section d-flex flex-column flex-lg-row align-items-center flex-wrap flex-lg-nowrap text-center text-lg-left">
               <img class="profile-img" id="profile_image" src="{{ profile.profile_image_urls.full }}" alt="">
-              <p class="courseId" style="display: none;">{{ profile.course_id }}</p>
               <p class="ml-lg-4 font-weight-bold" id="name" style="font-size: 24px;">
                 {{ profile.first_name }}
               </p>
@@ -228,7 +227,6 @@
   <script>
     const mainLogo = parent.document.querySelector(".logo");
     const pPLogo = document.querySelector(".logo");
-    console.log(mainLogo, mainLogo.src, pPLogo, pPLogo.src, "this is ids");
     pPLogo.src = mainLogo.src;
     
     document.addEventListener('DOMContentLoaded', function () {
