@@ -24,7 +24,7 @@ from openedx.core.djangoapps.password_policy import compliance as password_polic
 from openedx.core.djangoapps.password_policy.forms import PasswordPolicyAwareAdminAuthForm
 from openedx.core import toggles as core_toggles
 
-from common.djangoapps.student.views.management import extras_course_enroll_user, extras_update_user_details, extras_get_lti_tool_urls
+from common.djangoapps.student.views.management import extras_course_enroll_user, extras_update_user_details, extras_get_lti_tool_urls, extras_update_moodle_block_url
 from cms.djangoapps.contentstore.views.course import extras_create_course
 from cms.djangoapps.contentstore.views.course import extras_get_moodle_login_url
 
@@ -197,6 +197,7 @@ urlpatterns = oauth2_urlpatterns + [
     re_path(r'^extras/get_moodle_login_url', extras_get_moodle_login_url, name = 'extras_get_moodle_login_url'),
     re_path(r'^extras/update_user_details', extras_update_user_details, name = 'extras_update_user_details'),
     re_path(r'^extras/get_lti_tool_urls', extras_get_lti_tool_urls, name = 'extras_get_lti_tool_urls'),
+    re_path(r'^extras/update_moodle_block_url', extras_update_moodle_block_url, name = 'extras_update_moodle_block_url'),
 
     path('api/val/v0/', include('edxval.urls')),
     path('api/tasks/v0/', include('user_tasks.urls')),

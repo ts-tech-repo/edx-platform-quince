@@ -1993,3 +1993,14 @@ def extras_get_lti_tool_urls(request):
         response = requests.request("POST", moodle_service_url, headers=headers, params=querystring)
         return JsonResponse(response.json())
     return JsonResponse({"error": "Please Provide course short name"})
+
+@csrf_exempt
+def extras_update_moodle_block_url(request):
+    lms_url = request.POST.get("lms_url", "")
+    selected_tool = request.POST.get("selected_tool", "")
+    if selected_tool and lms_url:
+        headers = { 'content-type': "text/plain" }
+        querystring = { "wstoken": configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction": "mod_lti_update_block_url", "moodlewsrestformat": "json", "tool_id": selected_tool.split("?")[1], "lms_url": lms_url }
+        response = requests.request("POST", configuration_helpers.get_value("MOODLE_URL", "") + "/webservice/rest/server.php", headers=headers, params=querystring)
+        return JsonResponse(response.json())
+    return JsonResponse({"error" : "Please Provide tool and lms_url"})
