@@ -472,7 +472,8 @@ def get_component_templates(courselike, library=False):  # lint-amnesty, pylint:
                 # boilerplates not supported for advanced components
                 try:
                     component_display_name = xblock_type_display_name(category, default_display_name=category)
-                    log.info("#venkat displaycompo %s",component_display_name)
+                    if component_display_name and component_display_name == "Encrypt Player" :
+                        continue
                     advanced_component_templates['templates'].append(
                         create_template_dict(
                             component_display_name,
@@ -480,7 +481,9 @@ def get_component_templates(courselike, library=False):  # lint-amnesty, pylint:
                             advanced_component_types[category]
                         )
                     )
+                    log.info("#venkat advancedcomponent %s",advanced_component_templates)
                     categories.add(category)
+                    log.info("# venkat categorydata %s",categories)
                 except PluginMissingError:
                     # dhm: I got this once but it can happen any time the
                     # course author configures an advanced component which does
@@ -498,7 +501,6 @@ def get_component_templates(courselike, library=False):  # lint-amnesty, pylint:
         )
     if advanced_component_templates['templates']:
         component_templates.insert(0, advanced_component_templates)
-    log.info("#venkat componentt %s",component_templates)
     return component_templates
 
 

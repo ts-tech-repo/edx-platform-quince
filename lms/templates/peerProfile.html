@@ -169,8 +169,8 @@
     src="https://static.talentsprint.com/lms_maple/images/topRight.svg" alt="">
 
   <nav class="top-0 z-3">
-    <img src="https://static.talentsprint.com/lms_maple/images/logo.png" class="my-2"
-      style="height: 62px; margin-left: 70px; width: 250px" />
+    <img src="https://static.talentsprint.com/lms_maple/images/logo.png" class="my-2 logo"
+      style="height: 62px; margin-left: 70px;" />
   </nav>
   <header class="mb-5" style="margin-top: 40px">
     <div class="text-center">
@@ -225,11 +225,15 @@
     src="https://static.talentsprint.com/lms_maple/images/bottomLeft.svg" alt="">
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const courseElement = document.querySelector('.pgn__card-wrapper-image-cap');
+    const mainLogo = parent.document.querySelector(".logo");
+    const pPLogo = document.querySelector(".logo");
+    pPLogo.src = mainLogo.src;
+    
+    parent.document.addEventListener('DOMContentLoaded', function () {
+      const courseElement = parent.document.querySelector('.pgn__card-wrapper-image-cap');
       if (courseElement && courseElement.hasAttribute('href')) {
         const courseName = courseElement.getAttribute('href');
-        console.log(courseName);
+        console.log(courseName, "asldasdhkjashdjk");
       } else {
         console.log('Element not found');
       }
