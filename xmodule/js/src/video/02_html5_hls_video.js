@@ -66,7 +66,6 @@
                             );
                             self.config.onReadyHLS();
                         });
-                        console.log(this,HLS, HLS.Events, HLS.Events.LEVEL_SWITCHED);
                         this.hls.on(HLS.Events.LEVEL_SWITCHED, function(event, data) {
                             var level = self.hls.levels[data.level];
                             console.log(
@@ -77,8 +76,6 @@
                                 }
                             );
                         });
-                        console.log(config.videoSources[0]);
-                        this.videoEl.attr('src', 'https://cdn.chn.talentsprint.com/e_content/master.m3u8');
                     }
                 }
 

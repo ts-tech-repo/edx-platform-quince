@@ -161,6 +161,13 @@
         line-height: 1;
       }
     }
+
+    @media (max-width: 480px) {
+      .logo{
+        height: 40px !important;
+        margin-left: 20px !important;
+      }
+    }
   </style>
 </head>
 
@@ -169,8 +176,8 @@
     src="https://static.talentsprint.com/lms_maple/images/topRight.svg" alt="">
 
   <nav class="top-0 z-3">
-    <img src="https://static.talentsprint.com/lms_maple/images/logo.png" class="my-2"
-      style="height: 62px; margin-left: 70px; width: 250px" />
+    <img src="https://static.talentsprint.com/lms_maple/images/logo.png" class="my-2 logo"
+      style="height: 62px; margin-left: 70px;" />
   </nav>
   <header class="mb-5" style="margin-top: 40px">
     <div class="text-center">
@@ -194,7 +201,7 @@
             </div>
             <div class="ed-section mt-3">
               <p style="height:50px;color: rgba(0,0,0,0.5);font-size: 17px; overflow: hidden;display: -webkit-box;
--webkit-line-clamp: 2;
+-webkit-line-clamp: 2; line-clamp: 2;
 -webkit-box-orient: vertical;" id="level_of_education">{{ profile.designation }} {% if profile.designation and  profile.company %},{% endif %} {{ profile.company }}</p>
               </p>
               <p id="bio" style="display: none;">{{ profile.bio }}</p>
@@ -225,11 +232,15 @@
     src="https://static.talentsprint.com/lms_maple/images/bottomLeft.svg" alt="">
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const courseElement = document.querySelector('.pgn__card-wrapper-image-cap');
+    const mainLogo = parent.document.querySelector(".logo");
+    const pPLogo = document.querySelector(".logo");
+    pPLogo.src = mainLogo.src;
+    
+    parent.document.addEventListener('DOMContentLoaded', function () {
+      const courseElement = parent.document.querySelector('.pgn__card-wrapper-image-cap');
       if (courseElement && courseElement.hasAttribute('href')) {
         const courseName = courseElement.getAttribute('href');
-        console.log(courseName);
+        console.log(courseName, "asldasdhkjashdjk");
       } else {
         console.log('Element not found');
       }
