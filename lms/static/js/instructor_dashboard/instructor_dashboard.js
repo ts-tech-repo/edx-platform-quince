@@ -120,7 +120,7 @@ such that the value can be defined later than this assignment (file load order).
                 window.analytics.pageview('instructor_section:' + itemSectionName);
                 location.hash = '' + HASH_LINK_PREFIX + itemSectionName;
                 sectionsHaveLoaded.afterFor(function() {
-                    return $section.data('wrapper')?.onClickTitle();
+                    return $section.data('wrapper').onClickTitle();
                 });
                 if (!$section.is($activeSection)) {
                     if ($activeSection != null) {
