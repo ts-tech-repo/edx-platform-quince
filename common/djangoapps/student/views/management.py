@@ -1794,6 +1794,9 @@ def extras_get_assessment_details(request):
 
 @csrf_exempt
 def extras_update_lti_grades(request):
+    authorization_header = request.META.get('HTTP_AUTHORIZATION', None)
+    if authorization_header is None or configuration_helpers.get_value("EDX_API_TOKEN", None) != authorization_header:
+        return JsonResponse({"Status" : "Failed", "message" : "Please provide authentication token"})
     log.info("#sabidA 0 request received:  {}".format(request.POST))
     user_email = request.POST.get("user_email", "")
     usage_id = request.POST.get("usage_id", "")
@@ -1966,6 +1969,9 @@ def cyberstruct_sso(request):
 
 @csrf_exempt
 def extras_sync_moodle_attendance(request):
+    authorization_header = request.META.get('HTTP_AUTHORIZATION', None)
+    if authorization_header is None or configuration_helpers.get_value("EDX_API_TOKEN", None) != authorization_header:
+        return JsonResponse({"Status" : "Failed", "Response" : "Please provide authentication token"})
     usage_id = request.POST.get("unit_id")
     user_email = request.POST.get("user_email")
     attendance = request.POST.get("attendance")
