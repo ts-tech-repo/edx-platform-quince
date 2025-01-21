@@ -1002,7 +1002,10 @@ def change_email_settings(request):
 
 @csrf_exempt
 def extras_course_enroll_user(request):
-
+    authorization_header = request.META.get('HTTP_AUTHORIZATION', None)
+    if authorization_header is None or configuration_helpers.get_value("EDX_API_TOKEN", None) != authorization_header:
+        return render(request, 'blank.html', {"message": "Invalid Options"})
+    data = json.loads(request.body)
     data = json.loads(request.body)
     log.info(data)
 
