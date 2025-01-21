@@ -1565,7 +1565,7 @@ def extras_get_payment_details(request):
     international_orders_endpoint = "https://international.talentsprint.com/get-payment-history.dpl"
 
     try:
-        payload = {"email": request.user.email, "password" : "TS123$" , "site" : site}
+        payload = {"email": request.user.email, "password" : configuration_helpers.get_value("PAYMENT_DETAILS_PASSWORD", "") , "site" : site}
         response = requests.post(student_orders_endpoint, data=payload)
         international_response = requests.post(international_orders_endpoint, data=payload)
         data = {}
