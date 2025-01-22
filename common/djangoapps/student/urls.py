@@ -21,7 +21,7 @@ urlpatterns = [
 
     re_path(r'^extras/course_enroll_user/', csrf_exempt(views.extras_course_enroll_user), name = 'extras_course_enroll_user'),
 
-    re_path(r'/extras/generate_jwt_token', views.extras_generate_jwt_token, name = 'extras_generate_jwt_token'),
+    re_path(r'/extras/generate_jwt_token$', views.extras_generate_jwt_token, name = 'extras_generate_jwt_token'),
 
     re_path(r'^extras/gradebook$', views.extras_get_moodle_grades, name = "extras_get_moodle_grades"),
     re_path(r'^attendance_report', views.attendance_report, name = "attendance_report"),
