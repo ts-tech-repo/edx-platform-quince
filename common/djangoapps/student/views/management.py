@@ -1963,7 +1963,9 @@ def extras_sync_moodle_attendance(request):
 
     return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes((JwtAuthentication,))
+@permission_classes([AllowAny])
 def extras_get_lti_tool_urls(request):
     moodle_url = configuration_helpers.get_value("MOODLE_URL", "")
     moodle_service_url = moodle_url + "/webservice/rest/server.php"
@@ -1987,24 +1989,21 @@ def extras_update_moodle_block_url(request):
         return JsonResponse(response.json())
     return JsonResponse({"error" : "Please Provide tool and lms_url"})
 
-# @api_view(['POST'])
-# @authentication_classes(())
-# @permission_classes((AllowAny))
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes(())
+@permission_classes([AllowAny])
 def extras_generate_jwt_token(request):
 
-    log.info("Here")
-    
-    requesting_user = configuration_helpers.get_value(request.META['HTTP_HOST'])
-    jwtSecretToken = configuration_helpers.get_value('')
-
-    if not requesting_user:
-        return JsonResponse({"Status" : "Error", "message" : "Unauthorised domain"})
+    username = request.headers.get("username")
+    password = request.headers.get("password")
 
     try:
-        user_obj = User.objects.get(username = requesting_user)
+        user_obj = User.objects.get(username = username)
+        if not user_obj.check_password(password):
+            return JsonResponse({"error": "Invalid credentials"}, status=400)
         
-        return JsonResponse(create_jwt_for_user(user_obj, jwtSecretToken))
+        token = create_jwt_for_user(user_obj, user_obj.password)
+        return JsonResponse({"jwtToken" : token, "expiry" : settings.OAUTH_ID_TOKEN_EXPIRATION})
     
     except Exception as err:
         
