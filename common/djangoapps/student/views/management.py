@@ -1989,7 +1989,7 @@ def extras_update_moodle_block_url(request):
 
 @api_view(['POST'])
 @authentication_classes(())
-@permission_classes((AllowAny))
+@permission_classes([AllowAny])
 def extras_generate_jwt_token(request):
 
     log.info("Here")
