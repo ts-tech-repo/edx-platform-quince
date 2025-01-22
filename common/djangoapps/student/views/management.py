@@ -55,6 +55,7 @@ from edx_ace import ace
 from edx_ace.recipient import Recipient
 from edx_django_utils import monitoring as monitoring_utils
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from edx_rest_framework_extensions.auth.session.authentication import SessionAuthenticationAllowInactiveUser  # lint-amnesty, pylint: disable=wrong-import-order
 from eventtracking import tracker
 # Note that this lives in LMS, so this dependency should be refactored.
@@ -1964,7 +1965,7 @@ def extras_sync_moodle_attendance(request):
     return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 
 @api_view(['POST'])
-@authentication_classes([JwtAuthentication])
+@authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def extras_get_lti_tool_urls(request):
     moodle_url = configuration_helpers.get_value("MOODLE_URL", "")
