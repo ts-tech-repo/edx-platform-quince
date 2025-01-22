@@ -1969,7 +1969,9 @@ def extras_sync_moodle_attendance(request):
 @permission_classes([IsAuthenticated])
 def extras_get_lti_tool_urls(request):
     auth_header = request.headers.get('Authorization')
-    
+
+    log.info(auth_header)
+
     if not auth_header:
         return JsonResponse({"message" : 'Authorization header missing.'}, status = 400)
     
