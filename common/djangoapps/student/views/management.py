@@ -1964,8 +1964,8 @@ def extras_sync_moodle_attendance(request):
     return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 
 @api_view(['POST'])
-@authentication_classes((JwtAuthentication,))
-@permission_classes((IsAuthenticated,))
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated,])
 def extras_get_lti_tool_urls(request):
     moodle_url = configuration_helpers.get_value("MOODLE_URL", "")
     moodle_service_url = moodle_url + "/webservice/rest/server.php"
