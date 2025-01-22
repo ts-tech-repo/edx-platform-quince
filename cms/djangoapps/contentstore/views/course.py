@@ -1772,6 +1772,9 @@ def _get_course_creator_status(user):
 @require_http_methods(['POST'])
 @csrf_exempt
 def extras_create_course(request):
+    authorization_header = request.META.get('HTTP_AUTHORIZATION', None)
+    if authorization_header is None or configuration_helpers.get_value("EDX_API_TOKEN", None) != authorization_header:
+        return JsonResponse({"error" : "Please provide valid authentication token"})
     data = json.loads(request.body)
     log.info(data)
     display_name = data['other']['display_name']

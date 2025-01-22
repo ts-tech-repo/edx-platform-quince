@@ -1000,7 +1000,10 @@ def change_email_settings(request):
 
 @csrf_exempt
 def extras_course_enroll_user(request):
-
+    authorization_header = request.META.get('HTTP_AUTHORIZATION', None)
+    if authorization_header is None or configuration_helpers.get_value("EDX_API_TOKEN", None) != authorization_header:
+        return render(request, 'blank.html', {"message": "Please provide valid authentication token"})
+    
     data = json.loads(request.body)
     log.info(data)
 
@@ -1585,6 +1588,9 @@ def extras_get_payment_details(request):
 
 @csrf_exempt
 def extras_update_lti_grades(request):
+    authorization_header = request.META.get('HTTP_AUTHORIZATION', None)
+    if authorization_header is None or configuration_helpers.get_value("EDX_API_TOKEN", None) != authorization_header:
+        return JsonResponse({"Status" : "Failed", "message" : "Please provide valid authentication token"})
     user_email = request.POST.get("user_email", "")
     usage_id = request.POST.get("usage_id", "")
     user_object = User.objects.get(email = user_email)
@@ -1752,6 +1758,9 @@ def extras_transcript(request):
 
 @csrf_exempt
 def extras_sync_moodle_attendance(request):
+    authorization_header = request.META.get('HTTP_AUTHORIZATION', None)
+    if authorization_header is None or configuration_helpers.get_value("EDX_API_TOKEN", None) != authorization_header:
+        return JsonResponse({"Status" : "Failed", "Response" : "Please provide valid authentication token"})
     usage_id = request.POST.get("unit_id")
     user_email = request.POST.get("user_email")
     attendance = request.POST.get("attendance")
