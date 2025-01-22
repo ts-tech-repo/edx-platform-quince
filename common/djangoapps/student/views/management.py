@@ -103,6 +103,7 @@ from common.djangoapps.student.models import (  # lint-amnesty, pylint: disable=
     email_exists_or_retired,
     CourseAccessRole
 )
+from openedx.core.djangoapps.oauth_dispatch.jwt import create_jwt_for_user
 from common.djangoapps.student.signals import REFUND_ORDER
 from common.djangoapps.util.db import outer_atomic
 from common.djangoapps.util.json_request import JsonResponse
@@ -118,6 +119,8 @@ from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
 from jwcrypto import jwt, jwk
 from completion.models import BlockCompletion
+from rest_framework.permissions import AllowAny
+
 
 
 log = logging.getLogger("edx.student")
@@ -1352,26 +1355,6 @@ def merged_attendance(responses):
     "sessions_present": sum(data["sessions_present"] for data in mergeddata["session_summary"]),
     "overall_percentage": f"{(sum(data['sessions_present'] for data in mergeddata['session_summary']) * 100) / sum(data['total_sessions'] for data in mergeddata['session_summary']):.2f}"}]
 
-    # total_numtakensessions ,total_takensessionspoints ,total_takensessionsmaxpoints= 0,0,0
-
-    # for course in mergeddata["percentage"]:
-    #     total_numtakensessions += int(course["numtakensessions"])
-    #     total_takensessionspoints += float(course["takensessionspoints"])
-    #     total_takensessionsmaxpoints += float(course["takensessionsmaxpoints"])
-
-    # mergeddata["percentage"] = [
-    # {
-    #     "numtakensessions": str(total_numtakensessions),
-    #     "takensessionspoints": str(total_takensessionspoints),
-    #     "takensessionsmaxpoints": str(total_takensessionsmaxpoints),
-    #     "takensessionspercentage":  total_takensessionspoints/total_takensessionsmaxpoints,
-    #     "userstakensessionsbyacronym": "",
-    #     "pointssessionscompleted": mergeddata["percentage"][0]["pointssessionscompleted"],
-    #     "percentagesessionscompleted": f"{((total_takensessionspoints / total_takensessionsmaxpoints) * 100):.1f}%",
-    #     "course": mergeddata["percentage"][0]["course"],
-    #     "course_id": mergeddata["percentage"][0]["course_id"]
-    # }
-    # ]
     return mergeddata
 
 @csrf_exempt
@@ -2003,3 +1986,23 @@ def extras_update_moodle_block_url(request):
         response = requests.request("POST", configuration_helpers.get_value("MOODLE_URL", "") + "/webservice/rest/server.php", headers=headers, params=querystring)
         return JsonResponse(response.json())
     return JsonResponse({"error" : "Please Provide tool and lms_url"})
+
+@api_view(['POST'])
+@authentication_classes(())
+@permission_classes((AllowAny))
+def extras_generate_jwt_token(request):
+    
+    requesting_user = configuration_helpers.get_value(request.META['HTTP_HOST'])
+    jwtSecretToken = configuration_helpers.get_value('')
+
+    if not requesting_user:
+        return JsonResponse({"Status" : "Error", "message" : "Unauthorised domain"})
+
+    try:
+        user_obj = User.objects.get(username = requesting_user)
+        
+        return JsonResponse(create_jwt_for_user(user_obj, jwtSecretToken))
+    
+    except Exception as err:
+        
+        log.info("Something went wrong {0}".format(err))
