@@ -1991,6 +1991,8 @@ def extras_update_moodle_block_url(request):
 @authentication_classes(())
 @permission_classes((AllowAny))
 def extras_generate_jwt_token(request):
+
+    log.info("Here")
     
     requesting_user = configuration_helpers.get_value(request.META['HTTP_HOST'])
     jwtSecretToken = configuration_helpers.get_value('')
