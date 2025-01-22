@@ -119,6 +119,8 @@ from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
 from jwcrypto import jwt, jwk
 from completion.models import BlockCompletion
+from rest_framework.permissions import AllowAny
+
 
 
 log = logging.getLogger("edx.student")
