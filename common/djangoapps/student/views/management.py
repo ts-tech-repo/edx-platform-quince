@@ -1968,6 +1968,11 @@ def extras_sync_moodle_attendance(request):
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def extras_get_lti_tool_urls(request):
+    auth_header = request.headers.get('Authorization')
+    
+    if not auth_header:
+        return JsonResponse({"message" : 'Authorization header missing.'}, status = 400)
+    
     moodle_url = configuration_helpers.get_value("MOODLE_URL", "")
     moodle_service_url = moodle_url + "/webservice/rest/server.php"
     course_short_name = request.POST.get("course_shortName", "")
