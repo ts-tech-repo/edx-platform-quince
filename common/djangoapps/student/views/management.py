@@ -1992,17 +1992,14 @@ def extras_update_moodle_block_url(request):
 @permission_classes([AllowAny])
 def extras_generate_jwt_token(request):
 
-    log.info("Here")
-
-    log.info(request.headers)
-    
-    requesting_user = configuration_helpers.get_value(request.META['HTTP_HOST'])
-
-    if not requesting_user:
-        return JsonResponse({"Status" : "Error", "message" : "Unauthorised domain"})
+    username = request.headers.get["username"]
+    password = request.headers.get["password"]
 
     try:
         user_obj = User.objects.get(username = "chandana_k")
+        if not user_obj.check_password(password):
+            return JsonResponse({"error": "Invalid credentials"}, status=400)
+        
         token = create_jwt_for_user(user_obj, user_obj.password)
         return JsonResponse({"jwtToken" : token, "expiry" : settings.OAUTH_ID_TOKEN_EXPIRATION})
     
