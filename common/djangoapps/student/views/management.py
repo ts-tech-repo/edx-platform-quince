@@ -2002,9 +2002,8 @@ def extras_generate_jwt_token(request):
 
     try:
         user_obj = User.objects.get(username = "chandana_k")
-        tokenDict = create_jwt_for_user(user_obj, jwtSecretToken)
-        log.info(tokenDict)
-        return JsonResponse({})
+        token = create_jwt_for_user(user_obj, jwtSecretToken)
+        return JsonResponse({"jwtToken" : token, "expiry" : settings.OAUTH_ID_TOKEN_EXPIRATION})
     
     except Exception as err:
         
