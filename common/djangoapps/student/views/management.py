@@ -2003,7 +2003,7 @@ def extras_generate_jwt_token(request):
         if not user_obj.check_password(password):
             return JsonResponse({"error": "Invalid credentials"}, status=400)
         
-        token = create_jwt_for_user(user_obj, user_obj.password)
+        token = create_jwt_for_user(user_obj)
         return JsonResponse({"jwtToken" : token, "expiry" : settings.OAUTH_ID_TOKEN_EXPIRATION})
     
     except Exception as err:
