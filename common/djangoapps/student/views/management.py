@@ -1992,8 +1992,8 @@ def extras_update_moodle_block_url(request):
 @permission_classes([AllowAny])
 def extras_generate_jwt_token(request):
 
-    username = request.headers.get["username"]
-    password = request.headers.get["password"]
+    username = request.headers.get("username")
+    password = request.headers.get("password")
 
     try:
         user_obj = User.objects.get(username = "chandana_k")
