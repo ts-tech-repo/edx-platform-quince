@@ -2002,8 +2002,9 @@ def extras_generate_jwt_token(request):
 
     try:
         user_obj = User.objects.get(username = "chandana_k")
-        
-        return JsonResponse(create_jwt_for_user(user_obj, jwtSecretToken))
+        tokenDict = create_jwt_for_user(user_obj, jwtSecretToken)
+        log.info(tokenDict)
+        return JsonResponse({})
     
     except Exception as err:
         
