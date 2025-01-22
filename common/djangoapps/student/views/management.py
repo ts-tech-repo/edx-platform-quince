@@ -1963,7 +1963,9 @@ def extras_sync_moodle_attendance(request):
 
     return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes((JwtAuthentication,))
+@permission_classes([AllowAny])
 def extras_get_lti_tool_urls(request):
     moodle_url = configuration_helpers.get_value("MOODLE_URL", "")
     moodle_service_url = moodle_url + "/webservice/rest/server.php"
@@ -1996,7 +1998,7 @@ def extras_generate_jwt_token(request):
     password = request.headers.get("password")
 
     try:
-        user_obj = User.objects.get(username = "chandana_k")
+        user_obj = User.objects.get(username = username)
         if not user_obj.check_password(password):
             return JsonResponse({"error": "Invalid credentials"}, status=400)
         
