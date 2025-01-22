@@ -97,13 +97,13 @@
 												<td>{{record.total_grade}}</td>
 											{%endif%}
 											{% if assignment.itemtype != "course" %}
-													{%if assignment.bonuspoint%}
+													{%if assignment.bonuspoint is not none %}
 														<td>{{assignment.bonuspoint}}</td>
 													{% else %}
 														<td>-</td>
 													{%endif%}
                                             	{%else%}
-                                                	<td>-</td>
+                                                	<td>{{ record.coursewise_bonus }}</td>
                                             {%endif%}
                                                                                         {% if assignment.itemtype == "course" %}
 											<td>{{record.coursewise_percentage}}%</td>

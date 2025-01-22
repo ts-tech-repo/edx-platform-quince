@@ -1003,7 +1003,6 @@ def change_email_settings(request):
 
 @csrf_exempt
 def extras_course_enroll_user(request):
-
     data = json.loads(request.body)
     log.info(data)
 
@@ -1886,7 +1885,7 @@ def extras_get_peer_profiles(request):
 
             profiles.append({
                 "user_id": profile.user.id, "username": profile.user.username, "email": profile.user.email,
-                "first_name": profile.user.first_name, "last_name": profile.user.last_name,"is_superuser" : profile.user.is_superuser, "is_staff": profile.user.is_staff, "level_of_education": level_of_education.get(profile.level_of_education, ""),
+                "first_name": profile.user.first_name, "last_name": profile.user.last_name,"is_superuser" : profile.user.is_superuser, "is_staff": profile.user.is_staff, "course_id" : course_key,"level_of_education": level_of_education.get(profile.level_of_education, ""),
                 "company": profile.company, "designation": profile.designation, "bio": profile.bio, "social_links": [{'platform': link.platform, 'url': link.social_link} for link in profile.social_links.all()],
                 "has_profile_image": has_image, "profile_image_urls": profile_image_urls
             })
@@ -1975,6 +1974,16 @@ def extras_get_lti_tool_urls(request):
         return JsonResponse(response.json())
     return JsonResponse({"error": "Please Provide course short name"})
 
+@csrf_exempt
+def extras_update_moodle_block_url(request):
+    lms_url = request.POST.get("lms_url", "")
+    selected_tool = request.POST.get("selected_tool", "")
+    if selected_tool and lms_url:
+        headers = { 'content-type': "text/plain" }
+        querystring = { "wstoken": configuration_helpers.get_value("MOODLE_TOKEN", ""), "wsfunction": "mod_lti_update_block_url", "moodlewsrestformat": "json", "tool_id": selected_tool.split("?")[1].split("=")[1], "lms_url": lms_url }
+        response = requests.request("POST", configuration_helpers.get_value("MOODLE_URL", "") + "/webservice/rest/server.php", headers=headers, params=querystring)
+        return JsonResponse(response.json())
+    return JsonResponse({"error" : "Please Provide tool and lms_url"})
 
 @api_view(['POST'])
 @authentication_classes([])
