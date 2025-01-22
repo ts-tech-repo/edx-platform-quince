@@ -62,3 +62,15 @@ from openedx.core.djangoapps.user_authn.toggles import should_redirect_to_authn_
     </div>
   </div>
 </nav>
+<!-- <script>
+  const loginPageUrl = `${location.hostname}/login`;
+  function checkInternetAndRedirect() {
+      if (!navigator.onLine) {
+          window.location.href = loginPageUrl;
+      }
+  }
+  window.addEventListener('load', checkInternetAndRedirect);
+  window.addEventListener('offline', () => {
+      window.location.href = loginPageUrl;
+  });
+</script> -->
