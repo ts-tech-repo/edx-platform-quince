@@ -1993,16 +1993,17 @@ def extras_update_moodle_block_url(request):
 def extras_generate_jwt_token(request):
 
     log.info("Here")
+
+    log.info(request.META['HTTP_HOST'])
     
     requesting_user = configuration_helpers.get_value(request.META['HTTP_HOST'])
-    jwtSecretToken = configuration_helpers.get_value('')
 
-    # if not requesting_user:
-    #     return JsonResponse({"Status" : "Error", "message" : "Unauthorised domain"})
+    if not requesting_user:
+        return JsonResponse({"Status" : "Error", "message" : "Unauthorised domain"})
 
     try:
         user_obj = User.objects.get(username = "chandana_k")
-        token = create_jwt_for_user(user_obj, jwtSecretToken)
+        token = create_jwt_for_user(user_obj, user_obj.password)
         return JsonResponse({"jwtToken" : token, "expiry" : settings.OAUTH_ID_TOKEN_EXPIRATION})
     
     except Exception as err:
