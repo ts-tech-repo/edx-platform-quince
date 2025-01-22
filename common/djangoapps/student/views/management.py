@@ -1994,7 +1994,7 @@ def extras_generate_jwt_token(request):
 
     log.info("Here")
 
-    log.info(request.META['HTTP_HOST'])
+    log.info(request.headers)
     
     requesting_user = configuration_helpers.get_value(request.META['HTTP_HOST'])
 
