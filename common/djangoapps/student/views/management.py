@@ -1987,10 +1987,13 @@ def extras_update_moodle_block_url(request):
         return JsonResponse(response.json())
     return JsonResponse({"error" : "Please Provide tool and lms_url"})
 
-@api_view(['POST'])
-@authentication_classes(())
-@permission_classes((AllowAny))
+# @api_view(['POST'])
+# @authentication_classes(())
+# @permission_classes((AllowAny))
+@csrf_exempt
 def extras_generate_jwt_token(request):
+
+    log.info("Here")
     
     requesting_user = configuration_helpers.get_value(request.META['HTTP_HOST'])
     jwtSecretToken = configuration_helpers.get_value('')
