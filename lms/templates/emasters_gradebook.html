@@ -44,6 +44,7 @@
 						<!--	<th>Range</th> -->
                            <!--  <th>Calculated weight</th> -->
                             <th>Score</th>
+							<th>Bonus</th>
                             <th>Percentage</th>
                             <th>Feedback</th>        
 						</tr>    
@@ -73,7 +74,16 @@
                                                         {% endif %}
 						<!--	<td>{{assignment.rangeformatted | safe}}</td>	-->
 		                                        <!-- <td>{{assignment.weightformatted}}</td> -->
-        		        		        <td>{{assignment.gradeformatted}}</td> 
+        		        		        <td>{{assignment.gradeformatted}}</td>
+										{% if assignment.itemtype != "course" %}
+                                                                                                        {%if assignment.bonuspoint is not none %}
+                                                                                                                <td>{{assignment.bonuspoint}}</td>
+                                                                                                        {% else %}
+                                                                                                                <td>-</td>
+                                                                                                        {%endif%}
+                                                {%else%}
+                                                        <td>{{ record.coursewise_bonus }}</td>
+                                            {%endif%}
 				                        <td>{{assignment.percentageformatted}}</td>
 							{% if assignment.feedback%}
 	                				        <td class="feedback">{{assignment.feedback | safe}}</td>
