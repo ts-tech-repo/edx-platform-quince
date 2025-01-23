@@ -119,6 +119,8 @@ from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
 from jwcrypto import jwt, jwk
 from completion.models import BlockCompletion
+from rest_framework.permissions import AllowAny
+
 
 
 log = logging.getLogger("edx.student")
@@ -1961,8 +1963,11 @@ def extras_sync_moodle_attendance(request):
 
     return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_get_lti_tool_urls(request):
+    
     moodle_url = configuration_helpers.get_value("MOODLE_URL", "")
     moodle_service_url = moodle_url + "/webservice/rest/server.php"
     course_short_name = request.POST.get("course_shortName", "")
@@ -1986,20 +1991,20 @@ def extras_update_moodle_block_url(request):
     return JsonResponse({"error" : "Please Provide tool and lms_url"})
 
 @api_view(['POST'])
-@authentication_classes([])
+@authentication_classes(())
 @permission_classes([AllowAny])
 def extras_generate_jwt_token(request):
-    
-    requesting_user = configuration_helpers.get_value(request.META['HTTP_HOST'])
-    jwtSecretToken = configuration_helpers.get_value('')
 
-    if not requesting_user:
-        return JsonResponse({"Status" : "Error", "message" : "Unauthorised domain"})
+    username = request.headers.get("username")
+    password = request.headers.get("password")
 
     try:
-        user_obj = User.objects.get(username = requesting_user)
+        user_obj = User.objects.get(username = username)
+        if not user_obj.check_password(password):
+            return JsonResponse({"error": "Invalid credentials"}, status=400)
         
-        return JsonResponse(create_jwt_for_user(user_obj, jwtSecretToken))
+        token = create_jwt_for_user(user_obj)
+        return JsonResponse({"jwtToken" : token, "expiry" : settings.OAUTH_ID_TOKEN_EXPIRATION})
     
     except Exception as err:
         
