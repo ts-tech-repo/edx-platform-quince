@@ -1806,22 +1806,3 @@ def extras_get_ptc_details(request):
     except Exception as e:
         return JsonResponse({})
 
-@api_view(['POST'])
-@authentication_classes(())
-@permission_classes([AllowAny])
-def extras_generate_jwt_token(request):
-
-    username = request.headers.get("username")
-    password = request.headers.get("password")
-
-    try:
-        user_obj = User.objects.get(username = username)
-        if not user_obj.check_password(password):
-            return JsonResponse({"error": "Invalid credentials"}, status=400)
-        
-        token = create_jwt_for_user(user_obj)
-        return JsonResponse({"jwtToken" : token, "expiry" : settings.OAUTH_ID_TOKEN_EXPIRATION})
-    
-    except Exception as err:
-        
-        log.info("Something went wrong {0}".format(err))
