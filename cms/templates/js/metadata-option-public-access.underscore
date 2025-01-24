@@ -4,9 +4,9 @@
         <% _.each(model.get('options'), function(option) { %>
             <%
                 let optionValue = option.display_name !== undefined ? option['display_name'] : option;
-                let isSelected = optionValue.toLowerCase() === "staff" ? "selected" : ";"
+                let isSelected = optionValue.toLowerCase() === "staff" ? "selected" : "";
             %>
-            <option value="<%- optionValue %>" <%= isSelected %><%- optionValue %></option>
+            <option class="option" value="<%- optionValue %>" <%= isSelected %><%- optionValue %></option>
             {% comment %} <% if (option.display_name !== undefined) { %>
                 <option value="<%- option['display_name'] %>"><%- option['display_name'] %></option>
             <% } else { %>
