@@ -616,7 +616,9 @@ def password_change_request_handler(request):
             _("Your previous request is in progress, please try again in a few moments."),
             status=403
         )
-
+    if not user.is_active:
+        AUDIT_LOG.warning("Password reset attempt for inactive user %s.", email)
+        return HttpResponseBadRequest(_("Your account is inactive. Please contact support."))
     if email:
         try:
             request_password_change(email, request.is_secure())

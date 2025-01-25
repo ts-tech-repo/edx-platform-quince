@@ -210,7 +210,7 @@ def _log_and_raise_inactive_user_auth_error(unauthenticated_user):
     )
 
     profile = UserProfile.objects.get(user=unauthenticated_user)
-    compose_and_send_activation_email(unauthenticated_user, profile)
+    # compose_and_send_activation_email(unauthenticated_user, profile)
 
     raise AuthFailedError(
         error_code='inactive-user',
