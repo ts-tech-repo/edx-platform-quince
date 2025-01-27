@@ -556,7 +556,6 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
             "ptcURl": ""
         }
         ptc_popup_details = configuration_helpers.get_value("PTC_POPUP_DETAILS", None)
-        logger.info(f"#AMANK:: PTC Popup: {ptc_popup_details}")
         if ptc_popup_details:
             try:
                     response = requests.get(
@@ -564,14 +563,11 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
                         params={"batchId":  ptc_popup_details["PTC_BATCH_ID"], "emailId": user.email},
                         headers={"Access-Key": ptc_popup_details["PTC_API_ACCESS_KEY"]},
                     )
-                    logger.info(f"#AMANK:: PTC Response: {response.json()}")
                     parsed_data = response.json()
                     if parsed_data["status"] == "success" and parsed_data["data"]["ptcStatus"] == False:
-                        logger.info(f"#AMANK:: PTC status: {parsed_data['data']['ptcStatus']}")
                         learner_dash_data["ptcSubmitted"] = False
                         emailId = urllib.parse.quote(user.email)
-                        learner_dash_data["ptcURl"]= f"{parsed_data['data']['ptcURL']}?emailId={emailId}"
-                    logger.info(f"#AMANK:: PTC URL: {learner_dash_data['ptcURl']}")
+                        learner_dash_data["ptcURL"]= f"{parsed_data['data']['ptcURL']}?emailId={emailId}"
             except Exception as ex:
                     logger.error(f"#AMANK:: PTC Exception: {ex}")
         context = {
