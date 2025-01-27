@@ -472,8 +472,8 @@ def get_component_templates(courselike, library=False):  # lint-amnesty, pylint:
                 # boilerplates not supported for advanced components
                 try:
                     component_display_name = xblock_type_display_name(category, default_display_name=category)
-                    if component_display_name and component_display_name == "Encrypt Player" :
-                        continue
+                    # if component_display_name and component_display_name == "Encrypt Player" :
+                    #     continue
                     advanced_component_templates['templates'].append(
                         create_template_dict(
                             component_display_name,
