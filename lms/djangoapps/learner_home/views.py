@@ -570,7 +570,7 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
                         logger.info(f"#AMANK:: PTC status: {parsed_data['data']['ptcStatus']}")
                         learner_dash_data["ptcSubmitted"] = False
                         emailId = urllib.parse.quote(user.email)
-                        learner_dash_data["ptcURl "]= f"{parsed_data["data"]["ptcURL"]}?emailId={emailId}"
+                        learner_dash_data["ptcURl"]= f"{parsed_data['data']['ptcURL']}?emailId={emailId}"
                     logger.info(f"#AMANK:: PTC URL: {learner_dash_data['ptcURl']}")
             except Exception as ex:
                     logger.error(f"#AMANK:: PTC Exception: {ex}")
