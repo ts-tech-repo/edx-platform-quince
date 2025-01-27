@@ -2,8 +2,9 @@
 Views for Learner Home
 """
 
-import logging
+import logging, requests
 from collections import OrderedDict
+from urllib import request
 
 from completion.exceptions import UnavailableCompletionData
 from completion.utilities import get_key_to_last_completed_block
@@ -541,6 +542,28 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
 
         # Get credit availability
         user_credit_statuses = get_credit_statuses(user, course_enrollments)
+        
+        ptcSubmitted = True
+        ptcURl=""
+        ptc_popup_details = settings.PTC_POPUP_DETAILS
+        if ptc_popup_details:
+            batchId = settings.PTC_BATCH_ID
+            api_url = settings.PTC_API_URL
+            api_access_key = settings.PTC_API_ACCESS_KEY
+            user_email = user.email
+            try:
+                    response = requests.post(
+                        api_url,
+                        data={"batchId": batchId, "email": user_email},
+                        headers={"Access-Key": api_access_key},
+                    )
+                    parsed_data = response.json()
+                    if parsed_data.status == "success":
+                        ptcSubmitted = True
+                        emailId = urllib.parse.quote(user_email)
+                        ptcURl = f"{parsed_data['ptcURL']}?emailId={emailId}"
+            except Exception as ex:
+                    ptcSubmitted = False
 
         learner_dash_data = {
             "emailConfirmation": email_confirmation,
@@ -550,6 +573,8 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
             "unfulfilledEntitlements": unfulfilled_entitlements,
             "socialShareSettings": social_share_settings,
             "suggestedCourses": suggested_courses,
+            "ptcSubmitted":ptcSubmitted,
+            "ptcURl":ptcURl
         }
 
         context = {
