@@ -566,7 +566,7 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
                     parsed_data = response.json()
                     if parsed_data["status"] == "success" and parsed_data["data"]["ptcStatus"]:
                         emailId = urllib.parse.quote(user.email)
-                        learner_dash_data["ptcURl "]= f"{parsed_data["data"]["ptcURL"]}?emailId={emailId}"
+                        learner_dash_data["ptcURl"]= f"{parsed_data['data']['ptcURL']}?emailId={emailId}"
             except Exception as ex:
                     learner_dash_data["ptcSubmitted"] = False
 
