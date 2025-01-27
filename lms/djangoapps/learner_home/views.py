@@ -543,27 +543,6 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
         # Get credit availability
         user_credit_statuses = get_credit_statuses(user, course_enrollments)
         
-        ptcSubmitted = True
-        ptcURl=""
-        ptc_popup_details = settings.PTC_POPUP_DETAILS
-        if ptc_popup_details:
-            batchId = settings.PTC_BATCH_ID
-            api_url = settings.PTC_API_URL
-            api_access_key = settings.PTC_API_ACCESS_KEY
-            user_email = user.email
-            try:
-                    response = requests.post(
-                        api_url,
-                        data={"batchId": batchId, "email": user_email},
-                        headers={"Access-Key": api_access_key},
-                    )
-                    parsed_data = response.json()
-                    if parsed_data.status == "success":
-                        ptcSubmitted = True
-                        emailId = urllib.parse.quote(user_email)
-                        ptcURl = f"{parsed_data['ptcURL']}?emailId={emailId}"
-            except Exception as ex:
-                    ptcSubmitted = False
 
         learner_dash_data = {
             "emailConfirmation": email_confirmation,
@@ -573,9 +552,23 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
             "unfulfilledEntitlements": unfulfilled_entitlements,
             "socialShareSettings": social_share_settings,
             "suggestedCourses": suggested_courses,
-            "ptcSubmitted":ptcSubmitted,
-            "ptcURl":ptcURl
+            "ptcSubmitted": True,
+            "ptcURl": ""
         }
+        ptc_popup_details = configuration_helpers.get_value("PTC_POPUP_DETAILS", settings.PTC_POPUP_DETAILS)
+        if ptc_popup_details:
+            try:
+                    response = requests.get(
+                        ptc_popup_details["PTC_API_URL"],
+                        data={"batchId":  ptc_popup_details["PTC_BATCH_ID"], "emailId": user.email},
+                        headers={"Access-Key": ptc_popup_details["PTC_API_ACCESS_KEY"]},
+                    )
+                    parsed_data = response.json()
+                    if parsed_data["status"] == "success" and parsed_data["ptcStatus"]:
+                        emailId = urllib.parse.quote(user.email)
+                        learner_dash_data.ptcURl = f"{parsed_data['ptcURL']}?emailId={emailId}"
+            except Exception as ex:
+                    learner_dash_data.ptcSubmitted = False
 
         context = {
             "audit_access_deadlines": audit_access_deadlines,
