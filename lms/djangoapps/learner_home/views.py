@@ -556,9 +556,9 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
             "ptcURl": ""
         }
         ptc_popup_details = configuration_helpers.get_value("PTC_POPUP_DETAILS", None)
+        logger.info(f"#AMANK:: PTC Popup: {ptc_popup_details}")
         if ptc_popup_details:
             try:
-                    logger.info(f"#AMANK:: PTC Popup: {ptc_popup_details}")
                     response = requests.get(
                         ptc_popup_details["PTC_API_URL"],
                         data={"batchId":  ptc_popup_details["PTC_BATCH_ID"], "emailId": user.email},
