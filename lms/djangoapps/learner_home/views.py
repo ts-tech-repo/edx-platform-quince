@@ -555,7 +555,7 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
             "ptcSubmitted": True,
             "ptcURl": ""
         }
-        ptc_popup_details = configuration_helpers.get_value("PTC_POPUP_DETAILS", settings.PTC_POPUP_DETAILS)
+        ptc_popup_details = configuration_helpers.get_value("PTC_POPUP_DETAILS", None)
         if ptc_popup_details:
             try:
                     response = requests.get(
@@ -564,11 +564,11 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
                         headers={"Access-Key": ptc_popup_details["PTC_API_ACCESS_KEY"]},
                     )
                     parsed_data = response.json()
-                    if parsed_data["status"] == "success" and parsed_data["ptcStatus"]:
+                    if parsed_data["status"] == "success" and parsed_data["data"]["ptcStatus"]:
                         emailId = urllib.parse.quote(user.email)
-                        learner_dash_data.ptcURl = f"{parsed_data['ptcURL']}?emailId={emailId}"
+                        learner_dash_data["ptcURl "]= f"{parsed_data["data"]["ptcURL"]}?emailId={emailId}"
             except Exception as ex:
-                    learner_dash_data.ptcSubmitted = False
+                    learner_dash_data["ptcSubmitted"] = False
 
         context = {
             "audit_access_deadlines": audit_access_deadlines,
