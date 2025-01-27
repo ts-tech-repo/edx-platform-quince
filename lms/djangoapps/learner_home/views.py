@@ -2,8 +2,9 @@
 Views for Learner Home
 """
 
-import logging
+import logging, requests
 from collections import OrderedDict
+from urllib import request
 
 from completion.exceptions import UnavailableCompletionData
 from completion.utilities import get_key_to_last_completed_block
@@ -541,6 +542,7 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
 
         # Get credit availability
         user_credit_statuses = get_credit_statuses(user, course_enrollments)
+        
 
         learner_dash_data = {
             "emailConfirmation": email_confirmation,
@@ -550,7 +552,23 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
             "unfulfilledEntitlements": unfulfilled_entitlements,
             "socialShareSettings": social_share_settings,
             "suggestedCourses": suggested_courses,
+            "ptcSubmitted": True,
+            "ptcURl": ""
         }
+        ptc_popup_details = configuration_helpers.get_value("PTC_POPUP_DETAILS", None)
+        if ptc_popup_details:
+            try:
+                    response = requests.get(
+                        ptc_popup_details["PTC_API_URL"],
+                        data={"batchId":  ptc_popup_details["PTC_BATCH_ID"], "emailId": user.email},
+                        headers={"Access-Key": ptc_popup_details["PTC_API_ACCESS_KEY"]},
+                    )
+                    parsed_data = response.json()
+                    if parsed_data["status"] == "success" and parsed_data["data"]["ptcStatus"]:
+                        emailId = urllib.parse.quote(user.email)
+                        learner_dash_data["ptcURl "]= f"{parsed_data["data"]["ptcURL"]}?emailId={emailId}"
+            except Exception as ex:
+                    learner_dash_data["ptcSubmitted"] = False
 
         context = {
             "audit_access_deadlines": audit_access_deadlines,
