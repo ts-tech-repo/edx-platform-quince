@@ -561,7 +561,7 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
             try:
                     response = requests.get(
                         ptc_popup_details["PTC_API_URL"],
-                        data={"batchId":  ptc_popup_details["PTC_BATCH_ID"], "emailId": user.email},
+                        params={"batchId":  ptc_popup_details["PTC_BATCH_ID"], "emailId": user.email},
                         headers={"Access-Key": ptc_popup_details["PTC_API_ACCESS_KEY"]},
                     )
                     logger.info(f"#AMANK:: PTC Response: {response.json()}")
