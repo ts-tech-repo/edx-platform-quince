@@ -174,7 +174,6 @@ def get_lms_link_for_item(location, preview=False):
         "LMS_BASE",
         settings.LMS_BASE
     )
-
     if lms_base is None:
         return None
 
@@ -188,7 +187,7 @@ def get_lms_link_for_item(location, preview=False):
         )
 
     return "//{lms_base}/courses/{course_key}/jump_to/{location}".format(
-        lms_base=lms_base,
+        lms_base= lms_base.replace("quince","quince02"),
         course_key=str(location.course_key),
         location=str(location),
     )
@@ -221,7 +220,6 @@ def get_course_authoring_url(course_locator):
     course_authoring_url = mfe_config["COURSE_AUTHORING_MICROFRONTEND_URL"] if "COURSE_AUTHORING_MICROFRONTEND_URL" in mfe_config else settings.COURSE_AUTHORING_MICROFRONTEND_URL
     return configuration_helpers.get_value_for_org(
         course_locator.org,
-        
         'COURSE_AUTHORING_MICROFRONTEND_URL',
         course_authoring_url
     )
@@ -1471,10 +1469,15 @@ def get_home_context(request):
         user_can_create_library,
     )
 
-    optimization_enabled = GlobalStaff().has_user(request.user) and ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
+    #optimization_enabled = GlobalStaff().has_user(request.user) and ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
+    optimization_enabled = ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
 
-    org = request.GET.get('org', '') if optimization_enabled else None
+    org = request.GET.get('org', None) or request.session.get('org', None) if optimization_enabled else None
+    logging.info(f"org: {org}")
+    if org is not None:
+        org = org.upper()
     courses_iter, in_process_course_actions = get_courses_accessible_to_user(request, org)
+    logging.info(f"courses_iter: {courses_iter}")
     user = request.user
     libraries = []
     response_format = get_response_format(request)
