@@ -1473,9 +1473,6 @@ def get_home_context(request):
     optimization_enabled = GlobalStaff().has_user(request.user) and ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
 
     org = request.GET.get('org', '') if optimization_enabled else None
-    logging.info(f"org: {org}")
-    if org is not None:
-        org = org.upper()
     courses_iter, in_process_course_actions = get_courses_accessible_to_user(request, org)
     user = request.user
     libraries = []
@@ -1577,4 +1574,3 @@ class StudioPermissionsService:
     def can_write(self, course_key):
         """ Does the user have read access to the given course/library? """
         return has_studio_write_access(self._user, course_key)
-        
