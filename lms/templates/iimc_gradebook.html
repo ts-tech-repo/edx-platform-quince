@@ -31,7 +31,6 @@
 					<tr  id="heading_thead_1">
 						<th class = "course_heading">Course</th>
 						<th class = "grade_heading">Grade</th>
-						<th class = "bonus_heading">Bonus</th>
 						<!-- <th colspan="7"  class = "total_grade_heading">% Score</th>
 						<th class = "total_submissions_prcnt_heading">% Submissions</th> -->
 					</tr>
@@ -47,11 +46,6 @@
 								<tr class="view">
 									<td>{{record.course_name}}</td>
 									<td>{{assignment.gradeformatted}}</td>
-									{%if assignment.bonuspoint is not none %}
-                                        <td>{{assignment.bonuspoint}}</td>
-                                    {% else %}
-                                        <td>-</td>
-                                    {%endif%}
 								</tr>
 								{%endif%}
 							{%endif%}
