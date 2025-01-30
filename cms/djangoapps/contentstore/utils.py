@@ -174,6 +174,7 @@ def get_lms_link_for_item(location, preview=False):
         "LMS_BASE",
         settings.LMS_BASE
     )
+
     if lms_base is None:
         return None
 
@@ -187,7 +188,7 @@ def get_lms_link_for_item(location, preview=False):
         )
 
     return "//{lms_base}/courses/{course_key}/jump_to/{location}".format(
-        lms_base= lms_base.replace("quince","quince02"),
+        lms_base= lms_base,
         course_key=str(location.course_key),
         location=str(location),
     )
@@ -1469,15 +1470,13 @@ def get_home_context(request):
         user_can_create_library,
     )
 
-    #optimization_enabled = GlobalStaff().has_user(request.user) and ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
-    optimization_enabled = ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
+    optimization_enabled = GlobalStaff().has_user(request.user) and ENABLE_GLOBAL_STAFF_OPTIMIZATION.is_enabled()
 
-    org = request.GET.get('org', None) or request.session.get('org', None) if optimization_enabled else None
+    org = request.GET.get('org', '') if optimization_enabled else None
     logging.info(f"org: {org}")
     if org is not None:
         org = org.upper()
     courses_iter, in_process_course_actions = get_courses_accessible_to_user(request, org)
-    logging.info(f"courses_iter: {courses_iter}")
     user = request.user
     libraries = []
     response_format = get_response_format(request)
@@ -1578,3 +1577,4 @@ class StudioPermissionsService:
     def can_write(self, course_key):
         """ Does the user have read access to the given course/library? """
         return has_studio_write_access(self._user, course_key)
+        
