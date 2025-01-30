@@ -188,7 +188,7 @@ def get_lms_link_for_item(location, preview=False):
         )
 
     return "//{lms_base}/courses/{course_key}/jump_to/{location}".format(
-        lms_base=lms_base,
+        lms_base= lms_base,
         course_key=str(location.course_key),
         location=str(location),
     )
@@ -221,7 +221,6 @@ def get_course_authoring_url(course_locator):
     course_authoring_url = mfe_config["COURSE_AUTHORING_MICROFRONTEND_URL"] if "COURSE_AUTHORING_MICROFRONTEND_URL" in mfe_config else settings.COURSE_AUTHORING_MICROFRONTEND_URL
     return configuration_helpers.get_value_for_org(
         course_locator.org,
-        
         'COURSE_AUTHORING_MICROFRONTEND_URL',
         course_authoring_url
     )

@@ -604,6 +604,8 @@ class LearnerDashboardSerializer(serializers.Serializer):
     suggestedCourses = serializers.ListField(
         child=SuggestedCourseSerializer(), allow_empty=True
     )
+    ptcSubmitted = serializers.BooleanField()
+    ptcURL = serializers.URLField(allow_null=True)
 
     def get_courses(self, instance):
         """
