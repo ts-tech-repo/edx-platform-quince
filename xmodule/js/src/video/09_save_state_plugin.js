@@ -114,12 +114,12 @@
                         this.state.storage.setItem('savedVideoPosition', data.saved_video_position, true);
                         data.saved_video_position = Time.formatFull(data.saved_video_position);
                     }
-
+                    console.log(data, "save_user_data triggered")
                     $.ajax({
-                        url: this.state.config.saveStateUrl,
+                        url: "/debugging", //this.state.config.saveStateUrl,
                         type: 'POST',
                         async: !!async,
-                        dataType: 'json',
+                        dataType: 'json', 
                         data: data
                     });
                 }
