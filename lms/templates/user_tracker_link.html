@@ -88,7 +88,13 @@ h1{font-size: 20px;margin-bottom: 20px;}
             {% for item in data %}
 	    {% if item.show_to_user %}
             <tr>
-                <td>{{ item.assignment_name }}</td>
+                <td>
+                    {% if item.lms_url %}
+                        <a href="{{ item.lms_url }}" target="_blank">{{ item.assignment_name }}</a>
+                    {% else %}
+                        {{ item.assignment_name }}
+                    {% endif %}
+                </td>
                 <td>{{ item.module }}</td>
                 <td id="start_date_cell">{% if item.start_date == 'Jan 01, 1970 05:30 AM' or item.start_date == 'Jan 01, 1970 12:00 AM'%}-{% else %}{{ item.start_date }}{% endif %}</td>
                 <td id="due_date_cell">{% if item.due_date == 'Jan 01, 1970 05:30 AM' or item.due_date == 'Jan 01, 1970 12:00 AM'%}-{% else %}{{ item.due_date }}{% endif %}</td>
@@ -170,7 +176,8 @@ $('#example_filter input').on('keyup', function() {
 });
 var maxCharacters = 28;
         $('table td:nth-child(1)').each(function () {
-            var text = $(this).text();
+            var originalContent = $(this).html();
+            var plainText = $(this).text();
             var words = text.split(' ');
             for (var i = 0; i < words.length; i++) {
                 if (words[i].length > maxCharacters) {
@@ -180,7 +187,7 @@ var maxCharacters = 28;
                 }
             }
             var wrappedText = words.join(' ');
-            $(this).html(wrappedText);
+            $(this).html(originalContent.replace(plainText, wrappedText));
         });
 </script>
 </body>
