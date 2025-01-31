@@ -40,11 +40,13 @@
                     speedchange: this.onSpeedChange,
                     autoadvancechange: this.onAutoAdvanceChange,
                     play: this.bindUnloadHandler,
+                    // pause: this.onPause,
                     'pause destroy': this.saveStateHandler,
                     'language_menu:change': this.onLanguageChange,
                     youtube_availability: this.onYoutubeAvailability
                 };
                 this.bindHandlers();
+                this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3000);
             },
 
             bindHandlers: function() {
@@ -65,6 +67,28 @@
             bindUnloadHandler: _.once(function() {
                 $(window).on('unload.video', this.onUnload);
             }),
+            // onPlay: function() {
+            //     this.saveStateHandler(); // Call immediately when playing
+            //     this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3000); // Start interval
+            // },
+            // playHandlers: [this.onPlay.bind(this), this.bindUnloadHandler.bind(this)],
+
+            // handlePlayEvents: function() {
+            //     this.playHandlers.forEach(function(handler) {
+            //         handler(); // Call each handler in the array
+            //     });
+            // },
+
+            // onPause: function() {
+            //     this.clearSaveStateInterval(); // Clear interval when paused
+            // },
+
+            // clearSaveStateInterval: function() {
+            //     if (this.saveStateInterval) {
+            //         clearInterval(this.saveStateInterval);
+            //         this.saveStateInterval = null; // Reset the interval variable
+            //     }
+            // },
 
             onSpeedChange: function(event, newSpeed) {
                 this.saveState(true, {speed: newSpeed});
