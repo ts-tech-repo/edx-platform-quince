@@ -96,8 +96,8 @@ h1{font-size: 20px;margin-bottom: 20px;}
                     {% endif %}
                 </td>
                 <td>{{ item.module }}</td>
-                <td id="start_date_cell">{% if item.start_date == 'Jan 01, 1970 05:30 AM' or item.start_date == 'Jan 01, 1970 12:00 AM'%}-{% else %}{{ item.start_date }}{% endif %}</td>
-                <td id="due_date_cell">{% if item.due_date == 'Jan 01, 1970 05:30 AM' or item.due_date == 'Jan 01, 1970 12:00 AM'%}-{% else %}{{ item.due_date }}{% endif %}</td>
+                <td id="start_date_cell">{% if item.start_date == 'Jan 01, 1970 05:30 AM' or item.start_date == 'Jan 01, 1970 12:00 AM' or item.start_date == 'Jan 01, 1970 12:30 AM' %}-{% else %}{{ item.start_date }}{% endif %}</td>
+                <td id="due_date_cell">{% if item.due_date == 'Jan 01, 1970 05:30 AM' or item.due_date == 'Jan 01, 1970 12:00 AM or item.start_date == 'Jan 01, 1970 12:30 AM'%}-{% else %}{{ item.due_date }}{% endif %}</td>
                 <td>{{ item.submission_status }}</td>
                 <td>{{ item.grade_status }}</td>
             </tr>
