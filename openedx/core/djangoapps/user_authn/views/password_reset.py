@@ -619,9 +619,11 @@ def password_change_request_handler(request):
 
     if email:
         try:
-            request_password_change(email, request.is_secure())
             user = user if not request.POST.get('email_from_support_tools') and user.is_authenticated \
                 else _get_user_from_email(email=email)
+            if not user.is_active:
+                return HttpResponse(status=400)
+            request_password_change(email, request.is_secure())
             destroy_oauth_tokens(user)
         except errors.UserNotFound:
             AUDIT_LOG.info("Invalid password reset attempt")
