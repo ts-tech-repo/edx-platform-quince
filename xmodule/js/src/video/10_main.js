@@ -58,7 +58,7 @@
             'video/09_play_skip_control.js',
             'video/09_skip_control.js',
             'video/09_bumper.js',
-            'video/09_save_state_plugin.js',
+            'video/09_save_state_plugin.js?v=1.0.1',
             'video/09_events_plugin.js',
             'video/09_events_bumper_plugin.js',
             'video/09_poster.js',

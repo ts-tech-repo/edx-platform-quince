@@ -45,6 +45,7 @@
                     youtube_availability: this.onYoutubeAvailability
                 };
                 this.bindHandlers();
+                this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3000);
             },
 
             bindHandlers: function() {
