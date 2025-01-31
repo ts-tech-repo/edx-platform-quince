@@ -7,6 +7,7 @@
 
 
 import mimetypes
+import logging
 
 from django.conf import settings
 from django.http import Http404, HttpResponse, HttpResponseNotFound, HttpResponseServerError
@@ -22,6 +23,7 @@ from common.djangoapps.edxmako.shortcuts import render_to_response, render_to_st
 from common.djangoapps.util.cache import cache_if_anonymous
 from common.djangoapps.util.views import fix_crum_request
 from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+log = logging.getLogger(__name__)
 
 valid_templates = []
 
@@ -108,6 +110,7 @@ def render_403(request, exception=None):
 @fix_crum_request
 def render_404(request, exception=None):  # lint-amnesty, pylint: disable=unused-argument
     request.view_name = '404'
+    log.info("# venkat errorissue",request)
     return HttpResponseNotFound(render_to_string('static_templates/404.html', {}, request=request))
 
 
