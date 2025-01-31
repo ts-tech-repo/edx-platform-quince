@@ -39,14 +39,14 @@
                 this.events = {
                     speedchange: this.onSpeedChange,
                     autoadvancechange: this.onAutoAdvanceChange,
-                    play: this.bindUnloadHandler,
-                    // pause: this.onPause,
+                    play: this.combinedPlayHandler.bind(this),
+                    pause: this.onPause.bind(this),
                     'pause destroy': this.saveStateHandler,
                     'language_menu:change': this.onLanguageChange,
                     youtube_availability: this.onYoutubeAvailability
                 };
                 this.bindHandlers();
-                this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3000);
+                // this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3000);
             },
 
             bindHandlers: function() {
@@ -67,28 +67,24 @@
             bindUnloadHandler: _.once(function() {
                 $(window).on('unload.video', this.onUnload);
             }),
-            // onPlay: function() {
-            //     this.saveStateHandler(); // Call immediately when playing
-            //     this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3000); // Start interval
-            // },
-            // playHandlers: [this.onPlay.bind(this), this.bindUnloadHandler.bind(this)],
-
-            // handlePlayEvents: function() {
-            //     this.playHandlers.forEach(function(handler) {
-            //         handler(); // Call each handler in the array
-            //     });
-            // },
-
-            // onPause: function() {
-            //     this.clearSaveStateInterval(); // Clear interval when paused
-            // },
-
-            // clearSaveStateInterval: function() {
-            //     if (this.saveStateInterval) {
-            //         clearInterval(this.saveStateInterval);
-            //         this.saveStateInterval = null; // Reset the interval variable
-            //     }
-            // },
+            onPlay: function () {
+                this.saveStateHandler(), (this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3e3));
+              },
+    
+              combinedPlayHandler: function () {
+                this.onPlay();
+                this.bindUnloadHandler();
+              },
+    
+              clearSaveStateInterval: function () {
+                if (this.saveStateInterval) {
+                  clearInterval(this.saveStateInterval);
+                  this.saveStateInterval = null;
+                }
+              },
+              onPause: function () {
+                this.clearSaveStateInterval();
+              },
 
             onSpeedChange: function(event, newSpeed) {
                 this.saveState(true, {speed: newSpeed});
