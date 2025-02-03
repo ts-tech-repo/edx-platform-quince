@@ -208,7 +208,7 @@ class VideoFields:
         display_name=_("Transcript Download Role"),
         help=_('Choose a role to be able to download transcripts.'),
         default="*",
-        values=["ALL", "staff", "instructor"],
+        values=["All", "Staff", "Instructor"],
         scope=Scope.settings,
     )
     bumper_last_view_date = DateTime(
