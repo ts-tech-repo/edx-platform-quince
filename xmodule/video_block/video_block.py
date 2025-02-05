@@ -495,6 +495,8 @@ class VideoBlock(
             'showTranscriptDownload' : (loggedin_user.opt_attrs[ATTR_KEY_USER_ROLE] == getattr(self, 'transcript_download_role', True)) or getattr(self, 'transcript_download_role', True) == "*",
             'loggedin_useremail' : loggedin_user.opt_attrs[ATTR_KEY_EMAIL],
         }
+        log.info("#AMANK:: template_context: %s", template_context)
+        log.info("#AMANK:: ATT_KEY_USER_ROLE: %s", loggedin_user.opt_attrs[ATTR_KEY_USER_ROLE])
         if self.is_public_sharing_enabled():
             public_video_url = self.get_public_video_url()
             template_context['public_sharing_enabled'] = True
