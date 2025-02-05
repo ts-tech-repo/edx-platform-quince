@@ -85,7 +85,9 @@
                 var langHtml = HtmlUtils.interpolateHtml(
                     HtmlUtils.HTML(
                         [
-                            '<div class="grouped-controls test">',
+                            '<div class="grouped-controls">',
+                            '<i class="fa fa-cc" aria-hidden="true"></i>',
+                            '<li class="cc-settings"></li>',
                             '<button class="control toggle-captions" aria-disabled="false">',
                             '<span class="icon fa fa-cc" aria-hidden="true"></span>',
                             '</button>',
