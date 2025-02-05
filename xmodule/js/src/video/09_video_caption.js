@@ -562,9 +562,11 @@
                                         HtmlUtils.HTML('</li>')
                                     )
                                 );
-                            } else {
-                                self.renderCaption(start, captions);
-                            }
+                            } 
+                            // else {
+                            //     self.renderCaption(start, captions);
+                            // }
+                            self.renderCaption(start, captions);
                             self.hideCaptions(self.hideCaptionsOnLoad);
                             HtmlUtils.append(
                                 self.state.el.find('.video-wrapper').parent(),
