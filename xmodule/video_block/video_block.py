@@ -487,7 +487,7 @@ class VideoBlock(
             'track': track_url,
             'transcript_download_format': transcript_download_format,
             'transcript_download_formats_list': self.fields['transcript_download_format'].values,  # lint-amnesty, pylint: disable=unsubscriptable-object,
-            'showTranscriptDownload' : (getattr(self, 'transcript_download_role', True).lower() in ["all", "*"] or loggedin_user.opt_attrs[ATTR_KEY_USER_ROLE].lower() == getattr(self, 'transcript_download_role', True)),
+            'showTranscriptDownload' : (getattr(self, 'transcript_download_role', True).lower() in ["all", "*"] or loggedin_user.opt_attrs[ATTR_KEY_USER_ROLE].lower() == getattr(self, 'transcript_download_role', True).lower()),
             'loggedin_useremail' : loggedin_user.opt_attrs[ATTR_KEY_EMAIL],
         }
         log.info("#AMANK:: showTranscriptDownload: %s", template_context['showTranscriptDownload'])
