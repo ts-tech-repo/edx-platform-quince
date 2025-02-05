@@ -467,12 +467,6 @@ class VideoBlock(
 
         bumperize(self)
         
-        allowed_roles = getattr(self, 'transcript_download_role', "*")
-        if not isinstance(allowed_roles, (list, tuple)):
-            allowed_roles = [allowed_roles]
-
-        user_role = loggedin_user.opt_attrs.get(ATTR_KEY_USER_ROLE, "").lower()
-
         template_context = {
             'autoadvance_enabled': autoadvance_enabled,
             'branding_info': branding_info,
@@ -493,8 +487,7 @@ class VideoBlock(
             'track': track_url,
             'transcript_download_format': transcript_download_format,
             'transcript_download_formats_list': self.fields['transcript_download_format'].values,  # lint-amnesty, pylint: disable=unsubscriptable-object,
-            # 'showTranscriptDownload' : (loggedin_user.opt_attrs[ATTR_KEY_USER_ROLE] == getattr(self, 'transcript_download_role', True)) or getattr(self, 'transcript_download_role', True) == "*",
-            'showTranscriptDownload' : "*" in allowed_roles or user_role in allowed_roles or (isinstance(allowed_roles, str) and allowed_roles.lower() == "all"),
+            'showTranscriptDownload' : (getattr(self, 'transcript_download_role', True).lower() in ["all", "*"] or loggedin_user.opt_attrs[ATTR_KEY_USER_ROLE].lower() == getattr(self, 'transcript_download_role', True)),
             'loggedin_useremail' : loggedin_user.opt_attrs[ATTR_KEY_EMAIL],
         }
         log.info("#AMANK:: showTranscriptDownload: %s", template_context['showTranscriptDownload'])
