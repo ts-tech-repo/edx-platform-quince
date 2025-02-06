@@ -42,6 +42,9 @@ from common.djangoapps.util.course import (
 from common.djangoapps.util.milestones_helpers import (
     get_pre_requisite_courses_not_completed,
 )
+from common.djangoapps.student.models import UserProfile
+from django.db import transaction
+import json
 from lms.djangoapps.bulk_email.models import Optout
 from lms.djangoapps.bulk_email.models_api import is_bulk_email_feature_enabled
 from lms.djangoapps.commerce.utils import EcommerceService
@@ -556,20 +559,32 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
             "ptcURl": ""
         }
         ptc_popup_details = configuration_helpers.get_value("PTC_POPUP_DETAILS", None)
+        user_profile = UserProfile.objects.get(user=user)
+        ptc_details = json.loads(user_profile.ptc_details) if user_profile.ptc_details else {}
         if ptc_popup_details:
-            try:
-                    response = requests.get(
-                        ptc_popup_details["PTC_API_URL"],
-                        params={"batchId":  ptc_popup_details["PTC_BATCH_ID"], "emailId": user.email},
-                        headers={"Access-Key": ptc_popup_details["PTC_API_ACCESS_KEY"]},
-                    )
-                    parsed_data = response.json()
-                    if parsed_data["status"] == "success" and parsed_data["data"]["ptcStatus"] == False:
-                        learner_dash_data["ptcSubmitted"] = False
-                        emailId = urllib.parse.quote(user.email)
-                        learner_dash_data["ptcURL"]= f"{parsed_data['data']['ptcURL']}?emailId={emailId}"
-            except Exception as ex:
-                    logger.error(f"#AMANK:: PTC Exception: {ex}")
+            ptc_batch_id = ptc_popup_details["PTC_BATCH_ID"]
+            existing_ptc_entry = ptc_details.get(ptc_batch_id, {})
+            if not existing_ptc_entry.get("ptcStatus", False):
+                try:
+                        response = requests.get(
+                            ptc_popup_details["PTC_API_URL"],
+                            params={"batchId":  ptc_batch_id, "emailId": user.email},
+                            headers={"Access-Key": ptc_popup_details["PTC_API_ACCESS_KEY"]},
+                        )
+                        parsed_data = response.json()
+                        ptc_details[ptc_batch_id] = {
+                            "ptcStatus": parsed_data["data"]["ptcStatus"],
+                            "ptcURL": parsed_data["data"]["ptcURL"],
+                        }
+                        with transaction.atomic():
+                            user_profile.ptc_details = json.dumps(ptc_details)
+                            user_profile.save()
+                        if parsed_data["status"] == "success" and parsed_data["data"]["ptcStatus"] == False:
+                            learner_dash_data["ptcSubmitted"] = False
+                            emailId = urllib.parse.quote(user.email)
+                            learner_dash_data["ptcURL"]= f"{parsed_data['data']['ptcURL']}?emailId={emailId}"
+                except Exception as ex:
+                        logger.error(f"#AMANK:: PTC Exception: {ex}")
         context = {
             "audit_access_deadlines": audit_access_deadlines,
             "ecommerce_payment_page": ecommerce_payment_page,

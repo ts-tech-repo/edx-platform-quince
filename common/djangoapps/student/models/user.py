@@ -490,6 +490,7 @@ class UserProfile(models.Model):
     )
     company = models.CharField(max_length=255, blank=True, null=True)
     designation = models.CharField(max_length=255, blank=True, null=True)
+    ptc_details = models.TextField(blank=True, null=True)  
     mailing_address = models.TextField(blank=True, null=True)
     city = models.TextField(blank=True, null=True)
     country = CountryField(blank=True, null=True)
