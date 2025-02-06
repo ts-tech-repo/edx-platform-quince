@@ -87,10 +87,12 @@
                         [
                             '<div class="grouped-controls">',
                             '<i class="fa fa-cc" aria-hidden="true"></i>',
+                            '<div class="caption-icons">',
                             '<li class="cc-settings">caption settings</li>',
                             '<button class="control toggle-captions" aria-disabled="false">',
                             '<span class="icon fa fa-cc" aria-hidden="true"></span>',
                             '</button>',
+                            '</div>',
                             '<button class="control toggle-transcript" aria-disabled="false">',
                             '<span class="icon fa fa-quote-left" aria-hidden="true"></span>',
                             '</button>',
