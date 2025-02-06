@@ -564,27 +564,31 @@ class InitializeView(APIView):  # pylint: disable=unused-argument
         if ptc_popup_details:
             ptc_batch_id = ptc_popup_details["PTC_BATCH_ID"]
             existing_ptc_entry = ptc_details.get(ptc_batch_id, {})
+
             if not existing_ptc_entry.get("ptcStatus", False):
                 try:
-                        response = requests.get(
-                            ptc_popup_details["PTC_API_URL"],
-                            params={"batchId":  ptc_batch_id, "emailId": user.email},
-                            headers={"Access-Key": ptc_popup_details["PTC_API_ACCESS_KEY"]},
-                        )
-                        parsed_data = response.json()
-                        ptc_details[ptc_batch_id] = {
-                            "ptcStatus": parsed_data["data"]["ptcStatus"],
-                            "ptcURL": parsed_data["data"]["ptcURL"],
-                        }
-                        with transaction.atomic():
-                            user_profile.ptc_details = json.dumps(ptc_details)
-                            user_profile.save()
-                        if parsed_data["status"] == "success" and parsed_data["data"]["ptcStatus"] == False:
+                    response = requests.get(
+                        ptc_popup_details["PTC_API_URL"],
+                        params={"batchId":  ptc_batch_id, "emailId": user.email},
+                        headers={"Access-Key": ptc_popup_details["PTC_API_ACCESS_KEY"]},
+                    )
+                    parsed_data = response.json()
+
+                    if parsed_data.get("status") == "success":
+                        ptc_status = parsed_data["data"].get("ptcStatus", False)
+                        ptc_url = parsed_data["data"].get("ptcURL", "")
+
+                        if ptc_status:
+                            ptc_details[ptc_batch_id] = {"ptcStatus": ptc_status, "ptcURL": ptc_url}
+                            with transaction.atomic():
+                                user_profile.ptc_details = json.dumps(ptc_details)
+                                user_profile.save()
+                        else:
                             learner_dash_data["ptcSubmitted"] = False
                             emailId = urllib.parse.quote(user.email)
-                            learner_dash_data["ptcURL"]= f"{parsed_data['data']['ptcURL']}?emailId={emailId}"
+                            learner_dash_data["ptcURL"]= f"{ptc_url}?emailId={emailId}"
                 except Exception as ex:
-                        logger.error(f"#AMANK:: PTC Exception: {ex}")
+                    logger.error(f"#AMANK:: PTC Exception: {ex}")
         context = {
             "audit_access_deadlines": audit_access_deadlines,
             "ecommerce_payment_page": ecommerce_payment_page,
