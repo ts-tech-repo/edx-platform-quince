@@ -39,12 +39,14 @@
                 this.events = {
                     speedchange: this.onSpeedChange,
                     autoadvancechange: this.onAutoAdvanceChange,
-                    play: this.bindUnloadHandler,
+                    play: this.combinedPlayHandler.bind(this),
+                    pause: this.onPause.bind(this),
                     'pause destroy': this.saveStateHandler,
                     'language_menu:change': this.onLanguageChange,
                     youtube_availability: this.onYoutubeAvailability
                 };
                 this.bindHandlers();
+                // this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3000);
             },
 
             bindHandlers: function() {
@@ -65,6 +67,24 @@
             bindUnloadHandler: _.once(function() {
                 $(window).on('unload.video', this.onUnload);
             }),
+            onPlay: function () {
+                this.saveStateHandler(), (this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3e3));
+              },
+    
+              combinedPlayHandler: function () {
+                this.onPlay();
+                this.bindUnloadHandler();
+              },
+    
+              clearSaveStateInterval: function () {
+                if (this.saveStateInterval) {
+                  clearInterval(this.saveStateInterval);
+                  this.saveStateInterval = null;
+                }
+              },
+              onPause: function () {
+                this.clearSaveStateInterval();
+              },
 
             onSpeedChange: function(event, newSpeed) {
                 this.saveState(true, {speed: newSpeed});
@@ -114,12 +134,12 @@
                         this.state.storage.setItem('savedVideoPosition', data.saved_video_position, true);
                         data.saved_video_position = Time.formatFull(data.saved_video_position);
                     }
-
+                    
                     $.ajax({
                         url: this.state.config.saveStateUrl,
                         type: 'POST',
                         async: !!async,
-                        dataType: 'json',
+                        dataType: 'json', 
                         data: data
                     });
                 }
