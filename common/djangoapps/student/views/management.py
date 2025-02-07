@@ -103,6 +103,7 @@ from common.djangoapps.student.models import (  # lint-amnesty, pylint: disable=
 from common.djangoapps.student.signals import REFUND_ORDER
 from common.djangoapps.util.db import outer_atomic
 from common.djangoapps.util.json_request import JsonResponse
+from openedx.core.djangoapps.oauth_dispatch.jwt import create_jwt_for_user
 from common.djangoapps.student.signals import USER_EMAIL_CHANGED
 from xmodule.modulestore.django import modulestore  # lint-amnesty, pylint: disable=wrong-import-order
 
@@ -116,6 +117,7 @@ from common.djangoapps.student.models import CourseEnrollment, SocialLink
 from django.db.models import Prefetch
 from openedx.core.djangoapps.user_api.accounts.image_helpers import get_profile_image_urls_for_user
 from completion.models import BlockCompletion
+from rest_framework.permissions import AllowAny
 
 
 log = logging.getLogger("edx.student")
@@ -998,7 +1000,9 @@ def change_email_settings(request):
     return JsonResponse({"success": True})
 
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_course_enroll_user(request):
 
     data = json.loads(request.body)
@@ -1352,7 +1356,9 @@ def merged_attendance(responses):
     return mergeddata
 
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_reset_password_link(request):
     email = request.POST.get("email")
     domain = request.POST.get("domain")
@@ -1390,7 +1396,9 @@ def ist_to_utc(item):
     return item
 
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_get_user_enrolled_courses(request):
     user_email = request.POST.get("user_email")
     context = {}
@@ -1414,7 +1422,9 @@ def _get_active_inactive_courses(user):
             user_active_inactive_courses.update({user_course["course_details"]["course_id"] : "Dropped"})
     return user_active_inactive_courses
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_get_last_login(request):
         secret_key = configuration_helpers.get_value("EXTRAS_USER_DETAILS_TOKEN", "MZi7J7jArBgY8YoSFfvrpIqH65LXIuNA")
         user_email = request.POST.get("email", "")
@@ -1489,7 +1499,9 @@ def extras_get_mettl_report(request):
 
     return redirect(response["candidate"]["testStatus"]["htmlReport"])
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_update_user_details(request):
         data = json.loads(request.body)
         log.info(data)
@@ -1528,6 +1540,9 @@ def extras_notebook_submissions(request):
     redirect_url = "https://dashboard.talentsprint.com/submissions/notebook/auth.html?tokenID=" + token + "&requestingDomain="+ configuration_helpers.get_value("SITE_NAME", "maple.talentsprint.com")
     return redirect(redirect_url)
 
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_userdetails(request):
     try:
         if "uid" in request.GET:
@@ -1583,7 +1598,9 @@ def extras_get_payment_details(request):
         return HttpResponse(f"error: {e}")
 
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_update_lti_grades(request):
     user_email = request.POST.get("user_email", "")
     usage_id = request.POST.get("usage_id", "")
@@ -1687,6 +1704,7 @@ def join_lens_meeting(request):
         log.error("ZOOM Error: " + str(err))
         return HttpResponse("Please contact support")
 
+@login_required
 @csrf_exempt
 def extras_get_peer_profiles(request):
     level_of_education = dict(UserProfile.LEVEL_OF_EDUCATION_CHOICES)
@@ -1731,7 +1749,9 @@ def extras_get_peer_profiles(request):
     except Exception as e:
         return HttpResponse('Failed to fetch peer profiles')
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_certificate(request):
     try:
         data = {"org" : request.POST.get("org", None), "username" : request.POST.get("username", None), "cohort_name" : request.POST.get("cohort_name", None)}
@@ -1740,7 +1760,9 @@ def extras_certificate(request):
     except Exception as err:
         return ""
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_transcript(request):
     try:
         data = {"org" : request.POST.get("org", None), "username" : request.POST.get("username", None), "cohort_name" : request.POST.get("cohort_name", None)}
@@ -1750,7 +1772,9 @@ def extras_transcript(request):
     except Exception as err:
         return ""
 
-@csrf_exempt
+@api_view(['POST'])
+@authentication_classes([JwtAuthentication])
+@permission_classes([IsAuthenticated])
 def extras_sync_moodle_attendance(request):
     usage_id = request.POST.get("unit_id")
     user_email = request.POST.get("user_email")
@@ -1769,7 +1793,7 @@ def extras_sync_moodle_attendance(request):
 
     return JsonResponse({"Status" : "Success", "Response" : "Completion updated Successfully."})
 
-@csrf_exempt
+@login_required
 def extras_get_lti_tool_urls(request):
     moodle_url = configuration_helpers.get_value("MOODLE_URL", "")
     moodle_service_url = moodle_url + "/webservice/rest/server.php"
@@ -1798,6 +1822,7 @@ def extras_get_ptc_details(request):
         return JsonResponse({})
     
 @csrf_exempt
+@login_required
 def extras_update_moodle_block_url(request):
     lms_url = request.POST.get("lms_url", "")
     selected_tool = request.POST.get("selected_tool", "")
@@ -1808,3 +1833,22 @@ def extras_update_moodle_block_url(request):
         return JsonResponse(response.json())
     return JsonResponse({"error" : "Please Provide tool and lms_url"})
 
+@api_view(['POST'])
+@authentication_classes(())
+@permission_classes([AllowAny])
+def extras_generate_jwt_token(request):
+
+    username = request.headers.get("username")
+    password = request.headers.get("password")
+
+    try:
+        user_obj = User.objects.get(username = username)
+        if not user_obj.check_password(password):
+            return JsonResponse({"error": "Invalid credentials"}, status=401)
+        
+        token = create_jwt_for_user(user_obj)
+        return JsonResponse({"jwtToken" : token, "expiry" : settings.OAUTH_ID_TOKEN_EXPIRATION})
+    
+    except Exception as err:
+        log.info("Something went wrong {0}".format(err))
+        return JsonResponse({"error": "Invalid credentials/parameters"}, status=501)
