@@ -207,7 +207,7 @@ class VideoFields:
     transcript_download_role = String(
         display_name=_("Transcript Download Role"),
         help=_('Choose a role to be able to download transcripts.'),
-        default="*",
+        default="Staff",
         values=["All", "Staff", "Instructor"],
         scope=Scope.settings,
     )
