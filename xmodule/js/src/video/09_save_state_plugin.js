@@ -39,8 +39,7 @@
                 this.events = {
                     speedchange: this.onSpeedChange,
                     autoadvancechange: this.onAutoAdvanceChange,
-                    play: this.combinedPlayHandler.bind(this),
-                    pause: this.onPause.bind(this),
+                    play: this.bindUnloadHandler,
                     'pause destroy': this.saveStateHandler,
                     'language_menu:change': this.onLanguageChange,
                     youtube_availability: this.onYoutubeAvailability
@@ -67,24 +66,24 @@
             bindUnloadHandler: _.once(function() {
                 $(window).on('unload.video', this.onUnload);
             }),
-            onPlay: function () {
-                this.saveStateHandler(), (this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3e3));
-              },
+            // onPlay: function () {
+            //     this.saveStateHandler(), (this.saveStateInterval = setInterval(this.saveStateHandler.bind(this), 3e3));
+            //   },
     
-              combinedPlayHandler: function () {
-                this.onPlay();
-                this.bindUnloadHandler();
-              },
+            //   combinedPlayHandler: function () {
+            //     this.onPlay();
+            //     this.bindUnloadHandler();
+            //   },
     
-              clearSaveStateInterval: function () {
-                if (this.saveStateInterval) {
-                  clearInterval(this.saveStateInterval);
-                  this.saveStateInterval = null;
-                }
-              },
-              onPause: function () {
-                this.clearSaveStateInterval();
-              },
+            //   clearSaveStateInterval: function () {
+            //     if (this.saveStateInterval) {
+            //       clearInterval(this.saveStateInterval);
+            //       this.saveStateInterval = null;
+            //     }
+            //   },
+            //   onPause: function () {
+            //     this.clearSaveStateInterval();
+            //   },
 
             onSpeedChange: function(event, newSpeed) {
                 this.saveState(true, {speed: newSpeed});
