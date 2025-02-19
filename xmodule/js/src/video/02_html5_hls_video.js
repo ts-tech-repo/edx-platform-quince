@@ -64,6 +64,7 @@
                                     };
                                 })
                             );
+                            self.updateQualitySelector(data.levels);
                             self.config.onReadyHLS();
                         });
                         this.hls.on(HLS.Events.LEVEL_SWITCHED, function(event, data) {
@@ -103,6 +104,33 @@
                 Player.prototype.onReady = function() {
                     this.config.events.onReady(null);
                 };
+                Player.prototype.updateQualitySelector = function(levels) {
+                  var self = this;
+                  var qualitySelector = $("#resolution-container");
+                  var qualityItems = $("#resolution-container li").not("[data-value='-1']");
+                  qualityItems.hide();
+
+                  levels.forEach(function(level, index) {
+                      var resolution = level.height + "p";
+                      qualityItems.each(function() {
+                          if ($(this).attr("data-resolution") === resolution) {
+                              $(this).attr("data-value", index);
+                              $(this).show();
+                          }
+                      });
+                  });
+
+                  qualitySelector.on("click", "li", function() {
+                    var selectedLevel = parseInt($(this).attr("data-value"), 10);
+                    self.setQuality(selectedLevel);
+                });
+            };
+            Player.prototype.setQuality = function(levelIndex) {
+              if (this.hls) {
+                  this.hls.currentLevel = levelIndex;
+                  console.log("[HLS Video]: Quality switched to level:", levelIndex);
+              }
+          };
 
                 /**
              * Handler for HLS video errors. This only takes care of fatal erros, non-fatal errors
